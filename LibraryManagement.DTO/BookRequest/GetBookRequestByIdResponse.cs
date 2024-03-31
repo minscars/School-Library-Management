@@ -17,6 +17,7 @@ namespace LibraryManagement.DTO.BookRequest
         public string UserPhone { get; set; }
         public string PublishedBookId { get; set; }
         public string PublishedBookName { get; set; }
+        public string BookDetailId { get; set; }
         public string PublishedBookImage { get; set; }
         public int Available {  get; set; }
         public string BookCheckoutId { get; set; }  // this is code book when reader go to library order to take book
