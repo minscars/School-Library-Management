@@ -82,6 +82,7 @@ namespace LibraryManagement.Application.Services
                 .Include(b => b.Book.Category)
                 .Include(b => b.Publisher)
                 .Include(b => b.Book.BookAuthors).ThenInclude(b => b.Author)
+                .Include(b => b.BookShelfDetails!).ThenInclude(b => b.BookShelf!)
                 .Where(b => b.Id == Id)
                 .Select(b => new GetPublishedBookResponse()
                 {
@@ -100,6 +101,11 @@ namespace LibraryManagement.Application.Services
                     {
                         Id = a.Author.Id,
                         Name = a.Author.Name,
+                    }).ToList(),
+                    BookLocation = b.BookShelfDetails!.Select(x => new BookShelf
+                    {
+                        Id = x.BookShelf!.Id,
+                        Name = x.BookShelf!.Name,
                     }).ToList(),
                     Available = publishedBookAvailable.Count
                 }).FirstOrDefaultAsync();
