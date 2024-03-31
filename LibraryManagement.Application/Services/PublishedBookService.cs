@@ -194,5 +194,24 @@ namespace LibraryManagement.Application.Services
 
         }
 
+        public async Task<ApiResult<List<GetBookDetailRelatedListResponse>>> GetBookDetailRelatedListAsync(string publishedBookId)
+        {
+            var response = await _context.BookDetails.Where(b => b.PublishedBookId == publishedBookId && b.IsDeleted == false).Select(b => new GetBookDetailRelatedListResponse
+            {
+                Id = b.Id,
+                Code = b.Code,
+                IsDeleted = b.IsDeleted,
+                Status = b.Status,
+                CreatedTime = b.CreatedTime,
+                LastModifiedTime = b.LastModifiedTime,
+                DueTime = b.DueTime,
+            }).ToListAsync();
+
+            return new ApiResult<List<GetBookDetailRelatedListResponse>>(response)
+            {
+                Message = "",
+                StatusCode = 200
+            };
+        }
     }
 }

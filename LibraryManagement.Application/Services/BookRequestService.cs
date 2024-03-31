@@ -30,7 +30,7 @@ namespace LibraryManagement.Application.Services
         {
             var total = await _context.BookRequests.Where(r => r.IsDeleted == false).ToListAsync();
             var requestList = _context.BookRequests
-                .Include(r => r.PublishedBook)
+                .Include(r => r.BookDetail)
                 .Include(r => r.UserAccount).ThenInclude(r => r.User)
                 .Where(r => r.IsDeleted == false)
                 .AsQueryable();
@@ -52,10 +52,10 @@ namespace LibraryManagement.Application.Services
                 {
                     Id = r.Id,
                     Code = r.Code,
-                    UserAccountId = r.UserAccountId,
+                    UserAccountId = r.UserAccountId.ToString(),
                     UserName = r.UserAccount.User.Name,
-                    PublishedBookName = r.PublishedBook.Book.Name,
-                    PublishedBookImage = r.PublishedBook.Image,
+                    PublishedBookName = r.BookDetail.PublishedBook.Book.Name,
+                    PublishedBookImage = r.BookDetail.PublishedBook.Image,
                     BookCheckoutId = r.BookCheckoutId,
                     Status = StatusEnums.GetDisplayName((Status)r.Status),
                     CreatedTime = r.CreatedTime,
@@ -84,9 +84,9 @@ namespace LibraryManagement.Application.Services
         public async Task<PaginatedList<List<GetBookRequestByAccountUserResponse>>> GetBookRequestByAccountUserAsync(GetBookReuqestPaginationByUserRequest dto)
         {
             var requestList = _context.BookRequests
-                .Include(r => r.PublishedBook)
+                .Include(r => r.BookDetail)
                 .Include(r => r.UserAccount).ThenInclude(r => r.User)
-                .Where(r => r.IsDeleted == false && r.UserAccountId == dto.UserId)
+                .Where(r => r.IsDeleted == false && r.UserAccountId.ToString() == dto.UserId)
             .AsQueryable();
 
             requestList = requestList.Skip((dto.Page) * dto.Limit).Take(dto.Limit);
@@ -94,10 +94,10 @@ namespace LibraryManagement.Application.Services
                  {
                      Id = r.Id,
                      Code = r.Code,
-                    UserAccountId = r.UserAccountId,
-                    PublishedBookName = r.PublishedBook.Book.Name,
+                    UserAccountId = r.UserAccountId.ToString(),
+                    PublishedBookName = r.BookDetail.PublishedBook.Book.Name,
                     UserName = r.UserAccount.User.Name,
-                    PublishedBookImage = r.PublishedBook.Image,
+                    PublishedBookImage = r.BookDetail.PublishedBook.Image,
                     BookCheckoutId = r.BookCheckoutId,
                     Status = StatusEnums.GetDisplayName((Status)r.Status),
                     CreatedTime = r.CreatedTime,
@@ -109,7 +109,7 @@ namespace LibraryManagement.Application.Services
                     ReturnedTime = r.ReturnedTime,
                     CanceledTime = r.CanceledTime,
                 }).ToListAsync();
-            var total = await _context.BookRequests.Where(r => r.IsDeleted == false && r.UserAccountId == dto.UserId).ToListAsync();
+            var total = await _context.BookRequests.Where(r => r.IsDeleted == false && r.UserAccountId.ToString() == dto.UserId).ToListAsync();
             if (result.Count < 1)
             {
                 return new PaginatedList<List<GetBookRequestByAccountUserResponse>>(null);
@@ -125,23 +125,23 @@ namespace LibraryManagement.Application.Services
         public async Task<ApiResult<GetBookRequestByIdResponse>> GetBookRequestByIdAsync(string Id)
         {
             var reuqest = await _context.BookRequests
-                .Include(r => r.PublishedBook)
+                .Include(r => r.BookDetail)
                 .Include(r => r.UserAccount).ThenInclude(r => r.User)
                 .Where(r => r.IsDeleted == false && r.Id == Id)
                 .Select(r => new GetBookRequestByIdResponse()
                 {
                     Id = r.Id,
                     Code = r.Code,
-                    UserAccountId = r.UserAccountId,
+                    UserAccountId = r.UserAccountId.ToString(),
                     UserAvatar = r.UserAccount.Avatar,
                     UserName = r.UserAccount.User.Name,
                     UserEmail = r.UserAccount.Email,
                     UserPhone = r.UserAccount.User.PhoneNumber,
-                    PublishedBookId = r.PublishedBookId,
-                    PublishedBookName = r.PublishedBook.Book.Name,
-                    PublishedBookImage = r.PublishedBook.Image,
-                    BookCheckoutId = r.BookCheckoutId,
-                    BookTaked = r.BookCheckout.BookDetail.Code,
+                    PublishedBookId = r.BookDetail.PublishedBookId,
+                    PublishedBookName = r.BookDetail.PublishedBook.Book.Name,
+                    PublishedBookImage = r.BookDetail.PublishedBook.Image,
+                    BookCheckoutId = null,
+                    BookTaked = null,
                     Status = StatusEnums.GetDisplayName((Status)r.Status),
                     CreatedTime = r.CreatedTime,
                     RejectedTime = r.RejectedTime,
@@ -174,21 +174,13 @@ namespace LibraryManagement.Application.Services
         public async Task<ApiResult<string>> CreateBookRequestAsync(CreateBookRequestRequest dto)
         {
             var checkExit = await _context.BookRequests
-                .Where(br => br.UserAccountId.ToString() == dto.UserAccountId)
-                .Select(br => new BookRequest()
-                {
-                    Id = br.Id,
-                    UserAccountId = br.UserAccountId,
-                    Status = br.Status,
-                    PublishedBookId = br.PublishedBookId,
-
-                }).ToListAsync();
+                .Where(br => br.UserAccountId.ToString() == dto.UserAccountId).ToListAsync();
             foreach (var br in checkExit)
             {
                 if(((Status)br.Status != StatusEnums.Status.Returned || 
                     (Status)br.Status != StatusEnums.Status.Cancel ||
                     (Status)br.Status != StatusEnums.Status.Rejected)
-                    && dto.PublishedBookId==br.PublishedBookId)
+                    && dto.BookDetailId==br.BookDetailId)
                 {
                     return new ApiResult<string>("false")
                     {
@@ -201,7 +193,7 @@ namespace LibraryManagement.Application.Services
             {
                 Id = Guid.NewGuid().ToString(),
                 Code = SystemConstant.BOOKREQUEST_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
-                PublishedBookId = dto.PublishedBookId,
+                BookDetailId = dto.BookDetailId,
                 UserAccountId = new Guid(dto.UserAccountId),
                 Status = (int)StatusEnums.Status.Pending,
                 CreatedTime = DateTime.Now,
@@ -245,22 +237,6 @@ namespace LibraryManagement.Application.Services
                     check.ReceivedTime = DateTime.Now;
                     check.BorrowedTime = DateTime.Now;
                     check.DueTime = DateTime.Now.AddDays(14);
-
-                    var bookCheckout = new BookCheckout()
-                    {
-                        Id = SystemConstant.BOOKCHECKOUT_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
-                        BookDetailCode = requestDto.BookTaked,
-                        CreatedTime = DateTime.Now,
-                    };
-
-                    await _context.BookCheckouts.AddAsync(bookCheckout);
-                    var bookDetail = _context.BookDetails
-                        .Where(bd => bd.Code == bookCheckout.BookDetailCode)
-                        .FirstOrDefault();
-                    bookDetail.IsAvailable = false;
-
-                    await _context.SaveChangesAsync();
-                    check.BookCheckoutId = bookCheckout.Id; 
                     check.Note = requestDto.Note;
                     break;
 

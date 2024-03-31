@@ -8,7 +8,7 @@ namespace LibraryManagement.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<BookDetail> builder)
         {
-            builder.HasKey(k => k.Code);
+            builder.HasKey(k => k.Id);
         }
     }
 }

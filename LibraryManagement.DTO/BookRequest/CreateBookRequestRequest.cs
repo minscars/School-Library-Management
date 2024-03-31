@@ -8,7 +8,7 @@ namespace LibraryManagement.DTO.BookRequest
 {
     public class CreateBookRequestRequest
     {
-        public string PublishedBookId { get; set; }
+        public string BookDetailId { get; set; }
         public string UserAccountId { get; set; }
     }
 }

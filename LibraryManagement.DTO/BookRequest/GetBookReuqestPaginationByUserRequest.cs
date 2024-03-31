@@ -10,6 +10,6 @@ namespace LibraryManagement.DTO.BookRequest
     {
         public int Page {  get; set; }
         public int Limit { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

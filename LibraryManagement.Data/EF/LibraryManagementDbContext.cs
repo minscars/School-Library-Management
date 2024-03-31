@@ -19,7 +19,7 @@ namespace LibraryManagement.Data.EF
         public DbSet<Comment> Comments { set; get; }
         public DbSet<FeedBack> FeedBacks { set; get; }
         public DbSet<Publisher> Publisher { set; get; }
-        public DbSet<BookCheckout> BookCheckouts { set; get; }
+        //public DbSet<BookCheckout> BookCheckouts { set; get; }
         public DbSet<PublishedBook> PublishedBooks { set; get; }    
         public DbSet<BookDetail> BookDetails { set; get; }
         public DbSet<BookRequest> BookRequests { set; get; }
@@ -43,7 +43,7 @@ namespace LibraryManagement.Data.EF
                         .ApplyConfiguration(new CommentConfig())
                         .ApplyConfiguration(new FeedBackConfig())
                         .ApplyConfiguration(new PublisherConfig())
-                        .ApplyConfiguration(new BookCheckoutConfig())
+                        //.ApplyConfiguration(new BookCheckoutConfig())
                         .ApplyConfiguration(new BookDetailConfig())
                         .ApplyConfiguration(new PublisherConfig())
                         .ApplyConfiguration(new PublishedBookConfig())

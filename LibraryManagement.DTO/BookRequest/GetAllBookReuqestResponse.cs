@@ -10,7 +10,7 @@ namespace LibraryManagement.DTO.BookRequest
     {
         public string Id { get; set; }
         public string Code { get; set; }
-        public Guid UserAccountId { get; set; }
+        public string UserAccountId { get; set; }
         public string UserName { get; set; }
         public string PublishedBookName { get; set; }
         public string PublishedBookImage { get; set; }
