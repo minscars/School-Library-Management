@@ -12,7 +12,7 @@ namespace LibraryManagement.Data.Models
     {
         //public Guid Id { get; set; }
         public string? Avatar {  get; set; }
-        public string? UserPracticalId { get; set; } //Foreign key
+        public string? UserId { get; set; } //Foreign key
         public virtual User User { get; set; } = null!;
         public virtual List<BookRequest> BookRequests { get; set; }
         public virtual List<FeedBack> FeedBacks { get; set; }

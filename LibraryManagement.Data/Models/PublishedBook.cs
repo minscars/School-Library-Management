@@ -17,5 +17,6 @@
         public virtual List<FeedBack> FeedBacks { get; set; }   
         public virtual List<BookDetail> BookDetails { get; set; }
         public virtual List<BookRequest>? BookRequests { get; set; }
+        public virtual List<BookShelfDetail>? BookShelfDetails { get; set; }
     }
 }

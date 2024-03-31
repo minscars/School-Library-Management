@@ -35,7 +35,7 @@ namespace LibraryManagement.Data.Extentions
             var user = new UserAccount()
             {
                 Id = userAccountId,
-                UserPracticalId = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4",
+                UserId = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4",
                 UserName = "kha@gmail.com",
                 NormalizedUserName = "KHA@GMAIL.COM",
                 NormalizedEmail = "KHA@GMAIL.COM",
