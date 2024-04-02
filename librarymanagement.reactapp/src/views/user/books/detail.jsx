@@ -15,6 +15,8 @@ import userAccountAPI from "api/accountApi";
 import { useForm } from "react-hook-form";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
+import BasicTabs from "components/tabs";
+
 const Detail = () => {
   const [book, setBook] = useState([]);
   const { id } = useParams();
@@ -94,7 +96,7 @@ const Detail = () => {
 
   return (
     <div className="gap-5 xl:grid-cols-2">
-      <Card extra={"w-full h-full px-6 pb-6 sm:overflow-x-auto"}>
+      <Card extra={"px-6 pb-6 sm:overflow-x-auto"}>
         <div className="mb-5 mt-5 flex h-full w-full overflow-x-scroll xl:overflow-hidden">
           <Link to={"/user/books"}>
             <MdArrowBackIos className="mr-2 rounded-full text-[20px]" />
@@ -111,12 +113,13 @@ const Detail = () => {
               {" "}
               {book.category}
             </p>
-            <p className="mt-2 text-[18px] font-bold text-cyan-500">
+            <p className="mt-2 text-[18px] text-base text-gray-600">
               {" "}
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
                 {" "}
-                Borrowed: {book.checkout_visit}
+                Authors: {" "}
               </span>
+              {book.authors?.map(e => e.name)}
             </p>
             <p className="mr-4 mt-2 text-justify text-base text-gray-600">
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
@@ -133,19 +136,31 @@ const Detail = () => {
               mang gánh nặng mà gia đình ấn xuống quá lâu, khiến cánh giải thoát
               duy nhất là cái chết…
             </p>
+            <p className="mr-4 mt-2 text-justify text-base text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Publisher:{" "}
+              </span>
+              {book.publisherName}
+            </p>
+            <p className="mr-4 mt-2 text-justify text-base text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Location:{" "}
+              </span>
+              {book.bookLocation?.map(e => e.name)}
+            </p>
             <div className="mt-[10px]">
-              <button
+              {/* <button
                 onClick={() => handleClick(book.id)}
                 className="linear rounded-[15px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
               >
                 Borrow
-              </button>
+              </button> */}
               <ToastContainer />
             </div>
           </div>
         </div>
         <div class="mb-4 h-px bg-gray-300 dark:bg-white/30" />
-        <div className="flex flex-col items-center justify-center">
+        {/* <div className="flex flex-col items-center justify-center">
           <span className="align-center mb-2 text-[20px] font-bold text-customcolor-500">
             Feedback & Vote
           </span>
@@ -238,7 +253,8 @@ const Detail = () => {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
+        <BasicTabs />
       </Card>
     </div>
   );

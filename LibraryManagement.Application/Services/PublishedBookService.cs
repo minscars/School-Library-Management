@@ -1,5 +1,6 @@
 ﻿using LibraryManagement.Application.Interfaces;
 using LibraryManagement.Data.EF;
+using LibraryManagement.Data.Enums;
 using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.Contants;
 using LibraryManagement.DTO.Pagination;
@@ -201,7 +202,7 @@ namespace LibraryManagement.Application.Services
                 Id = b.Id,
                 Code = b.Code,
                 IsDeleted = b.IsDeleted,
-                Status = b.Status,
+                Status = StatusEnums.GetDisplayName((Status)b.Status),
                 CreatedTime = b.CreatedTime,
                 LastModifiedTime = b.LastModifiedTime,
                 DueTime = b.DueTime,
