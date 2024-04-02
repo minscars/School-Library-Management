@@ -71,5 +71,17 @@ namespace LibraryManagement.API.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpGet("book-detail-related-list/{publishedBookId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetBookDetailRelatedListAsync(string publishedBookId)
+        {
+            var result = await _publishedBookService.GetBookDetailRelatedListAsync(publishedBookId);
+            if (result.StatusCode == 200)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
     }
 }

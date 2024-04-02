@@ -16,13 +16,6 @@ namespace LibraryManagement.Data.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Avatar).HasDefaultValue("avatar-default.png");
-            builder.HasOne(x => x.User)
-                    .WithOne(x => x.UserAccount)
-                    .HasForeignKey<UserAccount>(x => x.UserPracticalId)
-                    .IsRequired(false);
-                    
-
         }
-
     }
 }

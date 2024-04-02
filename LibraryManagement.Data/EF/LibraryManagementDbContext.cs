@@ -19,12 +19,15 @@ namespace LibraryManagement.Data.EF
         public DbSet<Comment> Comments { set; get; }
         public DbSet<FeedBack> FeedBacks { set; get; }
         public DbSet<Publisher> Publisher { set; get; }
-        public DbSet<BookCheckout> BookCheckouts { set; get; }
+        //public DbSet<BookCheckout> BookCheckouts { set; get; }
         public DbSet<PublishedBook> PublishedBooks { set; get; }    
         public DbSet<BookDetail> BookDetails { set; get; }
         public DbSet<BookRequest> BookRequests { set; get; }
         public DbSet<BookAuthor> BookAuthors { set; get; }
         public DbSet<Author> Authors { set; get; }
+        public DbSet<BookShelf> BookShelves { set; get; }
+        public DbSet<BookShelfDetail> BookShelfDetails { set; get; }
+
         public LibraryManagementDbContext(DbContextOptions<LibraryManagementDbContext> options) : base(options)
         {
 
@@ -40,12 +43,14 @@ namespace LibraryManagement.Data.EF
                         .ApplyConfiguration(new CommentConfig())
                         .ApplyConfiguration(new FeedBackConfig())
                         .ApplyConfiguration(new PublisherConfig())
-                        .ApplyConfiguration(new BookCheckoutConfig())
+                        //.ApplyConfiguration(new BookCheckoutConfig())
                         .ApplyConfiguration(new BookDetailConfig())
                         .ApplyConfiguration(new PublisherConfig())
                         .ApplyConfiguration(new PublishedBookConfig())
                         .ApplyConfiguration(new UserConfig())
-                        .ApplyConfiguration(new BookAuthorConfig());
+                        .ApplyConfiguration(new BookAuthorConfig())
+                        .ApplyConfiguration(new BookShelfConfig())
+                        .ApplyConfiguration(new BookShelfDetailConfig());
 
             modelBuilder.FillDataCategory();
             modelBuilder.FillDataBook();
@@ -60,6 +65,8 @@ namespace LibraryManagement.Data.EF
             modelBuilder.FillDataBlog();
             modelBuilder.FillDataComment();
             modelBuilder.FillDataFeedBack();
+            modelBuilder.FillDataBookShelf();
+            modelBuilder.FillDataBookShelfDetail();
 
             //modelBuilder.FillDataBookCheckout();
 

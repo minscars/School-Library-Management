@@ -11,11 +11,11 @@ namespace LibraryManagement.Data.Extentions
             //var adminRoleId = new Guid("9E87B492-5343-4272-9A34-FA5DE7CFFB22");
             //var userRoleId = new Guid("8F7579EE-4AF9-4B71-9ADA-7F792F76DC31");
             //var adminId = new Guid("372EA575-2536-4076-9BAB-3E3138DE495F");
-            var userId = new Guid("8A820ADB-93D7-4C6F-9404-BDBFC14419F4");
+            //var userId = new Guid("2A738BF3-A14B-488E-B04E-17F918E8D6A4");
             modelBuilder.Entity<User>().HasData(
                 new User()
                 {
-                    Id = userId.ToString(),
+                    Id = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4",
                     //UserAccountId = new Guid("2A738BF3-A14B-488E-B04E-17F918E8D6A4"),
                     Name = "Lê Minh Kha",
                     UserCode = "B2012213",

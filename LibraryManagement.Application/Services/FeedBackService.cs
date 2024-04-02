@@ -58,14 +58,8 @@ namespace LibraryManagement.Application.Services
         public async Task<ApiResult<bool>> CreateNewFeedBackAsync(CreateNewFeedBackRequest dto)
         {
             var borrowed = await _context.BookRequests
-                .Where(br => br.UserAccountId.ToString() == dto.UserAccountId && br.PublishedBookId == dto.PublishedBookId)
-                .Select(br => new BookRequest()
-                {
-                    Id = br.Id,
-                    UserAccountId = br.UserAccountId,
-                    Status = br.Status,
-                    PublishedBookId = br.PublishedBookId,
-                }).FirstOrDefaultAsync();
+                .Where(br => br.UserAccountId.ToString() == dto.UserAccountId && br.BookDetail.PublishedBookId == dto.PublishedBookId)
+                .FirstOrDefaultAsync();
             if(borrowed == null)
             {
                 return new ApiResult<bool>(false)

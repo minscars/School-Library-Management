@@ -82,6 +82,7 @@ namespace LibraryManagement.Application.Services
                 .Include(b => b.Book.Category)
                 .Include(b => b.Publisher)
                 .Include(b => b.Book.BookAuthors).ThenInclude(b => b.Author)
+                .Include(b => b.BookShelfDetails!).ThenInclude(b => b.BookShelf!)
                 .Where(b => b.Id == Id)
                 .Select(b => new GetPublishedBookResponse()
                 {
@@ -100,6 +101,11 @@ namespace LibraryManagement.Application.Services
                     {
                         Id = a.Author.Id,
                         Name = a.Author.Name,
+                    }).ToList(),
+                    BookLocation = b.BookShelfDetails!.Select(x => new BookShelf
+                    {
+                        Id = x.BookShelf!.Id,
+                        Name = x.BookShelf!.Name,
                     }).ToList(),
                     Available = publishedBookAvailable.Count
                 }).FirstOrDefaultAsync();
@@ -188,5 +194,24 @@ namespace LibraryManagement.Application.Services
 
         }
 
+        public async Task<ApiResult<List<GetBookDetailRelatedListResponse>>> GetBookDetailRelatedListAsync(string publishedBookId)
+        {
+            var response = await _context.BookDetails.Where(b => b.PublishedBookId == publishedBookId && b.IsDeleted == false).Select(b => new GetBookDetailRelatedListResponse
+            {
+                Id = b.Id,
+                Code = b.Code,
+                IsDeleted = b.IsDeleted,
+                Status = b.Status,
+                CreatedTime = b.CreatedTime,
+                LastModifiedTime = b.LastModifiedTime,
+                DueTime = b.DueTime,
+            }).ToListAsync();
+
+            return new ApiResult<List<GetBookDetailRelatedListResponse>>(response)
+            {
+                Message = "",
+                StatusCode = 200
+            };
+        }
     }
 }

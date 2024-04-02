@@ -19,7 +19,7 @@ namespace LibraryManagement.Data.Extentions
                 {
                     Id = "1406E765-B3C6-4FC3-A25F-2154E7EAC5DB",
                     Code = SystemConstant.BOOKREQUEST_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
-                    PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
+                    BookDetailId = "da4b76e3-2d86-4f50-ab6e-c93a73d10e0e",
                     //BookCheckoutId = "BC001",
                     UserAccountId = new Guid("2A738BF3-A14B-488E-B04E-17F918E8D6A4"),
                     Status = 3,

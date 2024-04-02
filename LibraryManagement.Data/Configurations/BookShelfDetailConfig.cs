@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LibraryManagement.Data.Configurations
 {
-    public class BookDetailConfig : IEntityTypeConfiguration<BookDetail>
+    public class BookShelfDetailConfig : IEntityTypeConfiguration<BookShelfDetail>
     {
-        public void Configure(EntityTypeBuilder<BookDetail> builder)
+        public void Configure(EntityTypeBuilder<BookShelfDetail> builder)
         {
-            builder.HasKey(k => k.Id);
+            
         }
     }
 }
