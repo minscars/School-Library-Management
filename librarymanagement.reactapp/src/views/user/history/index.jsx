@@ -46,29 +46,38 @@ const History = () => {
               <thead>
                 <tr>
                   <th className="pr-30 border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
-                    <p className="ml-4 items-center text-xs uppercase tracking-wide text-gray-600">
-                      # id request
+                    <p className="items-center text-xs uppercase tracking-wide text-gray-600">
+                      # book code
                     </p>
                   </th>
-                  <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700"></th>
                   <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
                     <p className="text-xs uppercase tracking-wide text-gray-600">
-                      create date
+                      name
                     </p>
                   </th>
-                  <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                  <th className="border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
+                    <p className="text-xs uppercase tracking-wide text-gray-600">
+                      create time
+                    </p>
+                  </th>
+                  <th className="border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
+                    <p className="text-xs uppercase tracking-wide text-gray-600">
+                      borrow time
+                    </p>
+                  </th>
+                  <th className="border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
                     <p className="text-xs uppercase tracking-wide text-gray-600">
                       due time
                     </p>
                   </th>
-                  <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                  <th className="border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
                     <p className="text-xs uppercase tracking-wide text-gray-600">
                       status
                     </p>
                   </th>
-                  <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                  <th className="border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
                     <p className="text-xs uppercase tracking-wide text-gray-600">
-                      note
+                      extend
                     </p>
                   </th>
                 </tr>
@@ -80,40 +89,51 @@ const History = () => {
                     className="items-center border-b-2 hover:bg-gray-100"
                   >
                     <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                      <p className="font-bold text-navy-700 dark:text-white">
-                        <Link to={`./detail/${row.id}`}>{row.code}</Link>
-                      </p>
+                      <div className=" w-[155px]">
+                        <p className="font-bold text-navy-700 dark:text-white">
+                          {/* <Link to={`./detail/${row.id}`}> */}
+                          {row.bookDetailCode}
+                          {/* </Link> */}
+                        </p>
+                      </div>
                     </td>
                     <td className="items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                      <img
-                        src={row.publishedBookImage}
-                        alt=""
-                        className="ml-4 h-[90px] w-auto rounded-xl border-2 3xl:h-full 3xl:w-full"
-                      />
+                      <div className=" w-[260px]">
+                        <p className="font-bold text-navy-700 dark:text-white">
+                          {row.publishedBookName}
+                        </p>
+                      </div>
                     </td>
                     <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                      <div className=" w-[240px]">
+                      <div className=" w-[160px]">
                         {row.createdTime != null
                           ? moment(row.createdTime).format("DD/MM/YYYY HH:mm A")
                           : "..."}
                       </div>
                     </td>
+                    <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
+                      <div className=" w-[130px]">
+                        {row.borrowedTime != null
+                          ? moment(row.borrowedTime).format("DD/MM/YYYY")
+                          : "..."}
+                      </div>
+                    </td>
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      <div className="w-[240px]">
+                      <div className="w-[130px]">
                         {row.dueTime != null
                           ? moment(row.dueTime).format("DD/MM/YYYY")
                           : "..."}
                       </div>
                     </td>
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      <div className="w-[40px]">
+                      <div className="w-[60px]">
                         <p className="font-bold text-navy-700 dark:text-white">
                           {row.status}
                         </p>
                       </div>
                     </td>
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      <div className="w-[40px]">
+                      <div className="w-[60px]">
                         <p className="font-bold text-red-500 dark:text-white">
                           {moment().isAfter(
                             moment(row.dueDate, "YYYY-MM-DDTHH:mm:ss.SSSZ")

@@ -21,6 +21,7 @@ namespace LibraryManagement.DTO.PublishedBook
         public double Rating { get; set; }
         public int Checkout_visit { get; set; }
         public List<Author> Authors { get; set; }
+        public List<BookShelf>? BookLocation { get; set; }
 
     }
 }

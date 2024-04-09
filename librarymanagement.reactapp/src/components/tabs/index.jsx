@@ -1,12 +1,12 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import * as React from "react";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import feedBackApi from "api/feedBackApi";
 import jwt from "jwt-decode";
 import Rating from "@mui/material/Rating";
@@ -15,7 +15,8 @@ import userAccountAPI from "api/accountApi";
 import publishedBookApi from "api/publishedBookApi";
 import { useForm } from "react-hook-form";
 import Alert from "components/alert";
-
+import Swal from "sweetalert2";
+import bookRequestApi from "api/bookRequest";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -45,7 +46,7 @@ CustomTabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -55,6 +56,7 @@ export default function BasicTabs() {
   const handleChange = (event, newValue) => {
     setValueX(newValue);
   };
+  const navigate = useNavigate();
 
   const { id } = useParams();
   var token = window.localStorage.getItem("token");
@@ -79,14 +81,14 @@ export default function BasicTabs() {
     getUser();
 
     const getBookRelatedList = async () => {
-        const bookList = await publishedBookApi.GetBookRelatedList(id);
-        setBookRelatedList(bookList);
-      };
+      const bookList = await publishedBookApi.GetBookRelatedList(id);
+      setBookRelatedList(bookList);
+    };
     getBookRelatedList();
   }, []);
 
   const formRef = useRef(null);
-  
+
   const addFeedBack = async (content) => {
     const formData = new FormData();
     formData.append("Content", content.content);
@@ -107,98 +109,155 @@ export default function BasicTabs() {
     setfeedBackList(data);
   };
 
+  const openRequest = async (id) => {
+    var bookDetailId = id;
+    var userAccountId = userLogin.id;
+    const dto = { userAccountId, bookDetailId };
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You should recheck your information before open request to borrow this book!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, I checked it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await bookRequestApi.CreateNewBookRequest(dto).then(async (res) => {
+          if (res.statusCode === 200) {
+            Alert.showSuccessAlert(res.message);
+            navigate(`/user/history`);
+          } else {
+            Alert.showErrorAlert(res.message);
+          }
+        });
+      }
+    });
+  };
+
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={valueX} onChange={handleChange} aria-label="basic tabs example">
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={valueX}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+        >
           <Tab label="Location" {...a11yProps(0)} />
           <Tab label="Comments" {...a11yProps(1)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={valueX} index={0}>
         <table className="w-full">
-            <thead>
+          <thead>
             <tr>
-                <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
-                    <p className="text-xs uppercase tracking-wide text-gray-600">#</p>
-                </th>
-                <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
-                    <p className="text-xs uppercase tracking-wide text-gray-600">
-                        Book Code
-                    </p>
-                </th>
-                <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
-                    <p className="text-xs uppercase tracking-wide text-gray-600">
-                        Status
-                    </p>
-                </th>
-                <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
-                    <p className="text-xs uppercase tracking-wide text-gray-600">
-                        Action
-                    </p>
-                </th>
+              <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                <p className="text-xs uppercase tracking-wide text-gray-600">
+                  #
+                </p>
+              </th>
+              <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                <p className="text-xs uppercase tracking-wide text-gray-600">
+                  Book Code
+                </p>
+              </th>
+              <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                <p className="text-xs uppercase tracking-wide text-gray-600">
+                  Status
+                </p>
+              </th>
+              <th className="border-b border-gray-200 pb-[10px] pr-28 text-start dark:!border-navy-700">
+                <p className="text-xs uppercase tracking-wide text-gray-600">
+                  Action
+                </p>
+              </th>
             </tr>
-            </thead>
-            <tbody>
-                {bookRelatedList?.map((item, index) => (
-                    <tr className="items-center border-b-2 hover:bg-gray-100">
-                        <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                            <p> {index + 1} </p>
-                        </td>
-                        <td className="items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                            <p> {item.code} </p>
-                        </td>
-                        <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                            <p> {item.status} {item.status == "Borrowing" ? "(Due time: " + moment(item.dueTime).format("DD/MM/YYYY") + ")" : null }</p>
-                        </td>
-                        <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                            <p> Action</p>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
+          </thead>
+          <tbody>
+            {bookRelatedList?.map((item, index) => (
+              <tr className="items-center border-b-2 hover:bg-gray-100">
+                <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
+                  <p> {index + 1} </p>
+                </td>
+                <td className="items-center pb-[18px] pt-[14px] sm:text-[15px]">
+                  <p> {item.code} </p>
+                </td>
+                <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
+                  <p>
+                    {" "}
+                    {item.status}{" "}
+                    {item.status == "Borrowing"
+                      ? "(Due time: " +
+                        moment(item.dueTime).format("DD/MM/YYYY") +
+                        ")"
+                      : null}
+                  </p>
+                </td>
+                <td className="pb-1 pt-1 sm:text-[15px]">
+                  {item.status == "Available" && (
+                    <button
+                      onClick={() => openRequest(item.id)}
+                      className="linear rounded-[5px] bg-cyan-500 px-3 py-1 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
+                    >
+                      Borrow
+                    </button>
+                  )}
+                  {item.status != "Available" && (
+                    <button
+                      onClick={() => openRequest(item.id)}
+                      disabled={true}
+                      className="linear rounded-[5px] bg-cyan-800 px-3 py-1 text-base font-medium text-white transition duration-200 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
+                    >
+                      Borrow
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </CustomTabPanel>
       <CustomTabPanel value={valueX} index={1}>
         <div className="flex flex-col justify-center">
           <div>
             <form ref={formRef} onSubmit={handleSubmit(addFeedBack)}>
-                <div className="flex flex-col rounded-[10px] bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
-                    <div className="flex items-center justify-start">
-                        <img
-                        src={user?.avatar}
-                        className="ml-3 mr-3 h-[35px] w-[35px] rounded-full "
-                        alt=""
-                        />
-                        <input
-                        className="autofocus placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 focus:border-1 linear mb-2 mr-3 mt-2 w-full resize-none rounded-[10px] rounded-[7px] bg-lightPrimary px-3 px-4 py-2 py-2.5 font-sans text-sm font-medium font-normal outline-0 transition transition-all duration-200 hover:bg-gray-100 focus:outline-0 active:bg-gray-200 disabled:resize-none disabled:border-0 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
-                        type="text"
-                        placeholder="Let's share about this book!"
-                        {...register("content")}
-                        />
-                    </div>
-                    <div className="row ml-[65px] flex items-center justify-between mb-2">
-                        <div className="row flex items-center">
-                            <span className="mr-4 text-base text-gray-600">
-                                How would you rate this book?
-                            </span>
-
-                            <Rating
-                                className="items-center"
-                                name="half-rating"
-                                value={value}
-                                defaultValue={0}
-                                precision={0.5}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
-                        </div>
-                        <button className="linear ml-20 mr-3 cursor-pointer rounded-[10px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90">
-                            Send
-                        </button>
-                    </div>
+              <div className="flex flex-col rounded-[10px] bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
+                <div className="flex items-center justify-start">
+                  <img
+                    src={user?.avatar}
+                    className="ml-3 mr-3 h-[35px] w-[35px] rounded-full "
+                    alt=""
+                  />
+                  <input
+                    className="autofocus placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 focus:border-1 linear mb-2 mr-3 mt-2 w-full resize-none rounded-[10px] rounded-[7px] bg-lightPrimary px-3 px-4 py-2 py-2.5 font-sans text-sm font-medium font-normal outline-0 transition transition-all duration-200 hover:bg-gray-100 focus:outline-0 active:bg-gray-200 disabled:resize-none disabled:border-0 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
+                    type="text"
+                    placeholder="Let's share about this book!"
+                    {...register("content")}
+                  />
                 </div>
+                <div className="row mb-2 ml-[65px] flex items-center justify-between">
+                  <div className="row flex items-center">
+                    <span className="mr-4 text-base text-gray-600">
+                      How would you rate this book?
+                    </span>
+
+                    <Rating
+                      className="items-center"
+                      name="half-rating"
+                      value={value}
+                      defaultValue={0}
+                      precision={0.5}
+                      onChange={(event, newValue) => {
+                        setValue(newValue);
+                      }}
+                    />
+                  </div>
+                  <button className="linear ml-20 mr-3 cursor-pointer rounded-[10px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90">
+                    Send
+                  </button>
+                </div>
+              </div>
             </form>
             <div className="mb-2 ml-4 mt-4 text-[18px] font-bold  text-navy-700">
               <span>All feadbacks (1) 5/5 </span>
@@ -215,7 +274,10 @@ export default function BasicTabs() {
                 <div
                   className={`mb-1 mt-1 flex items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
                 >
-                  <div key={item.id} className="row flex items-center justify-between w-full">
+                  <div
+                    key={item.id}
+                    className="row flex w-full items-center justify-between"
+                  >
                     <div className="ml-4">
                       <p className={`text-m text-navy-700 dark:text-white`}>
                         {item.content}

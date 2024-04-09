@@ -58,6 +58,7 @@ namespace LibraryManagement.Application.Services
                     PublishedBookImage = r.BookDetail.PublishedBook.Image,
                     BookDetailId = r.BookDetailId,
                     BookCheckoutId = r.BookCheckoutId,
+                    BookDetailCode = r.BookDetail.Code,
                     Status = StatusEnums.GetDisplayName((Status)r.Status),
                     CreatedTime = r.CreatedTime,
                     RejectedTime = r.RejectedTime,
@@ -100,6 +101,7 @@ namespace LibraryManagement.Application.Services
                     UserName = r.UserAccount.User.Name,
                     PublishedBookImage = r.BookDetail.PublishedBook.Image,
                     BookCheckoutId = r.BookCheckoutId,
+                    BookDetailCode = r.BookDetail.Code,
                     Status = StatusEnums.GetDisplayName((Status)r.Status),
                     CreatedTime = r.CreatedTime,
                     RejectedTime = r.RejectedTime,
@@ -141,8 +143,9 @@ namespace LibraryManagement.Application.Services
                     PublishedBookId = r.BookDetail.PublishedBookId,
                     PublishedBookName = r.BookDetail.PublishedBook.Book.Name,
                     PublishedBookImage = r.BookDetail.PublishedBook.Image,
-                    BookDetailId = r.BookDetailId,
+                    BookDetailCode = r.BookDetail.Code,
                     BookCheckoutId = null,
+                    BookDetailId = r.BookDetailId,
                     BookTaked = null,
                     Status = StatusEnums.GetDisplayName((Status)r.Status),
                     CreatedTime = r.CreatedTime,
@@ -200,6 +203,10 @@ namespace LibraryManagement.Application.Services
                 Status = (int)StatusEnums.Status.Pending,
                 CreatedTime = DateTime.Now,
             };
+            var bookOPenRequest = await _context.BookDetails
+                .Where(bd => bd.Id == dto.BookDetailId)
+                .FirstOrDefaultAsync();
+            bookOPenRequest.Status = (int)StatusEnums.Status.Pending;
             await _context.BookRequests.AddAsync(newBookRequest);
             await _context.SaveChangesAsync();
             return new ApiResult<string>(newBookRequest.Id)
@@ -213,6 +220,9 @@ namespace LibraryManagement.Application.Services
         {
             var check = await _context.BookRequests
                 .Where(b => b.Id == requestDto.BookRequestId && b.IsDeleted == false)
+                .FirstOrDefaultAsync();
+            var bookDetail = await _context.BookDetails
+                .Where(b => b.Id == requestDto.BookDetailId)
                 .FirstOrDefaultAsync();
 
             if (check == null)
@@ -229,6 +239,7 @@ namespace LibraryManagement.Application.Services
             {
                 case Status.Approve:
                     check.Status = (int)Status.Approve; //approve
+                    bookDetail.Status = (int)Status.Approve;
                     check.ApprovedTime = DateTime.Now;
                     check.DueTime = DateTime.Now.AddDays(2);
                     check.Note = requestDto.Note;
@@ -236,6 +247,7 @@ namespace LibraryManagement.Application.Services
 
                 case Status.Borrowing:
                     check.Status = (int)Status.Borrowing; //borrow
+                    bookDetail.Status = (int)Status.Borrowing;
                     check.ReceivedTime = DateTime.Now;
                     check.BorrowedTime = DateTime.Now;
                     check.DueTime = DateTime.Now.AddDays(14);
@@ -244,12 +256,14 @@ namespace LibraryManagement.Application.Services
 
                 case Status.Returned:
                     check.Status = (int)Status.Returned; //return
+                    check.Status = (int)Status.Returned;
                     check.ReturnedTime = DateTime.Now;
                     var bookTaked = await _context.BookDetails.Where(b => b.Code == requestDto.BookTaked).FirstOrDefaultAsync();
                     bookTaked.IsAvailable = true;
                     break;
 
                 case Status.Rejected:
+                    check.Status = (int)Status.Rejected;
                     check.Status = (int)Status.Rejected;
                     check.RejectedTime = DateTime.Now;
                     check.Note = requestDto.Note;

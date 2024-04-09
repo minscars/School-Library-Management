@@ -40,6 +40,7 @@ function Detail() {
         }
         //alert(request);
         request.comment = result.value;
+        request.bookDetailId = bookRequest.bookDetailId;  
         console.log(request.bookTaked);
         console.log(status);
 
@@ -128,13 +129,13 @@ function Detail() {
                   {bookRequest.status}
                 </span>
               </p>
-
+              {/* 
               <p className="float-right mt-2 font-bold text-navy-700 dark:text-white">
                 Available:{" "}
                 <span className="font-bold text-blue-700">
                   {bookRequest.available}
                 </span>
-              </p>
+              </p> */}
             </div>
           </div>
           <div className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">

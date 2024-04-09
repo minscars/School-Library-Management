@@ -28,8 +28,8 @@ function Detail() {
               {moment().isAfter(
                 moment(bookRequest.dueTime, "YYYY-MM-DDTHH:mm:ss.SSSZ")
               ) &&
-                (bookRequest.status == "Approve" ||
-                  bookRequest.status == "Borrowing") && (
+                (bookRequest.status === "Approve" ||
+                  bookRequest.status === "Borrowing") && (
                   <span className="ml-2 text-red-500">(Expired)</span>
                 )}
             </h4>
@@ -58,7 +58,7 @@ function Detail() {
                 <p className="mt-2 text-gray-600">
                   Code book taked:{" "}
                   <span className="mr-20 font-bold text-navy-700 dark:text-white">
-                    {bookRequest.bookTaked}
+                    {bookRequest.bookDetailCode}
                   </span>
                 </p>
                 <p className="mt-2 text-gray-600">Quantity: 1</p>

@@ -13,18 +13,20 @@ namespace LibraryManagement.Data.Enums
     {
         public enum Status : int
         {
+            [Display(Name = "Available")]
+            Available = 1,
             [Display(Name = "Pending")]
-            Pending = 1,
+            Pending = 2,
             [Display(Name = "Approve")]
-            Approve = 2,
+            Approve = 3,
             [Display(Name = "Borrowing")]
-            Borrowing = 3,
+            Borrowing = 4,
             [Display(Name = "Returned")]
-            Returned = 4,
+            Returned = 5,
             [Display(Name = "Rejected")]
-            Rejected = 5,
+            Rejected = 6,
             [Display(Name = "Cancel")]
-            Cancel = 6,
+            Cancel = 7,
         }
         public static string GetDisplayName(Enum enumValue)
         {

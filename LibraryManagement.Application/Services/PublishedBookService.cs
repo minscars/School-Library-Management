@@ -54,6 +54,11 @@ namespace LibraryManagement.Application.Services
                     PublishedYear = b.PublishedYear,
                     Rating = b.Rating,
                     Checkout_visit = b.Checkout_visit,
+                    BookLocation = b.BookShelfDetails!.Select(x => new BookShelf
+                    {
+                        Id = x.BookShelf!.Id,
+                        Name = x.BookShelf!.Name,
+                    }).ToList(),
                     Authors = b.Book.BookAuthors.Select(a => new Author
                     {
                         Id = a.Author.Id,

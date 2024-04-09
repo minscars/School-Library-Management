@@ -113,40 +113,41 @@ const Detail = () => {
               {" "}
               {book.category}
             </p>
-            <p className="mt-2 text-[18px] text-base text-gray-600">
+            <p className="mt-2 text-[18px] text-[18px] text-gray-600">
               {" "}
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
                 {" "}
-                Authors: {" "}
+                Authors:{" "}
               </span>
-              {book.authors?.map(e => e.name)}
+              {book.authors?.map((e) => e.name)}
             </p>
-            <p className="mr-4 mt-2 text-justify text-base text-gray-600">
-              <span className="mb-10 text-[18px] font-bold  text-navy-700">
-                Description:{"  "}
-              </span>
-              Khi ngợi khen một người trẻ độc lập mạnh mẽ, có thể chúng ta không
-              biết họ lớn lên trong môi trường phải làm bố mẹ của bố mẹ mình ra
-              sao, cô đơn khắc khoải thế nào. Khi ngưỡng một một người trẻ học
-              giỏi, có thể chúng ta không biết họ đã bị ngạt thở bởi kỳ vọng của
-              cha mẹ. Khi phán xét một người trẻ hời hợt thiếu động lực sống, có
-              thể chúng ta không biết từ bé đến lớn họ đã được "đút sẵn" đến nỗi
-              không còn biết mình là ai. Khi kêu ca một người trẻ thiếu nghị lực
-              muốn kết thúc cuộc sống, có thể chúng ta không biết họ đã oằn mình
-              mang gánh nặng mà gia đình ấn xuống quá lâu, khiến cánh giải thoát
-              duy nhất là cái chết…
-            </p>
-            <p className="mr-4 mt-2 text-justify text-base text-gray-600">
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
                 Publisher:{" "}
               </span>
               {book.publisherName}
             </p>
-            <p className="mr-4 mt-2 text-justify text-base text-gray-600">
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Public year:{"  "}
+              </span>
+              {book.publishedYear}
+            </p>
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Page:{"  "}
+              </span>
+              {book.pages}
+            </p>
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
                 Location:{" "}
               </span>
-              {book.bookLocation?.map(e => e.name)}
+              {book.bookLocation?.map((item) => (
+                <span className="text-cyan-500" key={item.id}>
+                  {item.name}
+                </span>
+              ))}
             </p>
             <div className="mt-[10px]">
               {/* <button
@@ -160,7 +161,8 @@ const Detail = () => {
           </div>
         </div>
         <div class="mb-4 h-px bg-gray-300 dark:bg-white/30" />
-        {/* <div className="flex flex-col items-center justify-center">
+        <div>
+          {/* <div className="flex flex-col items-center justify-center">
           <span className="align-center mb-2 text-[20px] font-bold text-customcolor-500">
             Feedback & Vote
           </span>
@@ -254,6 +256,7 @@ const Detail = () => {
             </div>
           </div>
         </div> */}
+        </div>
         <BasicTabs />
       </Card>
     </div>
