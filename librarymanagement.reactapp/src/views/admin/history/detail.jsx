@@ -21,7 +21,6 @@ function Detail() {
   const handleUpdateStatus = async (status) => {
     Swal.fire({
       title: "Are you sure?",
-      input: "text",
       text: "You should recheck the user information before update status!",
       icon: "warning",
       showCancelButton: true,
@@ -32,17 +31,7 @@ function Detail() {
       if (result.isConfirmed) {
         var bookRequestId = bookRequest.id;
         const request = { bookRequestId, status };
-        if (status === 3) {
-          request.bookTaked = result.value;
-        }
-        if (status === 4) {
-          request.bookTaked = bookRequest.bookTaked;
-        }
-        //alert(request);
-        request.comment = result.value;
-        request.bookDetailId = bookRequest.bookDetailId;  
-        console.log(request.bookTaked);
-        console.log(status);
+        request.bookDetailId = bookRequest.bookDetailId;
 
         await bookRequestApi.UpdateStatus(request).then(async (res) => {
           console.log(request);
@@ -80,7 +69,7 @@ function Detail() {
             <div className="float-right mr-2">
               {bookRequest.status === "Pending" && (
                 <button
-                  onClick={() => handleUpdateStatus(2)}
+                  onClick={() => handleUpdateStatus(3)}
                   class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-blue-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                 >
                   Approve
@@ -88,7 +77,7 @@ function Detail() {
               )}
               {bookRequest.status === "Pending" && (
                 <button
-                  onClick={() => handleUpdateStatus(5)}
+                  onClick={() => handleUpdateStatus(6)}
                   class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-orange-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                 >
                   Rejected
@@ -97,13 +86,13 @@ function Detail() {
               {bookRequest.status === "Approve" && (
                 <div>
                   <button
-                    onClick={() => handleUpdateStatus(3)}
+                    onClick={() => handleUpdateStatus(4)}
                     class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-brand-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                   >
                     Received
                   </button>
                   <button
-                    onClick={() => handleUpdateStatus(6)}
+                    onClick={() => handleUpdateStatus(7)}
                     class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-red-600 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                   >
                     Cancel
@@ -113,7 +102,7 @@ function Detail() {
               {(bookRequest.status === "Received" ||
                 bookRequest.status === "Borrowing") && (
                 <button
-                  onClick={() => handleUpdateStatus(4)}
+                  onClick={() => handleUpdateStatus(5)}
                   class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-lime-600 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                 >
                   Returned

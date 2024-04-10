@@ -89,7 +89,7 @@ namespace LibraryManagement.Application.Services
                 .Include(r => r.BookDetail)
                 .Include(r => r.UserAccount).ThenInclude(r => r.User)
                 .Where(r => r.IsDeleted == false && r.UserAccountId.ToString() == dto.UserId)
-            .AsQueryable();
+                .AsQueryable();
 
             requestList = requestList.Skip((dto.Page) * dto.Limit).Take(dto.Limit);
             var result = await requestList.Select(r => new GetBookRequestByAccountUserResponse()
@@ -234,14 +234,13 @@ namespace LibraryManagement.Application.Services
                 };
             }
 
-
             switch (requestDto.Status)
             {
                 case Status.Approve:
                     check.Status = (int)Status.Approve; //approve
                     bookDetail.Status = (int)Status.Approve;
                     check.ApprovedTime = DateTime.Now;
-                    check.DueTime = DateTime.Now.AddDays(2);
+                    check.DueTime = DateTime.Now.AddDays(1);
                     check.Note = requestDto.Note;
                     break;
 
@@ -251,12 +250,13 @@ namespace LibraryManagement.Application.Services
                     check.ReceivedTime = DateTime.Now;
                     check.BorrowedTime = DateTime.Now;
                     check.DueTime = DateTime.Now.AddDays(14);
+                    bookDetail.DueTime = DateTime.Now.AddDays(14);
                     check.Note = requestDto.Note;
                     break;
 
                 case Status.Returned:
                     check.Status = (int)Status.Returned; //return
-                    check.Status = (int)Status.Returned;
+                    bookDetail.Status = (int)Status.Available;
                     check.ReturnedTime = DateTime.Now;
                     var bookTaked = await _context.BookDetails.Where(b => b.Code == requestDto.BookTaked).FirstOrDefaultAsync();
                     bookTaked.IsAvailable = true;
@@ -264,7 +264,7 @@ namespace LibraryManagement.Application.Services
 
                 case Status.Rejected:
                     check.Status = (int)Status.Rejected;
-                    check.Status = (int)Status.Rejected;
+                    bookDetail.Status = (int)Status.Available;
                     check.RejectedTime = DateTime.Now;
                     check.Note = requestDto.Note;
                     break;
@@ -272,8 +272,8 @@ namespace LibraryManagement.Application.Services
                 case Status.Cancel:
                     check.Status = (int)Status.Cancel;
                     check.CanceledTime = DateTime.Now;
+                    bookDetail.Status = (int)Status.Available;
                     break;
-
             }
 
             await _context.SaveChangesAsync();

@@ -68,7 +68,7 @@ const Marketplace = () => {
           <div class="text-xl font-bold text-navy-700 dark:text-white">
             All Books
           </div>
-          <div className="mr-4">
+          <div className="mr-4 mt-2 ">
             <select
               onChange={(e) => handleFilter(e)}
               className="ml-4 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"

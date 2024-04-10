@@ -27,11 +27,34 @@ namespace LibraryManagement.Application.Services
                 .Include(b => b.Publisher)
                 .Include(b => b.Book.BookAuthors).ThenInclude(b => b.Author).AsQueryable();
             #region Filtering
-            if (!string.IsNullOrEmpty(requestDto.Search))
+            if (requestDto.Type != null)
             {
-                bookList = bookList.Where(b => b.Book.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false);
-                total = await _context.PublishedBooks.Where(b => b.Book.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
+                switch (requestDto.Type)
+            {
+                case 1:
+                    bookList = bookList.Where(b => b.Book.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false);
+                    total = await _context.PublishedBooks.Where(b => b.Book.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
+                    break;
+
+                case 2:
+                    bookList = bookList.Where(b => b.Book.BookAuthors.Select(a => a.Author.Name).FirstOrDefault().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false); ;
+                    total = await _context.PublishedBooks.Where(b => b.Book.BookAuthors.Select(a => a.Author.Name).FirstOrDefault().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
+                    break;
+                case 3:
+                    bookList = bookList.Where(b => b.Book.PublishedBooks.Select(p => p.Publisher.Name).FirstOrDefault().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false); ;
+                    total = await _context.PublishedBooks.Where(b => b.Book.PublishedBooks.Select(p => p.Publisher.Name).FirstOrDefault().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
+                    break;
+                case 4:
+                    bookList = bookList.Where(b => b.Book.PublishedBooks.Select(p =>p.PublishedYear).FirstOrDefault().ToString().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false); 
+                    total = await _context.PublishedBooks.Where(b => b.Book.PublishedBooks.Select(p => p.PublishedYear).FirstOrDefault().ToString().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
+                    break;
             }
+            }
+            //if (!string.IsNullOrEmpty(requestDto.Search))
+            //{
+            //    bookList = bookList.Where(b => b.Book.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false);
+            //    total = await _context.PublishedBooks.Where(b => b.Book.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
+            //}
             if ((requestDto.Key !=0) && (requestDto.Key != null))
             {
                 bookList = bookList.Where(b => b.Book.CategoryId == requestDto.Key && b.Book.IsDeleted == false);

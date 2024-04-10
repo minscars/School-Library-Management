@@ -9,14 +9,14 @@ const NftCard = ({ data }) => {
   const [value, setValue] = useState(null);
   return (
     <Card
-      extra={`flex items-center flex-col w-full h-full !p-4 3xl:p-![18px] bg-white `}
+      extra={`flex items-center flex-col w-full !h-[250px] !p-4 3xl:p-![18px] bg-white `}
     >
       <div className="h-full w-full ">
         <div className="relative flex w-full justify-center">
           <img
             src={data.image}
             className="mb-3 h-[120px] w-auto rounded-l border-2 3xl:h-full 3xl:w-full"
-            alt=""
+            alt={data.title}
           />
         </div>
 
