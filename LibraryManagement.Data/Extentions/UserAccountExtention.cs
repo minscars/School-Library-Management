@@ -31,7 +31,9 @@ namespace LibraryManagement.Data.Extentions
             //Seed data for UserAccount Login into system
             var hasher = new PasswordHasher<UserAccount>();
             var userAccountId = new Guid("2A738BF3-A14B-488E-B04E-17F918E8D6A4");
-            
+
+            var userAccount2 = new Guid("F5AA72EA-A563-4E89-A289-E290814F3C17");
+            var userAccount3 = new Guid("F4E9077D-D904-4C9E-860E-7C0373CFDDFF");
             var user = new UserAccount()
             {
                 Id = userAccountId,
@@ -41,11 +43,28 @@ namespace LibraryManagement.Data.Extentions
                 NormalizedEmail = "KHA@GMAIL.COM",
             };
 
+            var user2 = new UserAccount()
+            {
+                Id = userAccount2,
+                UserId = "BEFE5A8F-B2F6-48C4-AAA0-E4DDA7A3914C",
+                UserName = "lam@gmail.com",
+                NormalizedUserName = "LAM@GMAIL.COM",
+                NormalizedEmail = "LAM@GMAIL.COM"
+            };
+
+            var user3 = new UserAccount()
+            {
+                Id = userAccount3,
+                UserId = "F7AA67C1-B3CB-4CCE-9394-1630407343BF",
+                UserName = "the@gmail.com",
+                NormalizedUserName = "THE@GMAIL.COM",
+                NormalizedEmail = "THE@GMAIL.COM"
+            };
+
             var admin = new UserAccount()
             {
                 Id = adminId,
                 UserName = "admin@gmail.com",
-                
                 NormalizedUserName = "ADMIN@GMAIL.COM",
                 Email = "admin@gmail.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
@@ -53,7 +72,9 @@ namespace LibraryManagement.Data.Extentions
             };
             user.PasswordHash = hasher.HashPassword(user, "kha123");
             admin.PasswordHash = hasher.HashPassword(admin, "admin123");
-            modelBuilder.Entity<UserAccount>().HasData(user,admin);
+            user2.PasswordHash = hasher.HashPassword(user2, "lam123");
+            user3.PasswordHash = hasher.HashPassword(user3, "the123");
+            modelBuilder.Entity<UserAccount>().HasData(user,admin,user2,user3);
 
             //Seed data for IdentityUserRole
             modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(
@@ -66,7 +87,17 @@ namespace LibraryManagement.Data.Extentions
               {
                   RoleId = userRoleId,
                   UserId = userAccountId,
-              });
+              },
+            new IdentityUserRole<Guid>
+            {
+                RoleId = userRoleId,
+                UserId = userAccount2,
+            },
+            new IdentityUserRole<Guid>
+            {
+                RoleId = userRoleId,
+                UserId = userAccount3,
+            });
 
             //Seed data for UserClaim
             modelBuilder.Entity<IdentityUserClaim<Guid>>().HasData(
@@ -111,7 +142,50 @@ namespace LibraryManagement.Data.Extentions
                   UserId = userAccountId,
                   ClaimType = "roles",
                   ClaimValue = "User"
-              });
+              },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 7,
+                UserId = userAccount2,
+                ClaimType = "id",
+                ClaimValue = userAccount2.ToString()
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 8,
+                UserId = userAccount2,
+                ClaimType = "email",
+                ClaimValue = "lam@gmail.com"
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 9 ,
+                UserId = userAccount2,
+                ClaimType = "roles",
+                ClaimValue = "User"
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 10,
+                UserId = userAccount3,
+                ClaimType = "id",
+                ClaimValue = userAccount3.ToString()
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 11,
+                UserId = userAccount3,
+                ClaimType = "email",
+                ClaimValue = "the@gmail.com"
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 12,
+                UserId = userAccount3,
+                ClaimType = "roles",
+                ClaimValue = "User"
+            }
+              );
         }
     }
 }

@@ -4,7 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
+import CardMenu from "components/card/CardMenu";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import feedBackApi from "api/feedBackApi";
@@ -18,7 +18,7 @@ import Alert from "components/alert";
 import Swal from "sweetalert2";
 import bookRequestApi from "api/bookRequest";
 function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, setTrigger, ...other } = props;
 
   return (
     <div
@@ -50,7 +50,7 @@ function a11yProps(index) {
   };
 }
 
-export default function BasicTabs() {
+export default function BasicTabs(props) {
   const [valueX, setValueX] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -69,8 +69,13 @@ export default function BasicTabs() {
 
   useEffect(() => {
     const getFeedBack = async () => {
-      const data = await feedBackApi.GetFeedBack(id);
-      setfeedBackList(data);
+      await feedBackApi.GetFeedBack(id).then((res) => {
+        if (res.statusCode === 200) {
+          setfeedBackList(res.data);
+        } else {
+          setfeedBackList(res.data);
+        }
+      });
     };
     getFeedBack();
 
@@ -97,16 +102,18 @@ export default function BasicTabs() {
     formData.append("Rate", value);
     await feedBackApi.AddFeedBack(formData).then(async (res) => {
       if (res.statusCode === 200) {
-        Alert.showSuccessAlert("Your post have been posted sucessfully!");
+        console.log(res);
+        Alert.showSuccessAlert(res.message);
+      } else {
+        Alert.showErrorAlert(res.message);
       }
-      Alert.showErrorAlert(res.message);
       if (formRef.current) {
         formRef.current.reset();
       }
       reset();
     });
     const data = await feedBackApi.GetFeedBack(id);
-    setfeedBackList(data);
+    setfeedBackList(data.data);
   };
 
   const openRequest = async (id) => {
@@ -144,8 +151,8 @@ export default function BasicTabs() {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          <Tab label="Location" {...a11yProps(0)} />
-          <Tab label="Comments" {...a11yProps(1)} />
+          <Tab label="Book Details" {...a11yProps(0)} />
+          <Tab label="Feedbacks" {...a11yProps(1)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={valueX} index={0}>
@@ -187,7 +194,7 @@ export default function BasicTabs() {
                   <p>
                     {" "}
                     {item.status}{" "}
-                    {item.status == "Borrowing"
+                    {item.status === "Borrowing"
                       ? "(Due time: " +
                         moment(item.dueTime).format("DD/MM/YYYY") +
                         ")"
@@ -195,7 +202,7 @@ export default function BasicTabs() {
                   </p>
                 </td>
                 <td className="pb-1 pt-1 sm:text-[15px]">
-                  {item.status == "Available" && (
+                  {item.status === "Available" && (
                     <button
                       onClick={() => openRequest(item.id)}
                       className="linear rounded-[5px] bg-cyan-500 px-3 py-1 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
@@ -203,7 +210,7 @@ export default function BasicTabs() {
                       Borrow
                     </button>
                   )}
-                  {item.status != "Available" && (
+                  {item.status !== "Available" && (
                     <button
                       onClick={() => openRequest(item.id)}
                       disabled={true}
@@ -259,56 +266,74 @@ export default function BasicTabs() {
                 </div>
               </div>
             </form>
-            <div className="mb-2 ml-4 mt-4 text-[18px] font-bold  text-navy-700">
-              <span>All feadbacks (1) 5/5 </span>
-            </div>
             {feedBackList === null && (
               <div className="flex flex-col items-center justify-center">
-                <p className="mt-48 text-xl text-gray-700">
+                <p className="mt-20 text-xl text-gray-700">
                   Feedbacks is empty!
                 </p>
               </div>
             )}
-            <div className="h-[150px]">
-              {feedBackList?.map((item) => (
+            {feedBackList !== null && (
+              <div className="mb-2 ml-4 mt-4 text-[18px] font-bold  text-navy-700">
+                <span>
+                  All feadbacks ({feedBackList?.total}) {feedBackList?.rate}/5{" "}
+                </span>
+              </div>
+            )}
+            <div className=" h-[400px]">
+              {feedBackList?.listFeedBacks?.map((item) => (
                 <div
-                  className={`mb-1 mt-1 flex items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+                  className={`mb-2 mt-1 items-center justify-between border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
                 >
-                  <div
-                    key={item.id}
-                    className="row flex w-full items-center justify-between"
-                  >
-                    <div className="ml-4">
-                      <p className={`text-m text-navy-700 dark:text-white`}>
+                  <div className="float-right mb-6">
+                    {userLogin.id === item.userAccountId && (
+                      <CardMenu
+                        trigger={props.setTrigger}
+                        feedBackId={item.id}
+                      />
+                    )}
+                  </div>
+                  <div key={item.id} className="w-full items-center">
+                    <div className="ml-2 mr-4 w-auto">
+                      <p
+                        className={`text-m text-between text-navy-700 dark:text-white`}
+                      >
                         {item.content}
                       </p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <img
-                          src={item.userAvatar}
-                          className={` h-[35px] w-[35px] rounded-full`}
-                        />
-
-                        <div className="ml-2">
-                          <p
-                            className={`text-m font-medium text-navy-700 dark:text-white`}
-                          >
-                            {item.userName}
-                          </p>
-                        </div>
-                      </div>
                     </div>
-                    <div className="ml-[200px]">
-                      <span className="mr-4 text-base text-gray-600">
-                        {moment(item.createdDate).format("DD/MM/YYYY HH:mm A")}
-                      </span>
-                      <div>
-                        <Rating
-                          className="items-center"
-                          name="half-rating"
-                          size="small"
-                          precision={0.5}
-                          value={item.rate}
-                        />
+                    <div className="ml-4 mt-2">
+                      <div className="mt-1 flex items-center justify-between gap-2">
+                        <div className="flex items-center">
+                          <img
+                            src={item.userAvatar}
+                            className={` h-[35px] w-[35px] rounded-full`}
+                          />
+                          <div className="ml-2">
+                            <p
+                              className={`text-m font-medium text-navy-700 dark:text-white`}
+                            >
+                              {item.userName}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="right-0 float-right">
+                          <div className="w-[200px]">
+                            <span className="text-[14px] text-gray-600">
+                              {moment(item.createdDate).format(
+                                "DD/MM/YYYY HH:mm A"
+                              )}
+                            </span>
+                            <div>
+                              <Rating
+                                className="items-center"
+                                name="half-rating"
+                                size="small"
+                                precision={0.5}
+                                value={item.rate}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -37,7 +37,7 @@ namespace LibraryManagement.Application.Services
                     break;
 
                 case 2:
-                    bookList = bookList.Where(b => b.Book.BookAuthors.Select(a => a.Author.Name).FirstOrDefault().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false); ;
+                    bookList = bookList.Where(b => b.Book.BookAuthors.Any(a => a.Author.Name.Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false));
                     total = await _context.PublishedBooks.Where(b => b.Book.BookAuthors.Select(a => a.Author.Name).FirstOrDefault().Trim().ToLower().Contains(requestDto.Search.ToLower()) && b.Book.IsDeleted == false).ToListAsync();
                     break;
                 case 3:

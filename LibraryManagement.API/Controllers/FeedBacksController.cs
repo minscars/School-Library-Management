@@ -27,8 +27,8 @@ namespace LibraryManagement.API.Controllers
             var result = await _feedBackService.GetFeedBackPublishedBookAsync(publishedBookId);
             if (result.StatusCode == 200)
             {
-                result.Data.ForEach(p => p.UserAvatar = setImageName(p.UserAvatar));
-                return Ok(result.Data);
+                result.Data.ListFeedBacks.ForEach(p => p.UserAvatar = setImageName(p.UserAvatar));
+                return Ok(result);
             }
             return Ok(result);
         }
@@ -41,10 +41,10 @@ namespace LibraryManagement.API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteFeedBackAsync([FromRoute]int Id)
+        [HttpDelete("{feedBackId}")] 
+        public async Task<IActionResult> DeleteFeedBackAsync([FromRoute]int feedBackId)
         {
-            var result = await _feedBackService.DeleteFeedBackAsync(Id);
+            var result = await _feedBackService.DeleteFeedBackAsync(feedBackId);
             return Ok(result);
         }
     }

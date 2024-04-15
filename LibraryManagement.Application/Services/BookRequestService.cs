@@ -1,20 +1,11 @@
-﻿using Azure.Core;
-using LibraryManagement.Application.Interfaces;
+﻿using LibraryManagement.Application.Interfaces;
 using LibraryManagement.Data.EF;
 using LibraryManagement.Data.Enums;
 using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.BookRequest;
 using LibraryManagement.DTO.Contants;
-using LibraryManagement.DTO.Notification;
 using LibraryManagement.DTO.Pagination;
-using LibraryManagement.DTO.PublishedBook;
-using LibraryManagement.DTO.Request;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static LibraryManagement.Data.Enums.StatusEnums;
 
 namespace LibraryManagement.Application.Services
@@ -43,7 +34,7 @@ namespace LibraryManagement.Application.Services
             if ((requestDto.Key != 0) && (requestDto.Key != null))
             {
                 requestList = requestList.Where(r => r.IsDeleted == false && r.Status == requestDto.Key);
-                total = await _context.BookRequests.Where(r => r.IsDeleted == false && r.Status == requestDto.Key).ToListAsync();
+                total = await _context.BookRequests.Where(r => r.IsDeleted == false && r.Status == requestDto.Key).ToListAsync(); 
             }
             #endregion
 

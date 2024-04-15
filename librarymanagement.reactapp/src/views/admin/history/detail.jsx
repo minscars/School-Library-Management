@@ -7,6 +7,7 @@ import banner from "assets/img/profile/banner.png";
 import moment from "moment";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
+import Stepper from "components/stepper";
 function Detail() {
   const [bookRequest, setBookRequest] = useState([]);
   const { id } = useParams();
@@ -143,7 +144,7 @@ function Detail() {
                 <p className="mt-2 text-gray-600">
                   <b>Code book taked:</b>{" "}
                   <span className="mr-20 font-bold text-navy-700 dark:text-white">
-                    {bookRequest.bookTaked}
+                    {bookRequest.bookDetailCode}
                   </span>
                 </p>
                 <p className="mt-2 text-gray-600">
@@ -156,6 +157,9 @@ function Detail() {
           <p className="mb-1 mt-3 font-medium text-blue-700 dark:text-white">
             <b>*Note:</b> {bookRequest.comment}
           </p>
+          <div>
+            <Stepper />
+          </div>
         </Card>
       </div>
       <div className="col-span-1 w-full rounded-xl 2xl:col-span-1">

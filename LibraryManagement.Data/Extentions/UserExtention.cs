@@ -22,7 +22,40 @@ namespace LibraryManagement.Data.Extentions
                     //Email = "kha@gmail.com",
                     PhoneNumber = "0398897634",
                     Address = "Đường 3/2, phường Xuân Khánh, quận Ninh Kiều, TP. Cần Thơ"
+                },
+                new User()
+                {
+                    Id = "BEFE5A8F-B2F6-48C4-AAA0-E4DDA7A3914C",
+                    Name = "Nguyễn Tùng Lâm",
+                    UserCode = "B1809363",
+                    PhoneNumber = "0338307449",
+                    Address = "87 Lê Văn Huân, Phường 13, Quận Tân Bình, TP. Hồ Chí Minh"
+                },
+                new User()
+                {
+                    Id = "F7AA67C1-B3CB-4CCE-9394-1630407343BF",
+                    Name = "Trần Chí Thể",
+                    UserCode = "B2003923",
+                    PhoneNumber = "1234567890",
+                    Address = "Ninh Kiều, TP. Cần Thơ"
+                },
+                new User()
+                {
+                    Id = "1B1BC693-F841-4B2D-9567-63710DA34F1D",
+                    Name = "Lưu Hoàng Lỉnh",
+                    UserCode = "B2012223",
+                    PhoneNumber = "0123456789",
+                    Address = "Cái Răng, TP. Cần Thơ"
+                },
+                new User()
+                {
+                    Id = "D8E5F8D4-09DE-42FA-9952-37AF9BF3EE9B",
+                    Name = "Nguyễn Trung Nhẩn",
+                    UserCode = "B2012237",
+                    PhoneNumber = "0122334455",
+                    Address = "Hẻm 51, TP. Cần Thơ"
                 }
+
                 );
 
             //var userId2 = new Guid("2A738BF3-A14B-488E-B04E-17F918E8D6A4");

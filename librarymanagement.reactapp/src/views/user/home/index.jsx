@@ -5,6 +5,7 @@ import publishedBookApi from "../../../api/publishedBookApi";
 import Card from "components/card";
 import Pagination from "components/pagination";
 import { FiSearch } from "react-icons/fi";
+import { ToastContainer, toast } from "react-toastify";
 const Marketplace = () => {
   const [booksList, setBooks] = useState([]);
   const [topFiveList, setTopFive] = useState([]);
@@ -44,11 +45,21 @@ const Marketplace = () => {
     var search = searchText;
     const dto = { page, limit, type, search };
     setIsLoaded(false);
-    const response = await publishedBookApi.GetAll(dto);
-    setPageCount(Math.ceil(response.totalRecord / limit));
-    setBooks(response.data);
-    setIsLoaded(true);
-    setSearchText("");
+    await publishedBookApi
+      .GetAll(dto)
+      .then((response) => {
+        if (response.statusCode === 200) {
+          setPageCount(Math.ceil(response.totalRecord / limit));
+          setBooks(response.data);
+          setIsLoaded(true);
+          setSearchText("");
+        } else {
+          toast.error("Do not have result with this key word!");
+        }
+      })
+      .catch(() => {
+        toast.error("Do not have result with this key word!");
+      });
   }
 
   const handlePageClick = (e) => {
@@ -198,6 +209,7 @@ const Marketplace = () => {
           ))}
         </Card>
       </div>
+      <ToastContainer />
     </div>
   );
 };

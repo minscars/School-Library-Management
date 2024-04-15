@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
 import BasicTabs from "components/tabs";
-
+import CardMenu from "components/card/CardMenu";
 const Detail = () => {
   const [book, setBook] = useState([]);
   const { id } = useParams();
@@ -27,6 +27,7 @@ const Detail = () => {
   const [user, setUser] = useState(null);
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
+  const [trigger, setTrigger] = useState();
   useEffect(() => {
     const getbyid = async () => {
       const data = await publishedBookApi.GetById(id);
@@ -43,7 +44,7 @@ const Detail = () => {
       setUser(user);
     };
     getUser();
-  }, []);
+  }, [trigger]);
 
   const formRef = useRef(null);
   const handleClick = async (id) => {
@@ -119,7 +120,9 @@ const Detail = () => {
                 {" "}
                 Authors:{" "}
               </span>
-              {book.authors?.map((e) => e.name)}
+              {book.authors?.map((item) => (
+                <span>{item.name}, </span>
+              ))}
             </p>
             <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
@@ -257,7 +260,7 @@ const Detail = () => {
           </div>
         </div> */}
         </div>
-        <BasicTabs />
+        <BasicTabs setTrigger={setTrigger} />
       </Card>
     </div>
   );
