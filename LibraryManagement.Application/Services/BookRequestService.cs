@@ -132,6 +132,8 @@ namespace LibraryManagement.Application.Services
                     UserAvatar = r.UserAccount.Avatar,
                     UserName = r.UserAccount.User.Name,
                     UserEmail = r.UserAccount.Email,
+                    UserCode = r.UserAccount.User.UserCode,
+                    UserAddress = r.UserAccount.User.Address,
                     UserPhone = r.UserAccount.User.PhoneNumber,
                     PublishedBookId = r.BookDetail.PublishedBookId,
                     PublishedBookName = r.BookDetail.PublishedBook.Book.Name,

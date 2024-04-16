@@ -75,10 +75,11 @@ const History = () => {
                   class="ml-4 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"
                 >
                   <option value={0}>All request</option>
-                  <option value={1}>Pending</option>
-                  <option value={2}>Approved</option>
-                  <option value={3}>Borrowing</option>
-                  <option value={4}>Returned</option>
+                  <option value={2}>Pending</option>
+                  <option value={3}>Approved</option>
+                  <option value={4}>Borrowing</option>
+                  <option value={5}>Returned</option>
+                  <option value={7}>Cancled</option>
                 </select>
               </div>
             </div>

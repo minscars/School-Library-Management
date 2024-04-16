@@ -15,6 +15,8 @@ namespace LibraryManagement.DTO.BookRequest
         public string UserAvatar {  get; set; }
         public string UserEmail { get; set; }
         public string UserPhone { get; set; }
+        public string UserCode { get; set; }
+        public string UserAddress { get; set; }
         public string PublishedBookId { get; set; }
         public string PublishedBookName { get; set; }
         public string BookDetailCode { get; set; }

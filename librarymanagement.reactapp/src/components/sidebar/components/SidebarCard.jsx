@@ -4,6 +4,7 @@ import jwt from "jwt-decode";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
 import userAPI from "api/userApi";
+import accountApi from "api/accountApi";
 import image1 from "assets/img/profile/image1.png";
 const FreeCard = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const FreeCard = () => {
   const [user, setUser] = useState(null);
   useEffect(() => {
     const getUser = async () => {
-      const user = await userAPI.GetUserById(userLogin.id);
+      const user = await accountApi.GetUserAccount(userLogin.id);
       setUser(user);
     };
     getUser();
@@ -45,7 +46,7 @@ const FreeCard = () => {
       </div>
 
       <div className="mt-16 flex h-fit flex-col items-center">
-        <p className="text-lg font-bold text-white">👋 Hey, {user?.name}</p>
+        <p className="text-lg font-bold text-white">👋 Hello Admin!</p>
         <a
           onClick={() => handleLogout()}
           className="text-medium mt-4 block cursor-pointer rounded-full bg-gradient-to-b from-white/50 to-white/10 px-11 py-[12px] text-center text-base text-white hover:bg-gradient-to-b hover:from-white/40 hover:to-white/5 "

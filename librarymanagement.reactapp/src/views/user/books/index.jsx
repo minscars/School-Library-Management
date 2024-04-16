@@ -52,8 +52,8 @@ const Marketplace = () => {
     formData.append("Key", e.target.value);
     if (e.target.value != 0) {
       const response = await bookApi.GetAll(formData);
-      setPageCount(Math.ceil(response.totalRecord / perPage));
-      setBooks(response.data);
+      setPageCount(Math.ceil(response?.totalRecord / perPage));
+      setBooks(response?.data);
     } else {
       const response = await bookApi.GetAll(formData);
       setPageCount(Math.ceil(response.totalRecord / perPage));
