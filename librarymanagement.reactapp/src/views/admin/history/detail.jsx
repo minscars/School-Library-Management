@@ -7,7 +7,7 @@ import banner from "assets/img/profile/banner.png";
 import moment from "moment";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
-import Stepper from "components/stepper";
+import HorizontalNonLinearStepper from "./components/stepper";
 function Detail() {
   const [bookRequest, setBookRequest] = useState([]);
   const { id } = useParams();
@@ -33,7 +33,7 @@ function Detail() {
         var bookRequestId = bookRequest.id;
         const request = { bookRequestId, status };
         request.bookDetailId = bookRequest.bookDetailId;
-
+        request.publishedBookId = bookRequest.publishedBookId;
         await bookRequestApi.UpdateStatus(request).then(async (res) => {
           console.log(request);
           if (res.statusCode === 200) {
@@ -158,7 +158,7 @@ function Detail() {
             <b>*Note:</b> {bookRequest.comment}
           </p>
           <div>
-            <Stepper />
+            <HorizontalNonLinearStepper />
           </div>
         </Card>
       </div>

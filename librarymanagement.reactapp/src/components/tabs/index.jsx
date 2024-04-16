@@ -280,17 +280,14 @@ export default function BasicTabs(props) {
                 </span>
               </div>
             )}
-            <div className=" h-[400px]">
+            <div className="h-[400px]">
               {feedBackList?.listFeedBacks?.map((item) => (
                 <div
                   className={`mb-2 mt-1 items-center justify-between border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
                 >
                   <div className="float-right mb-6">
                     {userLogin.id === item.userAccountId && (
-                      <CardMenu
-                        trigger={props.setTrigger}
-                        feedBackId={item.id}
-                      />
+                      <CardMenu feedBackId={item.id} />
                     )}
                   </div>
                   <div key={item.id} className="w-full items-center">

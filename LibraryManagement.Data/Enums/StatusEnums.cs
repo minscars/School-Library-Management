@@ -27,7 +27,21 @@ namespace LibraryManagement.Data.Enums
             Rejected = 6,
             [Display(Name = "Cancel")]
             Cancel = 7,
+            [Display(Name = "Extend")]
+            Extend = 8,
         }
+
+
+        public enum StatusPost : int
+        {
+            [Display(Name = "Pending")]
+            Pending = 1,
+            [Display(Name = "Posted")]
+            Approve = 2,
+            [Display(Name = "Deleted")]
+            Rejected = 3,
+        }
+
         public static string GetDisplayName(Enum enumValue)
         {
             string displayName;

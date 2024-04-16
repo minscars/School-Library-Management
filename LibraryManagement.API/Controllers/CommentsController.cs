@@ -27,9 +27,9 @@ namespace LibraryManagement.API.Controllers
             {
                 result.Data.ForEach(p => p.UserAvatar = setImageName(p.UserAvatar));
 
-                return Ok(result.Data);
+                return Ok(result);
             }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpPost]

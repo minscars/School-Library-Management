@@ -5,16 +5,17 @@ import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { MdArrowBackIos } from "react-icons/md";
-import image1 from "assets/img/profile/image1.png";
 import Alert from "components/alert";
 import moment from "moment";
 import blogApi from "api/blogApi";
-import userAPI from "api/userApi";
+import userAccountAPI from "api/accountApi";
 import commentApi from "api/commentApi";
 import jwt from "jwt-decode";
+
 export function Detail() {
   const [post, setPost] = useState([]);
   const { id } = useParams();
+  const [trigger, setTrigger] = useState();
 
   //get current user login
   const [user, setUser] = useState(null);
@@ -31,25 +32,33 @@ export function Detail() {
     getbyid();
 
     const getUser = async () => {
-      const user = await userAPI.GetUserById(userLogin.id);
+      const user = await userAccountAPI.GetUserAccount(userLogin.id);
       setUser(user);
     };
     getUser();
 
     const getCommnet = async () => {
-      const data = await commentApi.GetCommentPost(id);
-      setComments(data);
+      await commentApi.GetCommentPost(id).then((res) => {
+        if (res.statusCode === 200) {
+          setComments(res.data);
+        } else {
+          setComments(res.data);
+        }
+      });
     };
     getCommnet();
-  }, []);
+  }, [trigger]);
 
   const addComment = async (content) => {
     const formData = new FormData();
-    formData.append("PostId", id);
-    formData.append("UserId", userLogin.id);
+    formData.append("BlogId", id);
+    formData.append("UserAccountId", userLogin.id);
     formData.append("Content", content.content);
     await commentApi.CreateCommnet(formData).then(async (res) => {
       if (res.statusCode === 200) {
+        setTrigger(Math.random() + 1)
+          ?.toString(36)
+          .substring(7);
         Alert.showSuccessAlert("Your post have been posted sucessfully!");
 
         if (formRef.current) {
@@ -61,10 +70,10 @@ export function Detail() {
 
   return (
     <div className="gap-5 xl:grid-cols-2">
-      <Card extra={"w-full h-full px-6 pb-6 sm:overflow-x-auto"}>
-        <div className="mb-5 mt-5 flex h-full w-full overflow-x-scroll xl:overflow-hidden">
+      <Card extra={"w-full h-auto px-6 pb-6"}>
+        <div className="mb-5 mt-5 flex h-full w-full ">
           <Link to={"/user/forum"}>
-            <MdArrowBackIos className="mr-2 rounded-full text-[20px]" />
+            <MdArrowBackIos className="mr-2 " />
           </Link>
           <div className="">
             <div className="flex items-center gap-2">
@@ -85,7 +94,7 @@ export function Detail() {
               </div>
             </div>
             <div className="flex w-full justify-center">
-              <img src={image1} className="border-1 h-[260px] w-auto " />
+              {/* <img src={image1} className="border-1 h-[260px] w-auto " /> */}
             </div>
             <div className="mt-4">
               <p className="text-[22px] font-bold text-navy-700">
@@ -126,48 +135,52 @@ export function Detail() {
                 </button>
               </form>
             </div>
-            <div className="mb-4 ml-4 mt-2 text-[18px] font-bold  text-navy-700">
-              <span>All commnents (1)</span>
-            </div>
-            <div className="table-wrp mt-2 block h-[300px] overflow-x-scroll">
-              {commentList == null && (
+            {/* {commentList !== null && (
+              <div className="mb-4 ml-4 mt-2 text-[18px] font-bold  text-navy-700">
+                <span>All commnents (1)</span>
+              </div>
+            )} */}
+            <div className="table-wrp mt-2 block h-[200px] overflow-x-scroll">
+              {commentList === null && (
                 <div className="flex flex-col items-center justify-center">
                   <p className="mb-48 mt-5 font-medium text-gray-700">
                     Do not have comment yet!
                   </p>
                 </div>
               )}
-              {commentList?.map((row, key) => (
-                <div
-                //className={`mb-1 mt-1 flex w-full items-center justify-between bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-                >
-                  <div className="row ml-20 mt-1 flex items-center">
-                    <div className="flex  gap-2">
-                      <img
-                        src={row.userAvatar}
-                        className={`mt-2 h-[36px] w-[36px] rounded-full`}
-                      />
+              <div className="h-[400px]">
+                {commentList?.map((row, key) => (
+                  <div
+                  //className={`mb-1 mt-1 flex w-full items-center justify-between bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+                  >
+                    <div className="row ml-20 mt-1 flex w-fit items-center">
+                      <div className="flex  gap-2">
+                        <img
+                          src={row.userAvatar}
+                          className={`mt-2 h-[36px] w-[36px] rounded-full`}
+                        />
 
-                      <div className="ml-1 rounded-2xl border-2 bg-white p-2 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
-                        <p
-                          className={`text-m font-bold text-navy-700 dark:text-white`}
-                        >
-                          {row.userName}{" "}
-                          <span className="mr-4 text-sm text-gray-600">
-                            {" "}
-                            {moment(row.createdDate).format(
-                              "DD/MM/YYYY HH:mm A"
-                            )}
-                          </span>
-                        </p>
-                        <p className="text-m font-medium text-navy-700 dark:text-white">
-                          {row.content}
-                        </p>
+                        <div className="ml-1 rounded-2xl border-2 bg-white p-2 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
+                          <p
+                            className={`text-m font-bold text-navy-700 dark:text-white`}
+                          >
+                            {row.userName}{" "}
+                            <span className="mr-4 text-sm text-gray-600">
+                              {" "}
+                              {moment(row.createdDate).format(
+                                "DD/MM/YYYY HH:mm A"
+                              )}
+                            </span>
+                          </p>
+                          <p className="text-m font-medium text-navy-700 dark:text-white">
+                            {row.content}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>

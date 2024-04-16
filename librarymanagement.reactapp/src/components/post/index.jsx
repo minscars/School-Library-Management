@@ -5,12 +5,12 @@ import moment from "moment";
 const post = ({ data }) => {
   return (
     <div
-      className={` mb-1 mt-1 flex w-full items-center justify-between rounded-xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+      className={` mb-1 mt-1 flex w-full items-center justify-between rounded-[2px] border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
     >
       <div className="flex items-center">
-        <div className="">
+        {/* <div className="">
           <img className="h-auto w-[83px] rounded-lg" src={data.image} alt="" />
-        </div>
+        </div> */}
         <div className="ml-4">
           <p className={`text-l font-bold text-navy-700 dark:text-white`}>
             {data.title}
@@ -28,7 +28,7 @@ const post = ({ data }) => {
                 {data.username}
               </p>
               <p className="text-sm font-medium text-navy-700 dark:text-white">
-                {moment(data.createDate).format("DD/MM/YYYY")}
+                {moment(data.createDate).format("DD/MM/YYYY HH:mm A")}
               </p>
             </div>
             <div className="ml-[100px]">

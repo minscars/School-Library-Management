@@ -22,6 +22,7 @@ namespace LibraryManagement.Data.Models
         public DateTime? DueTime { get; set; }
         public DateTime? ReturnedTime { get; set; }
         public DateTime? CanceledTime { get; set; }
+        public DateTime? ExtendedTime { get; set; }
         public bool IsDeleted { get; set; }
         public string? Note {  get; set; }
         public virtual BookDetail BookDetail { get; set; }

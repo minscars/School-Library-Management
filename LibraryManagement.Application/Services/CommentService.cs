@@ -46,7 +46,6 @@ namespace LibraryManagement.Application.Services
                     UserAvatar = c.UserAccount.Avatar,
                     UserName = c.UserAccount.User.Name,
                     CreatedDate = c.CreatedDate
-
                 })
                 .ToListAsync();
 
