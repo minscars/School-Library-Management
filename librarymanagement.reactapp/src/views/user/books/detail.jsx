@@ -15,6 +15,8 @@ import userAccountAPI from "api/accountApi";
 import { useForm } from "react-hook-form";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
+import BasicTabs from "components/tabs";
+import CardMenu from "components/card/CardMenu";
 const Detail = () => {
   const [book, setBook] = useState([]);
   const { id } = useParams();
@@ -25,6 +27,7 @@ const Detail = () => {
   const [user, setUser] = useState(null);
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
+  const [trigger, setTrigger] = useState();
   useEffect(() => {
     const getbyid = async () => {
       const data = await publishedBookApi.GetById(id);
@@ -41,7 +44,7 @@ const Detail = () => {
       setUser(user);
     };
     getUser();
-  }, []);
+  }, [trigger]);
 
   const formRef = useRef(null);
   const handleClick = async (id) => {
@@ -94,7 +97,7 @@ const Detail = () => {
 
   return (
     <div className="gap-5 xl:grid-cols-2">
-      <Card extra={"w-full h-full px-6 pb-6 sm:overflow-x-auto"}>
+      <Card extra={"px-6 pb-6 sm:overflow-x-auto"}>
         <div className="mb-5 mt-5 flex h-full w-full overflow-x-scroll xl:overflow-hidden">
           <Link to={"/user/books"}>
             <MdArrowBackIos className="mr-2 rounded-full text-[20px]" />
@@ -111,41 +114,58 @@ const Detail = () => {
               {" "}
               {book.category}
             </p>
-            <p className="mt-2 text-[18px] font-bold text-cyan-500">
+            <p className="mt-2 text-[18px] text-[18px] text-gray-600">
               {" "}
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
                 {" "}
-                Borrowed: {book.checkout_visit}
+                Authors:{" "}
               </span>
+              {book.authors?.map((item) => (
+                <span>{item.name}, </span>
+              ))}
             </p>
-            <p className="mr-4 mt-2 text-justify text-base text-gray-600">
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
               <span className="mb-10 text-[18px] font-bold  text-navy-700">
-                Description:{"  "}
+                Publisher:{" "}
               </span>
-              Khi ngợi khen một người trẻ độc lập mạnh mẽ, có thể chúng ta không
-              biết họ lớn lên trong môi trường phải làm bố mẹ của bố mẹ mình ra
-              sao, cô đơn khắc khoải thế nào. Khi ngưỡng một một người trẻ học
-              giỏi, có thể chúng ta không biết họ đã bị ngạt thở bởi kỳ vọng của
-              cha mẹ. Khi phán xét một người trẻ hời hợt thiếu động lực sống, có
-              thể chúng ta không biết từ bé đến lớn họ đã được "đút sẵn" đến nỗi
-              không còn biết mình là ai. Khi kêu ca một người trẻ thiếu nghị lực
-              muốn kết thúc cuộc sống, có thể chúng ta không biết họ đã oằn mình
-              mang gánh nặng mà gia đình ấn xuống quá lâu, khiến cánh giải thoát
-              duy nhất là cái chết…
+              {book.publisherName}
+            </p>
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Public year:{"  "}
+              </span>
+              {book.publishedYear}
+            </p>
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Page:{"  "}
+              </span>
+              {book.pages}
+            </p>
+            <p className="mr-4 mt-2 text-justify text-[18px] text-gray-600">
+              <span className="mb-10 text-[18px] font-bold  text-navy-700">
+                Location:{" "}
+              </span>
+              {book.bookLocation?.map((item) => (
+                <span className="text-cyan-500" key={item.id}>
+                  {item.name}
+                </span>
+              ))}
             </p>
             <div className="mt-[10px]">
-              <button
+              {/* <button
                 onClick={() => handleClick(book.id)}
                 className="linear rounded-[15px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
               >
                 Borrow
-              </button>
+              </button> */}
               <ToastContainer />
             </div>
           </div>
         </div>
         <div class="mb-4 h-px bg-gray-300 dark:bg-white/30" />
-        <div className="flex flex-col items-center justify-center">
+        <div>
+          {/* <div className="flex flex-col items-center justify-center">
           <span className="align-center mb-2 text-[20px] font-bold text-customcolor-500">
             Feedback & Vote
           </span>
@@ -238,7 +258,9 @@ const Detail = () => {
               ))}
             </div>
           </div>
+        </div> */}
         </div>
+        <BasicTabs setTrigger={setTrigger} />
       </Card>
     </div>
   );

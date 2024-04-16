@@ -74,7 +74,7 @@ builder.Services.AddTransient<IBookRequestService, BookRequestService>();
 //builder.Services.AddTransient<IStatisticService, StatisticService>();
 builder.Services.AddTransient<IFeedBackService, FeedBackService>();
 builder.Services.AddTransient<IBlogService, BlogService>();
-//builder.Services.AddTransient<ICommentService, CommentService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 

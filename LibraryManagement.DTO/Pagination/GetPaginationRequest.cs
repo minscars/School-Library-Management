@@ -11,7 +11,8 @@ namespace LibraryManagement.DTO.Pagination
         public int Page { get; set; }
         public int Limit { get; set; }
         public string? Search {  get; set; }
-        public int? Key { get; set; }
+        public int? Key { get; set; } //cate
+        public int? Type { get; set; }
 
     }
 }

@@ -7,6 +7,7 @@ import banner from "assets/img/profile/banner.png";
 import moment from "moment";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
+import HorizontalNonLinearStepper from "./components/stepper";
 function Detail() {
   const [bookRequest, setBookRequest] = useState([]);
   const { id } = useParams();
@@ -21,7 +22,6 @@ function Detail() {
   const handleUpdateStatus = async (status) => {
     Swal.fire({
       title: "Are you sure?",
-      input: "text",
       text: "You should recheck the user information before update status!",
       icon: "warning",
       showCancelButton: true,
@@ -32,17 +32,8 @@ function Detail() {
       if (result.isConfirmed) {
         var bookRequestId = bookRequest.id;
         const request = { bookRequestId, status };
-        if (status === 3) {
-          request.bookTaked = result.value;
-        }
-        if (status === 4) {
-          request.bookTaked = bookRequest.bookTaked;
-        }
-        //alert(request);
-        request.comment = result.value;
-        console.log(request.bookTaked);
-        console.log(status);
-
+        request.bookDetailId = bookRequest.bookDetailId;
+        request.publishedBookId = bookRequest.publishedBookId;
         await bookRequestApi.UpdateStatus(request).then(async (res) => {
           console.log(request);
           if (res.statusCode === 200) {
@@ -79,7 +70,7 @@ function Detail() {
             <div className="float-right mr-2">
               {bookRequest.status === "Pending" && (
                 <button
-                  onClick={() => handleUpdateStatus(2)}
+                  onClick={() => handleUpdateStatus(3)}
                   class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-blue-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                 >
                   Approve
@@ -87,7 +78,7 @@ function Detail() {
               )}
               {bookRequest.status === "Pending" && (
                 <button
-                  onClick={() => handleUpdateStatus(5)}
+                  onClick={() => handleUpdateStatus(6)}
                   class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-orange-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                 >
                   Rejected
@@ -96,13 +87,13 @@ function Detail() {
               {bookRequest.status === "Approve" && (
                 <div>
                   <button
-                    onClick={() => handleUpdateStatus(3)}
+                    onClick={() => handleUpdateStatus(4)}
                     class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-brand-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                   >
                     Received
                   </button>
                   <button
-                    onClick={() => handleUpdateStatus(6)}
+                    onClick={() => handleUpdateStatus(7)}
                     class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-red-600 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                   >
                     Cancel
@@ -112,7 +103,7 @@ function Detail() {
               {(bookRequest.status === "Received" ||
                 bookRequest.status === "Borrowing") && (
                 <button
-                  onClick={() => handleUpdateStatus(4)}
+                  onClick={() => handleUpdateStatus(5)}
                   class="linear ml-2 rounded-[20px] bg-lightPrimary px-4 py-2 text-sm font-medium text-lime-600 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                 >
                   Returned
@@ -128,13 +119,13 @@ function Detail() {
                   {bookRequest.status}
                 </span>
               </p>
-
+              {/* 
               <p className="float-right mt-2 font-bold text-navy-700 dark:text-white">
                 Available:{" "}
                 <span className="font-bold text-blue-700">
                   {bookRequest.available}
                 </span>
-              </p>
+              </p> */}
             </div>
           </div>
           <div className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
@@ -153,7 +144,7 @@ function Detail() {
                 <p className="mt-2 text-gray-600">
                   <b>Code book taked:</b>{" "}
                   <span className="mr-20 font-bold text-navy-700 dark:text-white">
-                    {bookRequest.bookTaked}
+                    {bookRequest.bookDetailCode}
                   </span>
                 </p>
                 <p className="mt-2 text-gray-600">
@@ -166,6 +157,9 @@ function Detail() {
           <p className="mb-1 mt-3 font-medium text-blue-700 dark:text-white">
             <b>*Note:</b> {bookRequest.comment}
           </p>
+          <div>
+            <HorizontalNonLinearStepper />
+          </div>
         </Card>
       </div>
       <div className="col-span-1 w-full rounded-xl 2xl:col-span-1">

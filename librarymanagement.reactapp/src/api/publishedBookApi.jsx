@@ -16,6 +16,9 @@ const publishedBookApi = {
   GetTopFive: () => {
     return API.get("/PublishedBooks/TopFive");
   },
+  GetBookRelatedList: (publishedBookId) => {
+    return API.get(`/PublishedBooks/book-detail-related-list/${publishedBookId}`);
+  },
   // Create: (request) => {
   //   return APIFile.post("/Books", request);
   // },

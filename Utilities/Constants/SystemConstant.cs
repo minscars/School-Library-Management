@@ -20,6 +20,7 @@ namespace LibraryManagement.DTO.Contants
         public const string PUBLISHEDBOOK_PREFIX = "PB";
         public const string BOOKREQUEST_PREFIX = "BR";
         public const string BOOKCHECKOUT_PREFIX = "BC";
+        public const string BLOG_PREFIX = "BL";
 
         //pagination
 

@@ -18,8 +18,8 @@ import Swal from "sweetalert2";
 const Navbar = (props) => {
   const navigate = useNavigate();
   const { onOpenSidenav, brandText } = props;
-  const [darkmode, setDarkmode] = React.useState(false);
-  const [searchText, setSearchText] = React.useState("");
+  const [darkmode, setDarkmode] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [user, setUser] = useState(null);
   const userLogin = jwt(window.localStorage.getItem("token"));
 
@@ -87,8 +87,8 @@ const Navbar = (props) => {
 
       {/* Form search */}
       {userLogin.roles == "User" && (
-        <div className="relative  flex h-[61px] w-[355px] flex-grow items-center justify-around gap-2 rounded-full bg-white px-2 py-2 shadow-xl shadow-shadow-500 dark:!bg-navy-800 dark:shadow-none md:w-[365px] md:flex-grow-0 md:gap-1 xl:w-[365px] xl:gap-2">
-          <div className="flex h-full items-center rounded-full bg-lightPrimary text-navy-700 dark:bg-navy-900 dark:text-white xl:w-[225px]">
+        <div className="relative  flex h-auto w-full flex-grow items-center justify-around gap-2 rounded-full bg-white px-2 py-2 shadow-xl shadow-shadow-500 dark:!bg-navy-800 dark:shadow-none md:w-auto md:flex-grow-0 md:gap-1 xl:w-auto xl:gap-2">
+          {/* <div className="flex h-full items-center rounded-full bg-lightPrimary text-navy-700 dark:bg-navy-900 dark:text-white xl:w-[225px]">
             <p className="pl-3 pr-2 text-xl">
               <FiSearch className="h-4 w-4 text-gray-400 dark:text-white" />
             </p>
@@ -107,9 +107,9 @@ const Navbar = (props) => {
             onClick={onOpenSidenav}
           >
             <FiAlignJustify className="h-5 w-5" />
-          </span>
+          </span> */}
           {/* start Notification */}
-          <Dropdown
+          {/* <Dropdown
             button={
               //onclick to recall API notification
               <p className="cursor-pointer">
@@ -129,9 +129,6 @@ const Navbar = (props) => {
                 </div>
 
                 <button className="flex w-full items-center">
-                  {/* <div className="flex h-full w-[85px] items-center justify-center rounded-xl bg-gradient-to-b from-brandLinear to-brand-500 py-4 text-2xl text-white"> */}
-                  {/*<BsArrowBarUp />*/}
-                  {/*</div>*/}
                   <div className="ml-2 flex h-full w-full flex-col justify-center rounded-lg px-1 text-sm">
                     <p className="mb-1 text-left text-base font-bold text-gray-900 dark:text-white"></p>
                     <div className="flex justify-between">
@@ -144,10 +141,10 @@ const Navbar = (props) => {
                 </button>
               </div>
             }
-            classNames={"py-2 top-4 -left-[230px] md:-left-[440px] w-max"}
-          />
+            // classNames={"py-2 top-4 -left-[230px] md:-left-[440px] w-max"}
+          /> */}
           {/* start Horizon PRO */}
-          <Dropdown
+          {/* <Dropdown
             button={
               <p className="cursor-pointer">
                 <IoMdInformationCircleOutline className="h-4 w-4 text-gray-600 dark:text-white" />
@@ -206,7 +203,7 @@ const Navbar = (props) => {
             ) : (
               <RiMoonFill className="h-4 w-4 text-gray-600 dark:text-white" />
             )}
-          </div>
+          </div> */}
           {/* Profile & Dropdown */}
           <Dropdown
             button={
@@ -228,7 +225,7 @@ const Navbar = (props) => {
                 <div className="h-px w-full bg-gray-200 dark:bg-white/20 " />
 
                 <div className="flex flex-col p-4">
-                  <a
+                  {/* <a
                     href=" "
                     className="text-sm text-gray-800 dark:text-white hover:dark:text-white"
                   >
@@ -239,7 +236,7 @@ const Navbar = (props) => {
                     className="mt-3 text-sm text-gray-800 dark:text-white hover:dark:text-white"
                   >
                     Newsletter Settings
-                  </a>
+                  </a> */}
 
                   <a
                     onClick={() => handleLogout()}

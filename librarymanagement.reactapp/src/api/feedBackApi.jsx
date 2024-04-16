@@ -5,8 +5,11 @@ const feedBackApi = {
     return API.get(`/FeedBacks/${publishedBookId}`);
   },
   AddFeedBack: (dto) => {
-    return API.post("/FeedBacks", dto)
-  }
+    return API.post("/FeedBacks", dto);
+  },
+  DeleteFeedBack: (feedBackId) => {
+    return API.delete(`/FeedBacks/${feedBackId}`);
+  },
 };
 
 export default feedBackApi;

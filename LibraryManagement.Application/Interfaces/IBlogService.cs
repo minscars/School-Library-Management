@@ -17,6 +17,6 @@ namespace LibraryManagement.Application.Interfaces
         public Task<ApiResult<List<GetAllBlogByAccountIdResponse>>> GetByUserIdAsync(Guid AccountId);
         public Task<ApiResult<List<GetBlogResponse>>> GetPostByStatusAsync(StatusPostEnums.StatusPost postStatus);
         public Task<ApiResult<GetBlogByIdResponse>> GetByIdAsync(string Id);
-        public Task<ApiResult<bool>> CreateNewPostAsync(CreateBlogRequest dto);
+        public Task<ApiResult<bool>> CretaeBlogAsync(CreateBlogRequest dto);
     }
 }

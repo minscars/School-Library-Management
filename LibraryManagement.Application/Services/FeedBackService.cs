@@ -22,18 +22,18 @@ namespace LibraryManagement.Application.Services
             _context = context;
         }
 
-        public async Task<ApiResult<List<GetFeedBackPublishedBookResponse>>> GetFeedBackPublishedBookAsync(string publishBookId)
+        public async Task<ApiResult<GetAllFeedBackResponse>> GetFeedBackPublishedBookAsync(string publishBookId)
         {
             if (publishBookId == null)
             {
-                return new ApiResult<List<GetFeedBackPublishedBookResponse>>(null)
+                return new ApiResult<GetAllFeedBackResponse>(null)
                 {
                     Message = "Some thing went wrong!",
                     StatusCode = 400
                 };
             }
 
-            var result = await _context.FeedBacks
+            var feedBackList = await _context.FeedBacks
                 .Include(f => f.UserAccount).ThenInclude(f => f.User)
                 .Where(f => f.PublishedBookId == publishBookId && f.IsDeleted == false)
                 .OrderByDescending(f => f.CreatedDate)
@@ -48,7 +48,27 @@ namespace LibraryManagement.Application.Services
                     UserName = f.UserAccount.User.Name,
                     CreatedDate = f.CreatedDate,
                 }).ToListAsync();
-            return new ApiResult<List<GetFeedBackPublishedBookResponse>>(result)
+            var rate = (decimal)0;
+            if(feedBackList.Count > 0)
+            {
+
+                rate = Math.Round((decimal)(feedBackList.Sum(f => f.Rate) / feedBackList.Count), 1) ;
+            }
+            var result = new GetAllFeedBackResponse()
+            {
+                Total = feedBackList.Count,
+                Rate = rate,
+                ListFeedBacks = feedBackList,
+            };
+            if(result.Total ==0)
+            {
+                return new ApiResult<GetAllFeedBackResponse>(null)
+                {
+                    Message = "Some thing went wrong!",
+                    StatusCode = 400
+                };
+            }
+            return new ApiResult<GetAllFeedBackResponse>(result)
             {
                 Message = "",
                 StatusCode = 200
@@ -58,7 +78,9 @@ namespace LibraryManagement.Application.Services
         public async Task<ApiResult<bool>> CreateNewFeedBackAsync(CreateNewFeedBackRequest dto)
         {
             var borrowed = await _context.BookRequests
-                .Where(br => br.UserAccountId.ToString() == dto.UserAccountId && br.BookDetail.PublishedBookId == dto.PublishedBookId)
+                .Where(br => br.UserAccountId.ToString() == dto.UserAccountId 
+                    && br.BookDetail.PublishedBookId == dto.PublishedBookId 
+                    && (br.Status == (int)StatusEnums.Status.Borrowing || br.Status == (int)StatusEnums.Status.Returned))
                 .FirstOrDefaultAsync();
             if(borrowed == null)
             {
@@ -83,7 +105,6 @@ namespace LibraryManagement.Application.Services
             {
                 Message = "Feedback successfully!",
                 StatusCode = 200
-
             };
 
         }

@@ -72,9 +72,9 @@ namespace LibraryManagement.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateNewPost([FromForm] CreateBlogRequest dto)
+        public async Task<IActionResult> CretaeBlogAsync([FromForm] CreateBlogRequest dto)
         {
-            var result = await _blogService.CreateNewPostAsync(dto);
+            var result = await _blogService.CretaeBlogAsync(dto);
             return Ok(result);
         }
 

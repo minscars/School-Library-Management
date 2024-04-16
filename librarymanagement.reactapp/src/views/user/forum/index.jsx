@@ -7,7 +7,6 @@ import { Modal } from "react-responsive-modal";
 import React, { useState, useEffect, useRef } from "react";
 import { MdHome, MdImage, MdArrowForward } from "react-icons/md";
 import blogApi from "api/blogApi";
-import userAPI from "api/userApi";
 import userAccountAPI from "api/accountApi";
 import jwt from "jwt-decode";
 import moment from "moment";
@@ -47,7 +46,7 @@ const Forum = () => {
 
   useEffect(() => {
     const getall = async () => {
-      const data = await blogApi.GetByStatusPost(3);
+      const data = await blogApi.GetByStatusPost(2);
       setPosts(data);
     };
     getall();
@@ -65,9 +64,9 @@ const Forum = () => {
     const formData = new FormData();
     formData.append("Title", content.title);
     formData.append("Content", contentPost);
-    formData.append("UserId", userLogin.id);
+    formData.append("UserAccountId", userLogin.id);
     formData.append("Image", imageUploadFile);
-    await blogApi.PostNewPost(formData).then(async (res) => {
+    await blogApi.CreateBlog(formData).then(async (res) => {
       if (res.statusCode === 200) {
         Alert.showSuccessAlert("Your post have been posted sucessfully!");
         if (formRef.current) {

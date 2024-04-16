@@ -7,8 +7,8 @@ const postApi = {
   GetById: (id) => {
     return API.get(`/Blogs/Detail/${id}`);
   },
-  PostNewPost: (request) => {
-    return APIFile.post("/Posts", request);
+  CreateBlog: (dto) => {
+    return APIFile.post("/Blogs", dto);
   },
   GetByStatusPost: (idStatus) => {
     return API.get(`/Blogs/Status/${idStatus}`);

@@ -17,7 +17,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using static LibraryManagement.Data.Enums.StatusEnums;
 using static LibraryManagement.Data.Enums.StatusPostEnums;
+using StatusPost = LibraryManagement.Data.Enums.StatusEnums.StatusPost;
 
 namespace LibraryManagement.Application.Services
 {
@@ -142,25 +144,30 @@ namespace LibraryManagement.Application.Services
             };
         }
 
-        public async Task<ApiResult<bool>> CreateNewPostAsync(CreateBlogRequest dto)
+        public async Task<ApiResult<bool>> CretaeBlogAsync(CreateBlogRequest dto)
         {
             if (dto == null)
             {
                 return new ApiResult<bool>(false)
                 {
-                    Message = "Not found!",
-                    StatusCode = 404
+                    Message = "Something went wrong!",
+                    StatusCode = 400
                 };
             }
-            var imageName = await _fileServivce.UploadFileAsync(dto.Image, SystemConstant.IMG_POSTS_FOLDER);
             var post = new Blog()
             {
+                Id = SystemConstant.BLOG_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
                 UserAccountId = dto.UserAccountId,
                 Content = dto.Content,
                 Title = dto.Title,
+                Status =  (int)StatusEnums.StatusPost.Pending,
                 CreatedDate = DateTime.Now,
-                Image = imageName,
             };
+
+            if (dto.Image != null)
+            {
+                post.Image = await _fileServivce.UploadFileAsync(dto.Image, SystemConstant.IMG_POSTS_FOLDER);
+            }
 
             await _context.Blogs.AddAsync(post);
             await _context.SaveChangesAsync();
