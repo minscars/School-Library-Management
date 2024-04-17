@@ -48,31 +48,30 @@ namespace LibraryManagement.Application.Services
                     UserName = f.UserAccount.User.Name,
                     CreatedDate = f.CreatedDate,
                 }).ToListAsync();
-            var rate = (decimal)0;
+            
             if(feedBackList.Count > 0)
             {
 
-                rate = Math.Round((decimal)(feedBackList.Sum(f => f.Rate) / feedBackList.Count), 1) ;
-            }
-            var result = new GetAllFeedBackResponse()
-            {
-                Total = feedBackList.Count,
-                Rate = rate,
-                ListFeedBacks = feedBackList,
-            };
-            if(result.Total ==0)
-            {
-                return new ApiResult<GetAllFeedBackResponse>(null)
+                var rate = Math.Round((decimal)(feedBackList.Sum(f => f.Rate) / feedBackList.Count), 1) ;
+                var result = new GetAllFeedBackResponse()
                 {
-                    Message = "Some thing went wrong!",
-                    StatusCode = 400
+                    Total = feedBackList.Count,
+                    Rate = rate,
+                    ListFeedBacks = feedBackList,
+                };
+                return new ApiResult<GetAllFeedBackResponse>(result)
+                {
+                    Message = "",
+                    StatusCode = 200
                 };
             }
-            return new ApiResult<GetAllFeedBackResponse>(result)
+
+            return new ApiResult<GetAllFeedBackResponse>(null)
             {
-                Message = "",
-                StatusCode = 200
+                Message = "Some thing went wrong!",
+                StatusCode = 400
             };
+            
         }
 
         public async Task<ApiResult<bool>> CreateNewFeedBackAsync(CreateNewFeedBackRequest dto)
