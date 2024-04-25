@@ -13,6 +13,12 @@ const postApi = {
   GetByStatusPost: (idStatus) => {
     return API.get(`/Blogs/Status/${idStatus}`);
   },
+  UpdateStatusBlog: (dto) => {
+    return API.put("/Blogs/UpdateStatusBlog", dto);
+  },
+  GetBlogByUserAccount: (AccountId) => {
+    return API.get(`/Blogs/${AccountId}`);
+  },
 };
 
 export default postApi;

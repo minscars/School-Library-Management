@@ -8,18 +8,16 @@ using System.Threading.Tasks;
 
 namespace LibraryManagement.Data.Enums
 {
-    public class StatusPostEnums
+    public class StatusBlogEnums
     {
-        public enum StatusPost : int
+        public enum StatusBlog : int
         {
             [Display(Name = "Pending")]
             Pending = 1,
-            [Display(Name = "Approve")]
-            Approve = 2,
             [Display(Name = "Posted")]
-            Borrowing = 3,
+            Posted = 2,
             [Display(Name = "Cancel")]
-            Cancel = 4,
+            Cancel = 3
         }
         public static string GetDisplayName(Enum enumValue)
         {

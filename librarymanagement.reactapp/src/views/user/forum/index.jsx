@@ -13,6 +13,7 @@ import moment from "moment";
 import RichTextEditor from "components/textEditor";
 import { useForm } from "react-hook-form";
 import Alert from "components/alert";
+
 const Forum = () => {
   const [open, setOpen] = useState(false);
   const onOpenModal = () => setOpen(true);

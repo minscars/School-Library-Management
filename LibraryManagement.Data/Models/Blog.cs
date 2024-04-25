@@ -14,7 +14,7 @@ namespace LibraryManagement.Data.Models
         public string? Image { get; set; } = string.Empty;
         public string? Content { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set;}
+        public DateTime? PostedDate { get; set;}
         public Boolean? IsDeleted { get; set; }
         public int Status { get; set; }
         public virtual UserAccount UserAccount { get; set; }

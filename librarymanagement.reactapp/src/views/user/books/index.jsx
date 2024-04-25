@@ -6,6 +6,7 @@ import cateApi from "../../../api/categoryAPI";
 import { Link, useSearchParams } from "react-router-dom";
 import Card from "components/card";
 import Pagination from "components/pagination";
+import PaginationRounded from "components/paginationRounded";
 const Marketplace = () => {
   const [booksList, setBooks] = useState([]);
   const [catesList, setCate] = useState([]);
@@ -42,6 +43,7 @@ const Marketplace = () => {
   const handlePageClick = (e) => {
     setCurrentPage(e.selected);
     setOffset(e.selected);
+    console.log(e.selected);
   };
 
   async function handleFilter(e) {

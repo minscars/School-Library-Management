@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
 import bookRequestApi from "api/bookRequest";
+import { ToastContainer, toast } from "react-toastify";
 function CustomTabPanel(props) {
   const { children, value, index, setTrigger, ...other } = props;
 
@@ -101,11 +102,14 @@ export default function BasicTabs(props) {
     formData.append("PublishedBookId", id);
     formData.append("Rate", value);
     await feedBackApi.AddFeedBack(formData).then(async (res) => {
-      if (res.statusCode === 200) {
+      if (res?.statusCode === 200) {
         console.log(res);
-        Alert.showSuccessAlert(res.message);
+        Alert.showSuccessAlert(res?.message);
+      }
+      if (res?.statusCode === 400) {
+        Alert.showErrorAlert(res?.message);
       } else {
-        Alert.showErrorAlert(res.message);
+        toast.error("You have to fill the content!");
       }
       if (formRef.current) {
         formRef.current.reset();

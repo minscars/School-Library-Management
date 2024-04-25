@@ -3,7 +3,7 @@
 import { HiX } from "react-icons/hi";
 import Links from "./components/Links";
 import routes from "./admin-sidebar-routes";
-import Logo from "assets/img/logo/LibraryManagementLogo.png";
+import Logo from "assets/img/logo/Bookstore.png";
 import SidebarCard from "components/sidebar/components/SidebarCard";
 
 const AdminSidebar = ({ open, onClose }) => {
@@ -20,8 +20,10 @@ const AdminSidebar = ({ open, onClose }) => {
         <HiX />
       </span>
 
-      <div className={`mx-[56px] mb-[20px] ml-8 mt-[20px] flex items-center`}>
-        <img className="h-[65px] w-full" src={Logo} alt="" />
+      <div
+        className={`mx-[56px] mb-[20px] ml-8 mt-[20px] flex items-center justify-center`}
+      >
+        <img className="h-[80px] w-auto" src={Logo} alt="" />
       </div>
       <div class="mb-[40px] h-px bg-gray-300 dark:bg-white/30" />
       {/* Nav item */}

@@ -2,6 +2,7 @@
 using LibraryManagement.Application.Services;
 using LibraryManagement.Data.Enums;
 using LibraryManagement.Data.Models;
+using LibraryManagement.DTO.Blog;
 using LibraryManagement.DTO.Post;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -78,17 +79,29 @@ namespace LibraryManagement.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("Status/{postStatus}")]
+        [HttpGet("Status/{blogStatus}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetPostByStatusAsync([FromRoute] StatusPostEnums.StatusPost postStatus)
+        public async Task<IActionResult> GetPostByStatusAsync([FromRoute] StatusBlogEnums.StatusBlog blogStatus)
         {
-            var result = await _blogService.GetPostByStatusAsync(postStatus);
+            var result = await _blogService.GetPostByStatusAsync(blogStatus);
             if (result.StatusCode == 200)
             {
                 result.Data.ForEach(p => p.Avatar = setImageName(p.Avatar));
                 result.Data.ForEach(p => p.Image = setImagePost(p.Image));
             }
             return Ok(result.Data);
+        }
+
+        [HttpPut("UpdateStatusBlog")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateStatusBlogAsync([FromBody] UpdateBlogStatusRequest dto)
+        {
+            var result = await _blogService.UpdateStatusBlog(dto);
+            if (result.StatusCode == 200)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
     }

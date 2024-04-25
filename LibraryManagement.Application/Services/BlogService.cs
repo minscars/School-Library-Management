@@ -4,23 +4,11 @@ using LibraryManagement.Data.EF;
 using LibraryManagement.Data.Enums;
 using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.Blog;
-using LibraryManagement.DTO.Book;
-using LibraryManagement.DTO.BorrowBill;
 using LibraryManagement.DTO.Contants;
 using LibraryManagement.DTO.Post;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using static LibraryManagement.Data.Enums.StatusEnums;
-using static LibraryManagement.Data.Enums.StatusPostEnums;
-using StatusPost = LibraryManagement.Data.Enums.StatusEnums.StatusPost;
-
+using static LibraryManagement.Data.Enums.StatusBlogEnums;
 namespace LibraryManagement.Application.Services
 {
     public class BlogService : IBlogService
@@ -52,10 +40,10 @@ namespace LibraryManagement.Application.Services
                     Title = p.Title,
                     Image = p.Image,
                     Content = p.Content,
-                    Status = StatusPostEnums.GetDisplayName((StatusPost)p.Status),
+                    Status = StatusBlogEnums.GetDisplayName((StatusBlog)p.Status),
                     CreatedDate = p.CreatedDate,
                     IsDeleted = p.IsDeleted,
-                    UpdatedDate = p.UpdatedDate,
+                    PostedDate = p.PostedDate,
                 }).ToListAsync();
             if (blogList.Count < 1)
             {
@@ -87,10 +75,10 @@ namespace LibraryManagement.Application.Services
                         Title = p.Title,
                         Image = p.Image,
                         Content = p.Content,
-                        Status = StatusPostEnums.GetDisplayName((StatusPost)p.Status),
+                        Status = StatusBlogEnums.GetDisplayName((StatusBlog)p.Status),
                         CreatedDate = p.CreatedDate,
                         IsDeleted = p.IsDeleted,
-                        UpdatedDate = p.UpdatedDate,
+                        PostedDate = p.PostedDate,
                     }).ToListAsync();
             if (blogList.Count < 1)
             {
@@ -128,13 +116,17 @@ namespace LibraryManagement.Application.Services
                     UserAccountId = p.UserAccountId,
                     Avatar = p.UserAccount.Avatar,
                     UserName = p.UserAccount.User.Name,
+                    UserCode = p.UserAccount.User.UserCode,
+                    Address = p.UserAccount.User.Address,
+                    PhoneNumber = p.UserAccount.User.PhoneNumber,
+                    Email = p.UserAccount.Email,
                     Title = p.Title,
                     Image = p.Image,
                     Content = p.Content,
-                    Status = StatusPostEnums.GetDisplayName((StatusPost)p.Status),
+                    Status = StatusBlogEnums.GetDisplayName((StatusBlog)p.Status),
                     CreatedDate = p.CreatedDate,
                     IsDeleted = p.IsDeleted,
-                    UpdatedDate = p.UpdatedDate,
+                    PostedDate  = p.PostedDate,
                 }).FirstOrDefaultAsync();
 
             return new ApiResult<GetBlogByIdResponse>(blog)
@@ -179,11 +171,11 @@ namespace LibraryManagement.Application.Services
             };
         }
 
-        public async Task<ApiResult<List<GetBlogResponse>>> GetPostByStatusAsync(StatusPostEnums.StatusPost postStatus)
+        public async Task<ApiResult<List<GetBlogResponse>>> GetPostByStatusAsync(StatusBlogEnums.StatusBlog blogStatus)
         {
             var checkExit = await _context.Blogs
                 .Include(p => p.UserAccount).ThenInclude(p => p.User)
-                .Where(p => p.IsDeleted == false && p.Status == (int)postStatus)
+                .Where(p => p.IsDeleted == false && p.Status == (int)blogStatus)
                 .OrderByDescending(p => p.CreatedDate)
                 .Select(p => new GetBlogResponse()
                 {
@@ -194,10 +186,10 @@ namespace LibraryManagement.Application.Services
                     Title = p.Title,
                     Image = p.Image,
                     Content = p.Content,
-                    Status = StatusPostEnums.GetDisplayName((StatusPost)p.Status),
+                    Status = StatusBlogEnums.GetDisplayName((StatusBlog)p.Status),
                     CreatedDate = p.CreatedDate,
                     IsDeleted = p.IsDeleted,
-                    UpdatedDate = p.UpdatedDate,
+                    PostedDate = p.PostedDate,
                 }).ToListAsync();
 
             if (checkExit == null)
@@ -213,6 +205,29 @@ namespace LibraryManagement.Application.Services
             {
                 Message = "",
                 StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<bool>> UpdateStatusBlog(UpdateBlogStatusRequest dto)
+        {
+            var blog = await _context.Blogs
+                .Where(b => b.Id == dto.BlogId)
+                .FirstOrDefaultAsync();
+            if (blog != null)
+            {
+                blog.Status = (int)StatusBlog.Posted;
+                blog.PostedDate = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return new ApiResult<bool>(true)
+                {
+                    StatusCode = 200,
+                    Message = "The blog have been posted!"
+                };
+            }
+            return new ApiResult<bool>(false)
+            {
+                Message = "Something went wrong!",
+                StatusCode = 400
             };
         }
 

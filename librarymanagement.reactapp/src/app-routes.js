@@ -22,6 +22,7 @@ import AdminProfile from "views/admin/profile";
 import AdminDataTables from "views/admin/tables";
 import AdminDashBoard from "views/admin/default";
 import AdminBlog from "views/admin/blog"
+import AdminBlogDetail from "views/admin/blog/detail"
 
 import AdminPublishedBookManagement from "views/admin/publishedBook"
 
@@ -41,7 +42,7 @@ import UserForum from "views/user/forum"
 import UserForumDetail from "views/user/forum/detail"
 
 import UserProfile from "views/user/profile"
-
+import UserBlogDetail from "views/user/history/blogRequest/detail"
 
 const routes = [
   { layout: "/admin", path: "home", component: <AdminHome />},
@@ -67,6 +68,7 @@ const routes = [
   { layout: "/admin", path: "history/detail/:id", component: <AdminHistoryDetail />},
   { layout: "/admin", path: "statistic", component: <AdminStatistic />},
   { layout: "/admin", path: "blog", component: <AdminBlog />},
+  { layout: "/admin", path: "blog/detail/:id", component: <AdminBlogDetail />},
   { layout: "/admin", path: "publishedBook", component: <AdminPublishedBookManagement/>},
 
   { layout: "/auth", path: "sign-in", component: <SignIn />},
@@ -83,6 +85,11 @@ const routes = [
   { layout: "/user", path: "forum", component: <UserForum />},
   { layout: "/user", path: "forum/detail/:id", component: <UserForumDetail />},
   { layout: "/user", path: "profile", component: <UserProfile />},
+
+  { layout: "/user", path: "history/blogRequest/detail/:id", component: <UserBlogDetail />},
+
+
+
   
 
 ];
