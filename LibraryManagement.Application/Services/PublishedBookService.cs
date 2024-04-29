@@ -5,6 +5,7 @@ using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.Contants;
 using LibraryManagement.DTO.Pagination;
 using LibraryManagement.DTO.PublishedBook;
+using LibraryManagement.DTO.Request;
 using Microsoft.EntityFrameworkCore;
 using static LibraryManagement.Data.Enums.StatusEnums;
 
@@ -69,7 +70,6 @@ namespace LibraryManagement.Application.Services
                     Id = b.Id,
                     Code = b.Code,
                     Title = b.Book.Name,
-                    Description = b.Description,
                     Category = b.Book.Category.Name,
                     Image = b.Image,
                     Pages = b.Pages,
@@ -119,7 +119,6 @@ namespace LibraryManagement.Application.Services
                     Id = b.Id,
                     Code = b.Code,
                     Title = b.Book.Name,
-                    Description = b.Description,
                     Category = b.Book.Category.Name,
                     Image = b.Image,
                     Pages = b.Pages,
@@ -163,7 +162,6 @@ namespace LibraryManagement.Application.Services
                 //Id = SystemConstant.PUBLISHEDBOOK_PREFIX + $"{ DateTime.Now:yyyyMMddHHmmss}",
                 Id = Guid.NewGuid().ToString(),
                 BookId = dto.BookId,
-                Description = dto.Description,
                 Image = dto.Image,
                 PublisherId = dto.PublisherId,
                 PublishedYear = dto.PublishedYear,
@@ -193,7 +191,6 @@ namespace LibraryManagement.Application.Services
                 Id = b.Id,
                 Code = b.Code,
                 Title = b.Book.Name,
-                Description = b.Description,
                 Category = b.Book.Category.Name,
                 Image = b.Image,
                 Pages = b.Pages,
@@ -240,6 +237,50 @@ namespace LibraryManagement.Application.Services
             return new ApiResult<List<GetBookDetailRelatedListResponse>>(response)
             {
                 Message = "",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<List<GetAllPublishedBookResponse>>> GetTopPublishedBookAsync()
+        {
+            var bookList = await _context.PublishedBooks
+                .Include(b => b.Book)
+                .Include(b => b.Book.Category)
+                .Include(b => b.Publisher)
+                .Include(b => b.Book.BookAuthors).ThenInclude(b => b.Author)
+                .OrderByDescending(b => b.Checkout_visit)
+                .Take(5)
+                .Select(b => new GetAllPublishedBookResponse()
+                    {
+                    Id = b.Id,
+                    Code = b.Code,
+                    Title = b.Book.Name,
+                    Category = b.Book.Category.Name,
+                    Image = b.Image,
+                    Pages = b.Pages,
+                    PublisherName = b.Publisher.Name,
+                    PublishedYear = b.PublishedYear,
+                    Rating = b.Rating,
+                    Checkout_visit = b.Checkout_visit,
+                    BookLocation = b.BookShelfDetails!.Select(x => new BookShelf
+                    {
+                        Id = x.BookShelf!.Id,
+                        Name = x.BookShelf!.Name,
+                    }).ToList(),
+                    Authors = b.Book.BookAuthors.Select(a => new Author
+                    {
+                        Id = a.Author.Id,
+                        Name = a.Author.Name,
+                    }).ToList(),
+
+                }).ToListAsync();
+
+            if (bookList.Count < 1)
+            {
+                return new ApiResult<List<GetAllPublishedBookResponse>>(null);
+            }
+            return new ApiResult<List<GetAllPublishedBookResponse>>(bookList)
+            {
                 StatusCode = 200
             };
         }

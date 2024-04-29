@@ -54,13 +54,13 @@ const routes = [
     icon: <MdDiversity3 className="h-6 w-6" />,
     component: <Forum />,
   },
-  {
-    name: "Profile",
-    layout: "/user",
-    path: "profile",
-    icon: <MdPerson className="h-6 w-6" />,
-    component: <Profile />,
-  },
+  // {
+  //   name: "Profile",
+  //   layout: "/user",
+  //   path: "profile",
+  //   icon: <MdPerson className="h-6 w-6" />,
+  //   component: <Profile />,
+  // },
 ];
 
 export default routes;

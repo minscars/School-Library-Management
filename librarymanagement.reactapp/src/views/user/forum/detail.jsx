@@ -112,16 +112,16 @@ export function Detail() {
           <span className="align-center mb-3 text-[20px] font-bold text-customcolor-500">
             Comments
           </span>
-          <div>
-            <div className="flex items-center justify-center rounded-[10px] bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
-              <img
-                src={user?.avatar}
-                className="ml-3 mr-3 h-[35px] w-[35px] rounded-full"
-                alt=""
-              />
-              <form ref={formRef} onSubmit={handleSubmit(addComment)}>
+          <div className="w-full">
+            <form ref={formRef} onSubmit={handleSubmit(addComment)}>
+              <div className="flex w-full items-center justify-center rounded-[10px] bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
+                <img
+                  src={user?.avatar}
+                  className="ml-3 mr-3 h-[35px] w-[35px] rounded-full"
+                  alt=""
+                />
                 <input
-                  className="autofocus placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 focus:border-1 linear mb-2 mr-3 mt-2 w-[500px] resize-none rounded-[10px] rounded-[7px] bg-lightPrimary px-3 px-4 py-2 py-2.5 font-sans text-sm font-medium font-normal outline-0 transition transition-all duration-200 hover:bg-gray-100 focus:outline-0 active:bg-gray-200 disabled:resize-none disabled:border-0 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
+                  className="autofocus placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 focus:border-1 linear mb-2 mr-3 mt-2 w-[800px] resize-none rounded-[10px] rounded-[7px] bg-lightPrimary px-3 px-4 py-2 py-2.5 font-sans text-sm font-medium font-normal outline-0 transition transition-all duration-200 hover:bg-gray-100 focus:outline-0 active:bg-gray-200 disabled:resize-none disabled:border-0 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                   type="text"
                   placeholder="Let's share about this blog!"
                   autoFocus
@@ -133,14 +133,14 @@ export function Detail() {
                 >
                   Send
                 </button>
-              </form>
-            </div>
+              </div>
+            </form>
             {/* {commentList !== null && (
               <div className="mb-4 ml-4 mt-2 text-[18px] font-bold  text-navy-700">
                 <span>All commnents (1)</span>
               </div>
             )} */}
-            <div className="table-wrp mt-2 block h-[200px] overflow-x-scroll">
+            <div className="table-wrp mt-2 block h-[400px] overflow-x-scroll">
               {commentList === null && (
                 <div className="flex flex-col items-center justify-center">
                   <p className="mb-48 mt-5 font-medium text-gray-700">
@@ -153,14 +153,14 @@ export function Detail() {
                   <div
                   //className={`mb-1 mt-1 flex w-full items-center justify-between bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
                   >
-                    <div className="row ml-20 mt-1 flex w-fit items-center">
-                      <div className="flex  gap-2">
+                    <div className="row ml-20 mt-2 flex w-fit items-center">
+                      <div className="flex gap-2">
                         <img
                           src={row.userAvatar}
                           className={`mt-2 h-[36px] w-[36px] rounded-full`}
                         />
 
-                        <div className="ml-1 rounded-2xl border-2 bg-white p-2 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
+                        <div className="ml-1  rounded-2xl border-2 bg-white p-2 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
                           <p
                             className={`text-m font-bold text-navy-700 dark:text-white`}
                           >

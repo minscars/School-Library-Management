@@ -1,7 +1,7 @@
 import Post from "components/post";
 import banner from "assets/img/profile/banner.png";
 import Card from "components/card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import React, { useState, useEffect, useRef } from "react";
@@ -13,6 +13,7 @@ import moment from "moment";
 import RichTextEditor from "components/textEditor";
 import { useForm } from "react-hook-form";
 import Alert from "components/alert";
+import { Item } from "@syncfusion/ej2-react-navigations";
 
 const Forum = () => {
   const [open, setOpen] = useState(false);
@@ -23,13 +24,13 @@ const Forum = () => {
   const userLogin = jwt(window.localStorage.getItem("token"));
   const [contentPost, setContent] = useState("");
   const navigate = useNavigate();
-
+  const [topicList, setTopicList] = useState([]);
   const { register, handleSubmit, reset } = useForm();
 
   const [fileURL, setFileURL] = useState(null);
   const [imageUploadFile, setImageUploadFile] = useState(null);
   const hiddenFileInput = useRef(null);
-
+  const [topicId, setTopicId] = useState("");
   const handleClick = (event) => {
     hiddenFileInput.current.click();
   };
@@ -57,16 +58,24 @@ const Forum = () => {
       setUser(user);
     };
     getUser();
-  }, [open]);
+    const getAllTopic = async () => {
+      const data = await blogApi.GetAllTopic();
+      setTopicList(data.data);
+    };
+    getAllTopic();
+    console.log(topicId);
+  }, [open, topicId]);
 
   //const myRef = useRef("");
   const formRef = useRef(null);
+
   const addNewPost = async (content) => {
     const formData = new FormData();
     formData.append("Title", content.title);
     formData.append("Content", contentPost);
     formData.append("UserAccountId", userLogin.id);
     formData.append("Image", imageUploadFile);
+    formData.append("TopicId", topicId);
     await blogApi.CreateBlog(formData).then(async (res) => {
       if (res.statusCode === 200) {
         Alert.showSuccessAlert("Your post have been posted sucessfully!");
@@ -80,6 +89,10 @@ const Forum = () => {
       }
     });
   };
+
+  const getBlogByTopic = async (topic) => {
+    
+  }
 
   return (
     <div>
@@ -108,7 +121,7 @@ const Forum = () => {
                 "rounded-[10px] bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none",
             }}
           >
-            <div className="h-auto w-[600px]">
+            <div className="h-[600px] w-[600px]">
               <div className="flex justify-center">
                 <span className="text-xl font-bold text-navy-700 dark:text-white">
                   Create new post
@@ -175,6 +188,31 @@ const Forum = () => {
                       type="text"
                     />
                   </div>
+                  <div className="mb-2">
+                    <label class="text-m text-gray-600 dark:text-white">
+                      Topic
+                    </label>
+                    <select
+                      onChange={(e) => setTopicId(e.target.value)}
+                      className="`mt-2 h-12 w-full justify-center border border-gray-400 bg-white/0 p-3 text-sm outline-none"
+                    >
+                      <option
+                        className="rounded-xl border bg-white/0 p-3 text-sm outline-none"
+                        value={0}
+                      >
+                        Choose topic...
+                      </option>
+                      {topicList?.map((item) => (
+                        <option
+                          className="rounded-xl border bg-white/0 p-3 text-sm outline-none"
+                          key={item.id}
+                          value={item.topicId}
+                        >
+                          {item.topicName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <div>
                     <label class="text-m text-gray-600 dark:text-white">
                       Content
@@ -228,127 +266,42 @@ const Forum = () => {
 
             {/* Post followers */}
             <div className="mr-4 mt-2 flex w-full items-center justify-center text-gray-600 dark:text-white">
-              <button className="linear rounded-[20px] bg-lightPrimary px-4 py-2 text-base font-medium text-brand-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20">
-                My profile
-              </button>
+              <Link to={"/user/history"}>
+                <button className="linear rounded-[20px] bg-lightPrimary px-4 py-2 text-base font-medium text-brand-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20">
+                  My request
+                </button>
+              </Link>
             </div>
           </Card>
           <Card extra={"w-full p-4  mt-2 block h-[350px] overflow-y-scroll"}>
-            <div
-              className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-            >
-              <div className="flex items-center">
-                <div className="ml-4">
-                  <p
-                    className={`text-m font-bold text-navy-700 dark:text-white`}
-                  >
-                    Title blog personal
-                  </p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <p
-                      className={`text-sm font-medium text-navy-700 dark:text-white`}
-                    >
-                      Comment
-                    </p>
+            {topicList?.map((item) => (
+              <div
+                key={item.id}
+                className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+              >
+                <div className="flex items-center">
+                  <div className="ml-4">
+                    <Link>
+                      <p
+                        className={`text-m font-bold text-navy-700 dark:text-white`}
+                      >
+                        {item.topicName}
+                      </p>
+                    </Link>
+                    <div className="mt-3 flex items-center gap-2">
+                      <p
+                        className={`text-sm font-medium text-navy-700 dark:text-white`}
+                      >
+                        Blogs
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-                <MdArrowForward />
-              </div>
-            </div>
-            <div
-              className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-            >
-              <div className="flex items-center">
-                <div className="ml-4">
-                  <p
-                    className={`text-m font-bold text-navy-700 dark:text-white`}
-                  >
-                    Title blog personal
-                  </p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <p
-                      className={`text-sm font-medium text-navy-700 dark:text-white`}
-                    >
-                      Comment
-                    </p>
-                  </div>
+                <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
+                  <MdArrowForward />
                 </div>
               </div>
-              <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-                <MdArrowForward />
-              </div>
-            </div>
-            <div
-              className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-            >
-              <div className="flex items-center">
-                <div className="ml-4">
-                  <p
-                    className={`text-m font-bold text-navy-700 dark:text-white`}
-                  >
-                    Title blog personal
-                  </p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <p
-                      className={`text-sm font-medium text-navy-700 dark:text-white`}
-                    >
-                      Comment
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-                <MdArrowForward />
-              </div>
-            </div>
-            <div
-              className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-            >
-              <div className="flex items-center">
-                <div className="ml-4">
-                  <p
-                    className={`text-m font-bold text-navy-700 dark:text-white`}
-                  >
-                    Title blog personal
-                  </p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <p
-                      className={`text-sm font-medium text-navy-700 dark:text-white`}
-                    >
-                      Comment
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-                <MdArrowForward />
-              </div>
-            </div>
-            <div
-              className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-            >
-              <div className="flex items-center">
-                <div className="ml-4">
-                  <p
-                    className={`text-m font-bold text-navy-700 dark:text-white`}
-                  >
-                    Title blog personal
-                  </p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <p
-                      className={`text-sm font-medium text-navy-700 dark:text-white`}
-                    >
-                      Comment
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-                <MdArrowForward />
-              </div>
-            </div>
+            ))}
           </Card>
         </div>
       </div>

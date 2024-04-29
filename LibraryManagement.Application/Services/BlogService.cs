@@ -150,6 +150,7 @@ namespace LibraryManagement.Application.Services
             {
                 Id = SystemConstant.BLOG_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
                 UserAccountId = dto.UserAccountId,
+                TopicId = dto.TopicId,
                 Content = dto.Content,
                 Title = dto.Title,
                 Status =  (int)StatusEnums.StatusPost.Pending,
@@ -231,5 +232,39 @@ namespace LibraryManagement.Application.Services
             };
         }
 
+        public async Task<ApiResult<List<GetAllBlogResponse>>> GetBlogByTopicAsync(string topicId)
+        {
+            var blogList = await _context.Blogs
+            .Include(p => p.UserAccount).ThenInclude(p => p.User)
+            .Where(p => p.IsDeleted == false && p.TopicId == topicId)
+            .OrderByDescending(p => p.CreatedDate)
+            .Select(p => new GetAllBlogResponse()
+            {
+                Id = p.Id,
+                UserAccountId = p.UserAccountId,
+                Avatar = p.UserAccount.Avatar,
+                UserName = p.UserAccount.User.Name,
+                Title = p.Title,
+                Image = p.Image,
+                Content = p.Content,
+                Status = StatusBlogEnums.GetDisplayName((StatusBlog)p.Status),
+                CreatedDate = p.CreatedDate,
+                IsDeleted = p.IsDeleted,
+                PostedDate = p.PostedDate,
+            }).ToListAsync();
+            if (blogList.Count < 1)
+            {
+                return new ApiResult<List<GetAllBlogResponse>>(null)
+                {
+                    Message = "Something went wrong!",
+                    StatusCode = 400
+                };
+            }
+            return new ApiResult<List<GetAllBlogResponse>>(blogList)
+            {
+                Message = "",
+                StatusCode = 200
+            };
+        }
     }
 }

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import BarChart from "components/charts/BarChart";
 import LineChart from "components/charts/LineChart";
 import PieChart from "components/charts/PieChart";
+
 import {
   barChartDataDailyTraffic,
   barChartOptionsDailyTraffic,
@@ -16,6 +17,7 @@ import {
 import Card from "components/card";
 
 const Dashboard = () => {
+  const [trigger, setTrigger] = useState();
   var defaulColors = [
     "#ff2d55",
     "#edb109",
@@ -69,8 +71,7 @@ const Dashboard = () => {
       setPieChartData(pieChartDataArray);
     };
     getStatistic();
-  }, []);
-
+  }, [trigger]);
   return (
     <div>
       <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-6">
@@ -103,6 +104,7 @@ const Dashboard = () => {
 
           <div className="h-[300px] w-full pb-0 pt-10">
             <BarChart
+              setTrigger={setTrigger}
               chartData={barChartDataDailyTraffic}
               chartOptions={barChartOptionsDailyTraffic}
             />

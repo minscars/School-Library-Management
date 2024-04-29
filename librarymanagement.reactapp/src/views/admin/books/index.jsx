@@ -29,7 +29,7 @@ const Index = () => {
               </Link>
             </div>
           </div>
-          <div className="table-wrp mt-2 block h-[500px] overflow-x-scroll">
+          <div className="table-wrp mt-2 block h-[610px] overflow-y-scroll">
             <table className="w-full">
               <thead className="sticky top-0 mb-1 bg-white">
                 <tr>
@@ -82,7 +82,7 @@ const Index = () => {
                     </td>
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
                       <div className="w-auto">
-                        <p className=" text-justify text-sm font-bold text-navy-700 dark:text-white">
+                        <p className=" text-justify text-sm text-navy-700 dark:text-white">
                           {row.categoryName}
                         </p>
                       </div>
@@ -90,14 +90,14 @@ const Index = () => {
                     <td className="items-center pb-[18px] pt-[14px] sm:text-[15px]">
                       {row.authors?.map((item) => (
                         <div key={item.id} className="mr-[18px] w-auto">
-                          <p className=" text-justify text-sm font-bold text-navy-700 dark:text-white">
+                          <p className=" text-justify text-sm text-navy-700 dark:text-white">
                             {item.name}{" "}
                           </p>
                         </div>
                       ))}
                     </td>
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      <p className="text-justify text-sm font-bold text-navy-700 dark:text-white">
+                      <p className="text-justify text-sm text-navy-700 dark:text-white">
                         {row.createdTime != null
                           ? moment(row.createdDate).format("DD/MM/YYYY HH:mm A")
                           : "..."}

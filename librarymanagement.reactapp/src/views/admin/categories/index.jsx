@@ -29,7 +29,7 @@ const Index = () => {
               </Link>
             </div>
           </div>
-          <div className="table-wrp mt-2 block h-[480px] overflow-x-scroll">
+          <div className="table-wrp mt-2 block h-[600px] overflow-y-scroll">
             <table className="w-full">
               <thead className="sticky top-0 bg-white">
                 <tr>
@@ -76,7 +76,7 @@ const Index = () => {
                         </p>
                       </td>
                       <td className="pb-[18px] pt-[14px] sm:text-[14px]">
-                        <p className="text-sm font-bold text-navy-700 dark:text-white">
+                        <p className="text-sm  text-navy-700 dark:text-white">
                           {row.createdDate != null
                             ? moment(row.createdDate).format(
                                 "DD/MM/YYYY HH:mm A"
@@ -85,7 +85,7 @@ const Index = () => {
                         </p>
                       </td>
                       <td className="pb-[18px] pt-[14px] sm:text-[14px]">
-                        <p className="text-sm font-bold text-navy-700 dark:text-white">
+                        <p className="text-sm text-navy-700 dark:text-white">
                           {row.updatedDate != null
                             ? moment(row.updatedDate).format(
                                 "DD/MM/YYYY HH:mm A"

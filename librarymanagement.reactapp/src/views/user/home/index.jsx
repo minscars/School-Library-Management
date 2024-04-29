@@ -106,7 +106,7 @@ const Marketplace = () => {
           {booksList?.map((data) => (
             <Link to={`/user/books/detail/${data.id}`}>
               <Card
-                extra={`w-full !h-[130px] !p-4 3xl:p-![18px] bg-white mb-2`}
+                extra={`w-full !h-[130px] !p-4 3xl:p-![18px] bg-white mb-2 hover:bg-cyan-700`}
               >
                 <div className="flex">
                   <div>
@@ -146,7 +146,10 @@ const Marketplace = () => {
                         Location:{" "}
                       </span>
                       {data.bookLocation?.map((item) => (
-                        <span className="text-sm text-cyan-500" key={item.id}>
+                        <span
+                          className="text-sm font-bold text-cyan-500"
+                          key={item.id}
+                        >
                           {item.name}
                         </span>
                       ))}
@@ -181,9 +184,9 @@ const Marketplace = () => {
           {topFiveList?.map((item) => (
             <div
               key={item.id}
-              className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none"
+              className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-3xl shadow-shadow-500 hover:bg-gray-300 dark:!bg-navy-700 dark:shadow-none"
             >
-              <Link to={`/user/books/detail/`}>
+              <Link to={`/user/books/detail/${item.id}`}>
                 <div className="flex items-center">
                   <div className="">
                     <img

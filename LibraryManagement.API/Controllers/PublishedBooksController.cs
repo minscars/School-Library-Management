@@ -83,5 +83,17 @@ namespace LibraryManagement.API.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpGet("GetTopPublishedBook")]
+        public async Task<IActionResult> GetTopPublishedBookASync()
+        {
+            var result = await _publishedBookService.GetTopPublishedBookAsync();
+            if (result.StatusCode == 200)
+            {
+                result.Data.ForEach(s => s.Image = setImageName(s.Image));
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace LibraryManagement.Application.Interfaces
         public Task<ApiResult<bool>> CreatePublishedBookAsync(CreatePublishedBookRequest dto);
         public Task<ApiResult<List<GetAllPublishedBookResponse>>> GetPublishedBookBorrowedAsync();
         Task<ApiResult<List<GetBookDetailRelatedListResponse>>> GetBookDetailRelatedListAsync(string publishedBookId);
+        Task<ApiResult<List<GetAllPublishedBookResponse>>> GetTopPublishedBookAsync();
     }
 }

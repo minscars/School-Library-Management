@@ -68,12 +68,10 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IFileSerivce, FileService>();
 builder.Services.AddTransient<IPublishedBookService, PublishedBookService>();
 builder.Services.AddTransient<IBookRequestService, BookRequestService>();
-//builder.Services.AddTransient<IRequestService, RequestService>();
-//builder.Services.AddTransient<IBorrowBillService, BorrowBillService>();
-//builder.Services.AddTransient<INotificationService, NotificationService>();
-//builder.Services.AddTransient<IStatisticService, StatisticService>();
+builder.Services.AddTransient<IStatisticService, StatisticService>();
 builder.Services.AddTransient<IFeedBackService, FeedBackService>();
 builder.Services.AddTransient<IBlogService, BlogService>();
+builder.Services.AddTransient<ITopicService, TopicService>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

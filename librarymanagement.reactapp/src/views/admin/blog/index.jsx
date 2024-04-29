@@ -5,6 +5,7 @@ import blogApi from "api/blogApi";
 import moment from "moment";
 const Index = () => {
   const [postList, setPosts] = useState([]);
+
   useEffect(() => {
     const getall = async () => {
       const data = await blogApi.GetAll();
@@ -29,11 +30,6 @@ const Index = () => {
                   <th className="border-b border-gray-200 pb-[10px] text-start dark:!border-navy-700">
                     <p className="ml-5 items-center text-xs tracking-wide text-gray-600">
                       #
-                    </p>
-                  </th>
-                  <th className="border-b border-gray-200 pb-[10px] pr-[50px] text-start dark:!border-navy-700">
-                    <p className="ml-5 items-center text-xs tracking-wide text-gray-600">
-                      IMAGE
                     </p>
                   </th>
                   <th className="border-b border-gray-200 pb-[10px] pr-[100px] text-start dark:!border-navy-700">
@@ -65,16 +61,6 @@ const Index = () => {
                       <p className="text-sm font-bold text-navy-700 dark:text-white">
                         {key + 1}
                       </p>
-                    </td>
-                    <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      {row.image == null && "none"}
-                      <div className=" pl-4">
-                        {/* <img
-                          src={row.image}
-                          alt=""
-                          className="h-[60px] w-auto rounded-xl border-2 3xl:h-full 3xl:w-full"
-                        /> */}
-                      </div>
                     </td>
                     <td className="ml-10 items-center pb-[18px] pt-[14px] sm:text-[15px]">
                       <div className="ml-10 mr-[18px] w-auto">

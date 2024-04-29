@@ -18,6 +18,7 @@ namespace LibraryManagement.Data.Extentions
                 {
                     Id = "BF001",
                     UserAccountId = userAccountId,
+                    TopicId = "3A1C8B8E-33AB-4DB7-826F-D58C8DF82C88",
                     Title = "Test",
                     Content = "Test",
                     Image = "Test",

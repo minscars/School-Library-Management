@@ -19,6 +19,9 @@ const postApi = {
   GetBlogByUserAccount: (AccountId) => {
     return API.get(`/Blogs/${AccountId}`);
   },
+  GetAllTopic: () => {
+    return API.get("/Topics");
+  }
 };
 
 export default postApi;

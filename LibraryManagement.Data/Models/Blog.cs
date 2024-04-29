@@ -10,6 +10,7 @@ namespace LibraryManagement.Data.Models
     {
         public string Id { get; set; }
         public Guid UserAccountId { get; set; }
+        public string TopicId { get; set; }   
         public string? Title { get; set; }
         public string? Image { get; set; } = string.Empty;
         public string? Content { get; set; }

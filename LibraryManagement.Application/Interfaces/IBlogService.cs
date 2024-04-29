@@ -14,6 +14,7 @@ namespace LibraryManagement.Application.Interfaces
     public interface IBlogService
     {
         public Task<ApiResult<List<GetAllBlogResponse>>> GetAllAsync();
+        public Task<ApiResult<List<GetAllBlogResponse>>> GetBlogByTopicAsync(string topicId);
         public Task<ApiResult<List<GetAllBlogByAccountIdResponse>>> GetByUserIdAsync(Guid AccountId);
         public Task<ApiResult<List<GetBlogResponse>>> GetPostByStatusAsync(StatusBlogEnums.StatusBlog postStatus);
         public Task<ApiResult<GetBlogByIdResponse>> GetByIdAsync(string Id);

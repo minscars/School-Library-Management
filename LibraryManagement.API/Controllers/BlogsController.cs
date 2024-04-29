@@ -43,6 +43,20 @@ namespace LibraryManagement.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetBlogByTopic/{topicId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetBlogByTopicAsync(string topicId)
+        {
+            var result = await _blogService.GetBlogByTopicAsync(topicId);
+            if (result.StatusCode == 200)
+            {
+                result.Data.ForEach(p => p.Avatar = setImageName(p.Avatar));
+                result.Data.ForEach(p => p.Image = setImagePost(p.Image));
+                return Ok(result.Data);
+            }
+            return Ok(result);
+        }
+
         [HttpGet("{AccountId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllByUserId([FromRoute] Guid AccountId)
@@ -54,7 +68,7 @@ namespace LibraryManagement.API.Controllers
                 result.Data.ForEach(p => p.Image = setImagePost(p.Image));
                 return Ok(result.Data);
             }
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpGet("Detail/{postId}")]
