@@ -99,7 +99,7 @@ const Index = () => {
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
                       <p className="text-justify text-sm text-navy-700 dark:text-white">
                         {row.createdTime != null
-                          ? moment(row.createdDate).format("DD/MM/YYYY HH:mm A")
+                          ? moment(row.createdTime).format("DD/MM/YYYY HH:mm A")
                           : "..."}
                       </p>
                     </td>

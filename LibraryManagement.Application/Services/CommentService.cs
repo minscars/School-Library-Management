@@ -37,17 +37,28 @@ namespace LibraryManagement.Application.Services
             }
             var commentList = await _context.Comments
                 .Include(c => c.UserAccount)
-                .Where(c => c.BlogId == blogId && c.IsDeleted == false)
-                .Select(c => new GetAllCommentInBlogResponse()
+                .Where(c => c.BlogId == blogId && c.IsDeleted == false && c.ReplyCommentId == null)
+                .Select( c => new GetAllCommentInBlogResponse()
                 {
                     Id = c.Id,
                     BlogId = c.BlogId,
                     Content = c.Content,
                     UserAvatar = c.UserAccount.Avatar,
                     UserName = c.UserAccount.User.Name,
-                    CreatedDate = c.CreatedDate
-                })
-                .ToListAsync();
+                    CreatedDate = c.CreatedDate,
+                    ListReplyComments = _context.Comments
+                    .Include(r => r.UserAccount)
+                    .Where(r => r.ReplyCommentId == c.Id)
+                    .OrderBy(r => r.CreatedDate)
+                    .Select(r => new GetListReplyCommnet()
+                    {
+                        Id = r.Id,
+                        Content = r.Content,
+                        CreatedDate = r.CreatedDate,
+                        UserAvatar = r.UserAccount.Avatar,
+                        UserName = r.UserAccount.User.Name,
+                    }).ToList(),
+                }).ToListAsync();
 
             if (commentList.Count < 1)
             {
@@ -76,31 +87,18 @@ namespace LibraryManagement.Application.Services
                 };
             }
 
-            if (dto.Id != null)
+            var comment = new Comment()
             {
-                var comment = new Comment()
-                {
-                    BlogId = dto.BlogId,
-                    Content = dto.Content,
-                    UserAccountId = dto.UserAccountId,
-                    CreatedDate = DateTime.Now
-                };
-                await _context.Comments.AddAsync(comment);
-            }
-            else
+                BlogId = dto.BlogId,
+                Content = dto.Content,
+                UserAccountId = dto.UserAccountId,
+                CreatedDate = DateTime.Now
+            };
+            if(dto.ReplyCommentId != null)
             {
-                var commentReply = new Comment()
-                {
-                    BlogId = dto.BlogId,
-                    Content = dto.Content,
-                    UserAccountId = dto.UserAccountId,
-                    CreatedDate = DateTime.Now,
-                    ReplyCommentId = dto.Id
-
-                };
-                await _context.Comments.AddAsync(commentReply);
-
+                comment.ReplyCommentId = dto.ReplyCommentId;
             }
+            await _context.Comments.AddAsync(comment);
 
             await _context.SaveChangesAsync();
 

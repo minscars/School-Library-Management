@@ -8,7 +8,6 @@ namespace LibraryManagement.DTO.Comment
 {
     public class CreateCommentInBlogRequest
     {
-        public int Id { get; set; }
         public string BlogId { get; set; }
         public Guid UserAccountId { get; set; }
         public string? Content { get; set; }

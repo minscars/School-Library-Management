@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Link from "@mui/material/Link";
 import { MdArrowForward } from "react-icons/md";
 import moment from "moment";
 const post = ({ data }) => {
@@ -8,11 +8,10 @@ const post = ({ data }) => {
       className={` mb-1 mt-1 flex w-full items-center justify-between rounded-[2px] border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
     >
       <div className="flex items-center">
-        {/* <div className="">
-          <img className="h-auto w-[83px] rounded-lg" src={data.image} alt="" />
-        </div> */}
         <div className="ml-2">
-          <p className={`text-[17px] font-bold text-navy-700 dark:text-white`}>
+          <p
+            className={`text-[17px] font-bold text-navy-700 hover:underline dark:text-white`}
+          >
             {data.title}
           </p>
           <div className="flex items-center justify-between">
@@ -24,12 +23,12 @@ const post = ({ data }) => {
 
               <div className="ml-2">
                 <p
-                  className={` text-m font-medium text-navy-700 dark:text-white`}
+                  className={` text-m font-bold text-navy-700 dark:text-white`}
                 >
                   {data.userName}
                 </p>
                 <p className="text-sm font-medium text-navy-700 dark:text-white">
-                  {moment(data.createDate).format("DD/MM/YYYY HH:mm")}
+                  {moment(data.createdDate).format("DD/MM/YYYY HH:mm")}
                 </p>
               </div>
             </div>
@@ -40,11 +39,6 @@ const post = ({ data }) => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-        <Link to={`/user/forum/detail/${data.id}`}>
-          <MdArrowForward />
-        </Link>
       </div>
     </div>
   );

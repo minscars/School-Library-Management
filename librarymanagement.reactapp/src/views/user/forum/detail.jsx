@@ -11,7 +11,7 @@ import blogApi from "api/blogApi";
 import userAccountAPI from "api/accountApi";
 import commentApi from "api/commentApi";
 import jwt from "jwt-decode";
-
+import Comment from "./components/comment";
 export function Detail() {
   const [post, setPost] = useState([]);
   const { id } = useParams();
@@ -153,31 +153,12 @@ export function Detail() {
                   <div
                   //className={`mb-1 mt-1 flex w-full items-center justify-between bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
                   >
-                    <div className="row ml-20 mt-2 flex w-fit items-center">
-                      <div className="flex gap-2">
-                        <img
-                          src={row.userAvatar}
-                          className={`mt-2 h-[36px] w-[36px] rounded-full`}
-                        />
-
-                        <div className="ml-1  rounded-2xl border-2 bg-white p-2 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
-                          <p
-                            className={`text-m font-bold text-navy-700 dark:text-white`}
-                          >
-                            {row.userName}{" "}
-                            <span className="mr-4 text-sm text-gray-600">
-                              {" "}
-                              {moment(row.createdDate).format(
-                                "DD/MM/YYYY HH:mm A"
-                              )}
-                            </span>
-                          </p>
-                          <p className="text-m font-medium text-navy-700 dark:text-white">
-                            {row.content}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <Comment
+                      setTrigger={setTrigger}
+                      userId={userLogin.id}
+                      blogId={id}
+                      item={row}
+                    />
                   </div>
                 ))}
               </div>

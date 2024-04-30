@@ -106,7 +106,7 @@ const Marketplace = () => {
           {booksList?.map((data) => (
             <Link to={`/user/books/detail/${data.id}`}>
               <Card
-                extra={`w-full !h-[130px] !p-4 3xl:p-![18px] bg-white mb-2 hover:bg-cyan-700`}
+                extra={`w-full !h-[130px] !p-4 3xl:p-![18px] bg-white mb-2 hover:bg-gray-300`}
               >
                 <div className="flex">
                   <div>

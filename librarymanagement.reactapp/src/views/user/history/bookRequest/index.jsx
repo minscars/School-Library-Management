@@ -6,7 +6,13 @@ import { Link } from "react-router-dom";
 import bookRequestApi from "api/bookRequest";
 import Pagination from "components/pagination";
 import { FiSettings } from "react-icons/fi";
-import { MdHistory } from "react-icons/md";
+
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdOutlineError,
+  MdHistory,
+} from "react-icons/md";
 import TooltipHorizon from "components/tooltip";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
@@ -165,10 +171,8 @@ const History = (props) => {
                     >
                       <td className=" items-center pb-[18px] pt-[14px] sm:text-[15px]">
                         <div className=" w-[130px]">
-                          <p className="font-bold text-navy-700 dark:text-white">
-                            {/* <Link to={`./detail/${row.id}`}> */}
+                          <p className=" font-bold text-customcolor-500 dark:text-white">
                             {row.bookDetailCode}
-                            {/* </Link> */}
                           </p>
                         </div>
                       </td>
@@ -228,6 +232,9 @@ const History = (props) => {
                             (row.canceledTime !== null
                               ? moment(row.canceledTime).format("DD/MM/YYYY ")
                               : "...")}
+                          {row.status === "Returned" && (
+                            <MdCheckCircle className="ml-6 text-green-500" />
+                          )}
 
                           {row.status === "Borrowing" && (
                             <p className="hover:text-black flex cursor-pointer items-center gap-2 pt-1 text-customcolor-500 hover:font-medium">

@@ -15,10 +15,6 @@ class BarChart extends Component {
       chartData: this.props.chartData,
       chartOptions: this.props.chartOptions,
     });
-    this.props
-      .setTrigger(Math.random() + 1)
-      ?.toString(36)
-      .substring(7);
   }
 
   render() {

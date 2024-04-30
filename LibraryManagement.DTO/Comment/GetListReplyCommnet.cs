@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LibraryManagement.DTO.Comment
 {
-    public class GetAllCommentInBlogResponse
+    public class GetListReplyCommnet
     {
         public int Id { get; set; }
         public string BlogId { get; set; }
@@ -17,6 +17,5 @@ namespace LibraryManagement.DTO.Comment
         public DateTime? CreatedDate { get; set; }
         public int? ReplyCommentId { get; set; }
         public bool? IsDeleted { get; set; }
-        public List<GetListReplyCommnet> ListReplyComments {  get; set; }
     }
 }

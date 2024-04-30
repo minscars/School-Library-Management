@@ -90,9 +90,7 @@ const Forum = () => {
     });
   };
 
-  const getBlogByTopic = async (topic) => {
-    
-  }
+  const getBlogByTopic = async (topic) => {};
 
   return (
     <div>
@@ -237,7 +235,9 @@ const Forum = () => {
           </Modal>
           <Card extra={"w-full p-3 mt-2 block h-[550px] overflow-y-scroll"}>
             {postList?.map((row) => (
-              <Post key={row.id} data={row} />
+              <Link to={`/user/forum/detail/${row.id}`}>
+                <Post key={row.id} data={row} />
+              </Link>
             ))}
           </Card>
         </div>

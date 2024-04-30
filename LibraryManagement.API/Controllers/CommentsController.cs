@@ -26,6 +26,7 @@ namespace LibraryManagement.API.Controllers
             if (result.StatusCode == 200)
             {
                 result.Data.ForEach(p => p.UserAvatar = setImageName(p.UserAvatar));
+                result.Data.ForEach(p => p.ListReplyComments.ForEach(r => r.UserAvatar = setImageName(r.UserAvatar)));
 
                 return Ok(result);
             }

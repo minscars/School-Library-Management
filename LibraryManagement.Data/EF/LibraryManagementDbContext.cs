@@ -28,7 +28,7 @@ namespace LibraryManagement.Data.EF
         public DbSet<BookShelf> BookShelves { set; get; }
         public DbSet<BookShelfDetail> BookShelfDetails { set; get; }
         public DbSet<Topic> Topics { set; get; }
-
+        
         public LibraryManagementDbContext(DbContextOptions<LibraryManagementDbContext> options) : base(options)
         {
 
@@ -44,7 +44,6 @@ namespace LibraryManagement.Data.EF
                         .ApplyConfiguration(new CommentConfig())
                         .ApplyConfiguration(new FeedBackConfig())
                         .ApplyConfiguration(new PublisherConfig())
-                        //.ApplyConfiguration(new BookCheckoutConfig())
                         .ApplyConfiguration(new BookDetailConfig())
                         .ApplyConfiguration(new PublisherConfig())
                         .ApplyConfiguration(new PublishedBookConfig())
@@ -53,6 +52,7 @@ namespace LibraryManagement.Data.EF
                         .ApplyConfiguration(new BookShelfConfig())
                         .ApplyConfiguration(new BookShelfDetailConfig())
                         .ApplyConfiguration(new TopicConfig());
+                        
 
             modelBuilder.FillDataCategory();
             modelBuilder.FillDataBook();
@@ -70,8 +70,6 @@ namespace LibraryManagement.Data.EF
             modelBuilder.FillDataBookShelf();
             modelBuilder.FillDataBookShelfDetail();
             modelBuilder.FillDataTopic();
-
-            //modelBuilder.FillDataBookCheckout();
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<UserAccount>(entity =>
