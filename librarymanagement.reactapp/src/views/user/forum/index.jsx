@@ -5,7 +5,13 @@ import { useNavigate, Link } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import React, { useState, useEffect, useRef } from "react";
-import { MdHome, MdImage, MdArrowForward } from "react-icons/md";
+import {
+  MdHome,
+  MdImage,
+  MdArrowForward,
+  MdOutlineModeComment,
+  MdOutlineMessage,
+} from "react-icons/md";
 import blogApi from "api/blogApi";
 import userAccountAPI from "api/accountApi";
 import jwt from "jwt-decode";
@@ -91,7 +97,9 @@ const Forum = () => {
   };
 
   const getBlogByTopic = async (topic) => {};
-
+  // let currentDate = new Date();
+  // var formatDate = moment(currentDate.getTime()).format("HH");
+  // console.log(formatDate - 4);
   return (
     <div>
       <div className="grid h-full grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
@@ -277,7 +285,7 @@ const Forum = () => {
             {topicList?.map((item) => (
               <div
                 key={item.id}
-                className={` mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+                className={` mb-2 mt-2 flex w-full items-center justify-center rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
               >
                 <div className="flex items-center">
                   <div className="ml-4">
@@ -289,6 +297,7 @@ const Forum = () => {
                       </p>
                     </Link>
                     <div className="mt-3 flex items-center gap-2">
+                      <MdOutlineMessage />
                       <p
                         className={`text-sm font-medium text-navy-700 dark:text-white`}
                       >
@@ -296,9 +305,6 @@ const Forum = () => {
                       </p>
                     </div>
                   </div>
-                </div>
-                <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
-                  <MdArrowForward />
                 </div>
               </div>
             ))}

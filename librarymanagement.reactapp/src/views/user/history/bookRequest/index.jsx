@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 const History = (props) => {
   const [requestList, setRequestList] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit] = useState(5);
+  const [limit] = useState(7);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);

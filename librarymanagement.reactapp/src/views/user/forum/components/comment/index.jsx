@@ -42,7 +42,7 @@ export default function Comment(props) {
             className={`mt-2 h-[36px] w-[36px] rounded-full`}
           />
 
-          <div className="ml-1  rounded-2xl border-2 bg-white p-2 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
+          <div className="ml-2 rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
             <p className={`text-m font-bold text-navy-700 dark:text-white`}>
               {props.item.userName}{" "}
               <span className="mr-4 text-sm text-gray-600">

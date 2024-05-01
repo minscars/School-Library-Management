@@ -44,6 +44,7 @@ namespace LibraryManagement.Application.Services
                     CreatedDate = p.CreatedDate,
                     IsDeleted = p.IsDeleted,
                     PostedDate = p.PostedDate,
+                    TotalComments = p.Comments.Count
                 }).ToListAsync();
             if (blogList.Count < 1)
             {
@@ -191,6 +192,7 @@ namespace LibraryManagement.Application.Services
                     CreatedDate = p.CreatedDate,
                     IsDeleted = p.IsDeleted,
                     PostedDate = p.PostedDate,
+                    TotalComments = p.Comments.Count
                 }).ToListAsync();
 
             if (checkExit == null)
@@ -251,6 +253,7 @@ namespace LibraryManagement.Application.Services
                 CreatedDate = p.CreatedDate,
                 IsDeleted = p.IsDeleted,
                 PostedDate = p.PostedDate,
+                TotalComments = p.Comments.Count,
             }).ToListAsync();
             if (blogList.Count < 1)
             {

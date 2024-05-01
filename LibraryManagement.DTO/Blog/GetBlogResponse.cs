@@ -16,6 +16,7 @@ namespace LibraryManagement.DTO.Blog
         public string? Image { get; set; }
         public string? Content { get; set; }
         public string? Status { get; set; }
+        public int TotalComments { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? PostedDate { get; set; }
         public Boolean? IsDeleted { get; set; }
