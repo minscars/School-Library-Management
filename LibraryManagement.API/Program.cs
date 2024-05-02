@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using LibraryManagement.Application.Mapping;
 using Microsoft.AspNetCore.Identity;
 using LibraryManagement.Data.Models;
+using TheSkyHomestay.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +74,8 @@ builder.Services.AddTransient<IFeedBackService, FeedBackService>();
 builder.Services.AddTransient<IBlogService, BlogService>();
 builder.Services.AddTransient<ITopicService, TopicService>();
 builder.Services.AddTransient<ICommentService, CommentService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
