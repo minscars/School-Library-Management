@@ -37,11 +37,7 @@ const Index = (props) => {
                         TITLE
                       </p>
                     </th>
-                    <th className="border-b border-gray-200 pb-[10px] pr-[60px] text-start dark:!border-navy-700">
-                      <p className="text-xs tracking-wide text-gray-600">
-                        BY USER
-                      </p>
-                    </th>
+
                     <th className="border-b border-gray-200 pb-[10px] pr-[40px] text-start dark:!border-navy-700">
                       <p className="text-xs tracking-wide text-gray-600">
                         STATUS
@@ -72,13 +68,6 @@ const Index = (props) => {
                         </div>
                       </td>
                       <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                        <div className="w-auto">
-                          <p className=" text-justify text-sm font-normal text-navy-700 dark:text-white">
-                            {row.userName}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="pb-[18px] pt-[14px] sm:text-[15px]">
                         <div className="w-[40px]">
                           <p className=" text-justify text-sm font-normal text-navy-700 dark:text-white">
                             {row.status}
@@ -87,7 +76,7 @@ const Index = (props) => {
                       </td>
                       <td className="pb-[18px] pt-[14px] sm:text-[15px]">
                         <p className=" text-justify text-sm font-normal text-navy-700 dark:text-white">
-                          {moment(row.createdDate).format("DD/MM/YYYY HH:mm A")}
+                          {moment(row.createdDate).format("DD/MM/YYYY HH:mm")}
                         </p>
                       </td>
                     </tr>

@@ -65,26 +65,58 @@ namespace LibraryManagement.Application.Services
 
 
 
-        //    public async Task<ApiResult<BookDTO>> GetByIdAsync(int id)
-        //    {
-        //        var book = await _context.Books
-        //            .Include(b => b.Category)
-        //            .Where(b => b.IsDeleted == false && b.Id == id)
-        //            .Select(b => _mapper.Map<BookDTO>(b)).FirstOrDefaultAsync();
-        //        if (book==null)
-        //        {
-        //            return new ApiResult<BookDTO>(null)
-        //            {
-        //                Message = $"Couldn't find the room with id: {id}",
-        //                StatusCode = 400
-        //            };
-        //        }
-        //        return new ApiResult<BookDTO>(_mapper.Map<BookDTO>(book))
-        //        {
-        //            Message = "",
-        //            StatusCode = 200
-        //        };
-        //    }
+        public async Task<ApiResult<GetDetailBook>> GetByIdAsync(string id)
+        {
+            var book = await _context.Books
+                .Include(b => b.Category)
+                .Where(b => b.IsDeleted == false && b.Id == id)
+                .Select(b => new GetDetailBook()
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    CreatedTime = b.CreatedTime,
+                    CategoryName = b.Category.Name,
+                    Authors = b.BookAuthors.Select(a => new GetAuthorBookDetail
+                    {
+                        Value = a.Author.Id,
+                        Label = a.Author.Name,
+                    }).ToList(),
+                }).FirstOrDefaultAsync();
+            if (book == null)
+            {
+                return new ApiResult<GetDetailBook>(null)
+                {
+                    Message = $"Couldn't find the room with id: {id}",
+                    StatusCode = 400
+                };
+            }
+            return new ApiResult<GetDetailBook>(book)
+            {
+                Message = "",
+                StatusCode = 200
+            };
+        }
+        public async Task<ApiResult<List<GetAuthorBookDetail>>> GetAllAuthorAsync()
+        {
+            var result = await _context.Authors
+                .Select(a => new GetAuthorBookDetail()
+                {
+                    Value = a.Id,
+                    Label = a.Name
+                }).ToListAsync();
+            if(result.Count > 0 )
+            {
+                return new ApiResult<List<GetAuthorBookDetail>>(result)
+                {
+                    StatusCode = 200
+                };
+            }
+
+            return new ApiResult<List<GetAuthorBookDetail>>(null)
+            {
+                StatusCode = 400
+            };
+        }
 
         //    public async Task<ApiResult<List<BookDTO>>> GetByCategoryIdAsync(int categoryId)
         //    {
@@ -160,50 +192,38 @@ namespace LibraryManagement.Application.Services
         //        };
         //    }
 
-        //    public async Task<ApiResult<bool>> EditAsync(EditBookDTO request)
-        //    {
-        //        if (request == null)
-        //        {
-        //            return new ApiResult<bool>(false)
-        //            {
-        //                Message = "Something went wrong!",
-        //                StatusCode = 400
-        //            };
-        //        }
+        public async Task<ApiResult<bool>> EditAsync(EditBookDTO request)
+        {
+            if (request == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = "Something went wrong!",
+                    StatusCode = 400
+                };
+            }
 
-        //        var book = await _context.Books.Where(b => b.IsDeleted == false && b.Id == request.Id).FirstOrDefaultAsync();
-        //        if (book == null)
-        //        {
-        //            return new ApiResult<bool>(false)
-        //            {
-        //                Message = $"Couldn't find the book with id: {request.Id}",
-        //                StatusCode = 404
-        //            };
-        //        }
+            var book = await _context.Books.Where(b => b.IsDeleted == false && b.Id == request.Id).FirstOrDefaultAsync();
+            if (book == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = $"Couldn't find the book with id: {request.Id}",
+                    StatusCode = 404
+                };
+            }
 
-        //        if(request.Image == null) 
-        //        {
-        //            book.Image = book.Image;
-        //        }
-        //        else
-        //        {
-        //            string path = Path.Combine(_webHostEnvironment.WebRootPath, SystemConstant.IMG_BOOKS_FOLDER, book.Image);
-        //            await _fileServivce.RemoveFileAsync(path);
-        //            var imageName = await _fileServivce.UploadFileAsync(request.Image, SystemConstant.IMG_BOOKS_FOLDER);
-        //            book.Image = imageName;
-        //        }
+            book.Name = request.Name;
+            book.CategoryId = request.CategoryId;
+            book.UpdatedTime = DateTime.Now;
 
-        //        book.Name = request.Name;
-        //        book.CategoryId = request.CategoryId;
-        //        book.UpdatedTime = DateTime.Now;
-
-        //        await _context.SaveChangesAsync();
-        //        return new ApiResult<bool>(true)
-        //        {
-        //            Message = "Edit book successfully!",
-        //            StatusCode = 200
-        //        };
-        //    }
+            await _context.SaveChangesAsync();
+            return new ApiResult<bool>(true)
+            {
+                Message = "Edit book successfully!",
+                StatusCode = 200
+            };
+        }
 
         //    public async Task<ApiResult<List<BookDTO>>> FindByKeyAsync(string key)
         //    {

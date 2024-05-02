@@ -1,46 +1,51 @@
 import Card from "components/card";
-import { useEffect, useState } from "react";
-import cateApi from "../../../api/categoryAPI";
+import React, { useEffect, useState } from "react";
+import cateApi from "api/categoryAPI";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import bookApi from "../../../api/publishedBookApi";
-
+import bookApi from "api/bookApi";
+import { MultiSelect } from "react-multi-select-component";
 import Alert from "components/alert";
 import { useNavigate, useParams } from "react-router-dom";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 
 export function Update() {
   const [catesList, setCates] = useState([]);
   const [book, setBook] = useState([]);
+  const [authors, setAuthors] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [selectedAuthor, setSelectedAuthor] = useState(
+    book?.authors ? book?.authors : []
+  );
   useEffect(() => {
     const getall = async () => {
       const data = await cateApi.GetAll();
       setCates(data);
     };
+    getall();
+
     const getbyid = async () => {
-      const data = await bookApi.GetById(id);
+      const data = await bookApi.GetDetailBook(id);
       setBook(data);
     };
     getbyid();
-    getall();
-  }, []);
+
+    const getAllAuthor = async () => {
+      const data = await bookApi.GetAllAuthor();
+      setAuthors(data);
+    };
+    getAllAuthor();
+  }, [id]);
+
+  useEffect(() => {
+    if (book?.authors && book?.authors.length) {
+      setSelectedAuthor(book?.authors);
+    }
+  }, [book]);
 
   const { register, handleSubmit } = useForm();
-
-  const [fileURL, setFileURL] = useState(null);
-  const [imageUploadFile, setImageUploadFile] = useState(null);
-  const onFileChange = (event) => {
-    setImageUploadFile(event.target.files[0]);
-    const fileInput = event.target;
-
-    if (fileInput.files.length > 0) {
-      const selectedFile = fileInput.files[0];
-      const url = URL.createObjectURL(selectedFile);
-      setFileURL(url);
-    }
-  };
 
   const editBook = async (content) => {
     content.Id = id;
@@ -48,7 +53,6 @@ export function Update() {
     formData.append("Id", content.Id);
     formData.append("Name", content.name);
     formData.append("CategoryId", content.categoryid);
-    formData.append("Image", imageUploadFile);
     await bookApi.Edit(formData).then((response) => {
       if (response.statusCode === 200) {
         Alert.showSuccessAlert(response.message, navigate("/admin/books"));
@@ -56,11 +60,9 @@ export function Update() {
         Alert.showErrorAlert(response.message);
       }
     });
-
-    // Alert.showSuccessAlert('Edit your book sucessfully!')
-    //navigate('/admin/books');
   };
 
+  console.log("selectedAuthor", selectedAuthor);
   return (
     <div className="mt-5 gap-5 xl:grid-cols-2">
       <Card extra={"w-full h-full px-6 pb-6 sm:overflow-x-auto"}>
@@ -101,36 +103,6 @@ export function Update() {
               </div>
 
               <div>
-                <label for="image" class="text-m text-navy-700 dark:text-white">
-                  Image
-                </label>
-                <input
-                  className={`mt-2 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none`}
-                  {...register("image")}
-                  onChange={onFileChange}
-                  extra=""
-                  label="Image"
-                  id="image"
-                  placeholder=""
-                  type="file"
-                />
-                <div className="flex justify-center">
-                  <img
-                    src={book.image}
-                    alt=""
-                    className="mb-3 mr-6 mt-5 h-[120px] w-auto rounded-xl border-2 3xl:h-full 3xl:w-full"
-                  />
-                  {fileURL && (
-                    <img
-                      src={fileURL}
-                      alt="Preview Image"
-                      className="mb-3 mr-6 mt-5 h-[120px] w-auto rounded-xl border-2 3xl:h-full 3xl:w-full"
-                    />
-                  )}
-                </div>
-              </div>
-
-              <div>
                 <label
                   for="categories"
                   class="text-m mb-5 text-navy-700 dark:text-white"
@@ -144,10 +116,40 @@ export function Update() {
                   class="mt-2 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"
                 >
                   <option>Choose a category</option>
-                  {catesList.map((row, key) => {
-                    return <option value={row.id}>{row.name}</option>;
-                  })}
+                  {catesList.map((row) => (
+                    <option key={row.id} value={row.id}>
+                      {row.name}
+                    </option>
+                  ))}
                 </select>
+              </div>
+
+              <div>
+                <label
+                  for="categories"
+                  class="text-m mb-5 text-navy-700 dark:text-white"
+                >
+                  Author
+                </label>
+
+                <MultiSelect
+                  options={authors}
+                  value={selectedAuthor}
+                  onChange={setSelectedAuthor}
+                  labelledBy="Select"
+                />
+                <div className="mt-2">
+                  <Stack direction="row" spacing={1}>
+                    {selectedAuthor?.map((item) => (
+                      <Chip
+                        key={item.value}
+                        label={item.label}
+                        //onClick={handleClick}
+                        //onDelete={handleDelete}
+                      />
+                    ))}
+                  </Stack>
+                </div>
               </div>
             </div>
 

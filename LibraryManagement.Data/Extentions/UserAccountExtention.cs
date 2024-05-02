@@ -34,31 +34,60 @@ namespace LibraryManagement.Data.Extentions
 
             var userAccount2 = new Guid("F5AA72EA-A563-4E89-A289-E290814F3C17");
             var userAccount3 = new Guid("F4E9077D-D904-4C9E-860E-7C0373CFDDFF");
+            var userAcoount4 = new Guid("5BB18865-B42E-4EF0-844F-9AC649AB1732");
+            var userAccount5 = new Guid("D1F58D0A-78FC-4564-8642-3B63D71763AC");
+            var userAccount6 = new Guid("5B01EC43-AFDC-4117-8212-FE47FEB3A5F4");
             var user = new UserAccount()
             {
                 Id = userAccountId,
                 UserId = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4",
-                UserName = "kha@gmail.com",
-                NormalizedUserName = "KHA@GMAIL.COM",
-                NormalizedEmail = "KHA@GMAIL.COM",
+                UserName = "khab2012213@student.ctu.edu.vn",
+                NormalizedUserName = "KHAB2012213@STUDENT.CTU.EDU.VN",
+                NormalizedEmail = "KHAB2012213@STUDENT.CTU.EDU.VN",
             };
 
             var user2 = new UserAccount()
             {
                 Id = userAccount2,
                 UserId = "BEFE5A8F-B2F6-48C4-AAA0-E4DDA7A3914C",
-                UserName = "lam@gmail.com",
-                NormalizedUserName = "LAM@GMAIL.COM",
-                NormalizedEmail = "LAM@GMAIL.COM"
+                UserName = "lamb1809363@student.ctu.edu.vn",
+                NormalizedUserName = "LAMB1809363@STUDENT.CTU.EDU.VN",
+                NormalizedEmail = "LAMB1809363@STUDENT.CTU.EDU.VN"
             };
 
             var user3 = new UserAccount()
             {
                 Id = userAccount3,
                 UserId = "F7AA67C1-B3CB-4CCE-9394-1630407343BF",
-                UserName = "the@gmail.com",
-                NormalizedUserName = "THE@GMAIL.COM",
-                NormalizedEmail = "THE@GMAIL.COM"
+                UserName = "theb2003923@student.ctu.edu.vn",
+                NormalizedUserName = "THEB2003923@STUDENT.CTU.EDU.VN",
+                NormalizedEmail = "THEB2003923@STUDENT.CTU.EDU.VN"
+            };
+
+            var user4 = new UserAccount()
+            {
+                Id = userAcoount4,
+                UserId = "1B1BC693-F841-4B2D-9567-63710DA34F1D",
+                UserName = "linhb2012223@student.ctu.edu.vn",
+                NormalizedUserName = "LINHB2012223@STUDENT.CTU.EDU.VN",
+                NormalizedEmail = "LINHB2012223@STUDENT.CTU.EDU.VN"
+            };
+
+            var user5 = new UserAccount()
+            {
+                Id= userAccount5,
+                UserId = "D8E5F8D4-09DE-42FA-9952-37AF9BF3EE9B",
+                UserName = "nhanb2012237@student.ctu.edu.vn",
+                NormalizedUserName = "NHANB2012237@STUDENT.CTU.EDU.VN",
+                NormalizedEmail = "NHANB2012237@STUDENT.CTU.EDU.VN"
+            };
+            var user6 = new UserAccount()
+            {
+                Id = userAccount6,
+                UserId = "B03DE8D3-DFD7-4A25-B081-20FB1696DB22",
+                UserName = "nhungb1914237@student.ctu.edu.vn",
+                NormalizedUserName = "NHUNGB1914237@STUDENT.CTU.EDU.VN",
+                NormalizedEmail = "NHUNGB1914237@STUDENT.CTU.EDU.VN"
             };
 
             var admin = new UserAccount()
@@ -74,7 +103,10 @@ namespace LibraryManagement.Data.Extentions
             admin.PasswordHash = hasher.HashPassword(admin, "admin123");
             user2.PasswordHash = hasher.HashPassword(user2, "lam123");
             user3.PasswordHash = hasher.HashPassword(user3, "the123");
-            modelBuilder.Entity<UserAccount>().HasData(user,admin,user2,user3);
+            user4.PasswordHash = hasher.HashPassword(user4, "linh123");
+            user5.PasswordHash = hasher.HashPassword(user5, "nhan123");
+            user6.PasswordHash = hasher.HashPassword(user6, "nhung123");
+            modelBuilder.Entity<UserAccount>().HasData(user,admin,user2,user3, user4, user5, user6);
 
             //Seed data for IdentityUserRole
             modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(
@@ -134,7 +166,7 @@ namespace LibraryManagement.Data.Extentions
                   Id = 5,
                   UserId = userAccountId,
                   ClaimType = "email",
-                  ClaimValue = "kha@gmail.com"
+                  ClaimValue = "khab2012213@student.ctu.edu.vn"
               },
               new IdentityUserClaim<Guid>
               {
@@ -155,7 +187,7 @@ namespace LibraryManagement.Data.Extentions
                 Id = 8,
                 UserId = userAccount2,
                 ClaimType = "email",
-                ClaimValue = "lam@gmail.com"
+                ClaimValue = "lamb1809363@student.ctu.edu.vn"
             },
             new IdentityUserClaim<Guid>
             {
@@ -176,12 +208,79 @@ namespace LibraryManagement.Data.Extentions
                 Id = 11,
                 UserId = userAccount3,
                 ClaimType = "email",
-                ClaimValue = "the@gmail.com"
+                ClaimValue = "theb2003923@student.ctu.edu.vn"
             },
             new IdentityUserClaim<Guid>
             {
                 Id = 12,
                 UserId = userAccount3,
+                ClaimType = "roles",
+                ClaimValue = "User"
+            },
+
+            new IdentityUserClaim<Guid>
+            {
+                Id = 13,
+                UserId = userAcoount4,
+                ClaimType = "id",
+                ClaimValue = userAcoount4.ToString()
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 14,
+                UserId = userAcoount4,
+                ClaimType = "email",
+                ClaimValue = "linhb2012223@student.ctu.edu.vn"
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 15,
+                UserId = userAcoount4,
+                ClaimType = "roles",
+                ClaimValue = "User"
+            },
+
+
+            new IdentityUserClaim<Guid>
+            {
+                Id = 16,
+                UserId = userAccount5,
+                ClaimType = "id",
+                ClaimValue = userAccount5.ToString()
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 17,
+                UserId = userAccount5,
+                ClaimType = "email",
+                ClaimValue = "nhanb2012237@student.ctu.edu.vn"
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 18,
+                UserId = userAccount5,
+                ClaimType = "roles",
+                ClaimValue = "User"
+            },
+
+            new IdentityUserClaim<Guid>
+            {
+                Id = 19,
+                UserId = userAccount6,
+                ClaimType = "id",
+                ClaimValue = userAccount6.ToString()
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 20,
+                UserId = userAccount6,
+                ClaimType = "email",
+                ClaimValue = "nhungb1914237@student.ctu.edu.vn"
+            },
+            new IdentityUserClaim<Guid>
+            {
+                Id = 21,
+                UserId = userAccount6,
                 ClaimType = "roles",
                 ClaimValue = "User"
             }

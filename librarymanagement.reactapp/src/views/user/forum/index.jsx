@@ -285,10 +285,10 @@ const Forum = () => {
             {topicList?.map((item) => (
               <div
                 key={item.id}
-                className={` mb-2 mt-2 flex w-full items-center justify-center rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+                className={` mb-2 mt-2 flex w-full items-center rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
               >
                 <div className="flex items-center">
-                  <div className="ml-4">
+                  <div className="ml-4 flex items-center">
                     <Link>
                       <p
                         className={`text-m font-bold text-navy-700 dark:text-white`}
@@ -296,7 +296,7 @@ const Forum = () => {
                         {item.topicName}
                       </p>
                     </Link>
-                    <div className="mt-3 flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <MdOutlineMessage />
                       <p
                         className={`text-sm font-medium text-navy-700 dark:text-white`}

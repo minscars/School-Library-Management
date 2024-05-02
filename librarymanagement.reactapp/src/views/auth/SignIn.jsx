@@ -80,32 +80,12 @@ export default function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* Checkbox */}
-            <div className="mb-10 mt-4 px-2">
-              <a
-                className="float-right text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
-                href=" "
-              >
-                Forgot Password?
-              </a>
-            </div>
             <button
               type="submit"
               className="linear mt-2 w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
             >
               Sign In
             </button>
-            <div className="mt-4 flex items-center justify-center">
-              <span className=" text-sm font-medium text-navy-700 dark:text-gray-600">
-                Not registered yet?
-              </span>
-              <Link
-                to={"/auth/register"}
-                className="ml-1 text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
-              >
-                Create an account
-              </Link>
-            </div>
           </form>
         </div>
       </div>

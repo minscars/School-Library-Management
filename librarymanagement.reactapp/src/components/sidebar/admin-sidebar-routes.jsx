@@ -76,13 +76,13 @@ const routes = [
   //   icon: <MdPerson className="h-6 w-6" />,
   //   component: <Profile />,
   // },
-  {
-    name: "Dashboard",
-    layout: "/admin",
-    path: "dashboard",
-    icon: <MdPerson className="h-6 w-6" />,
-    component: <DashBoard />,
-  },
+  // {
+  //   name: "Dashboard",
+  //   layout: "/admin",
+  //   path: "dashboard",
+  //   icon: <MdPerson className="h-6 w-6" />,
+  //   component: <DashBoard />,
+  // },
 
   {
     name: "Blog Management",

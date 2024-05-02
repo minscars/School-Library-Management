@@ -36,7 +36,7 @@ export default function Comment(props) {
   return (
     <>
       <div className="row ml-20 mt-2 flex w-fit items-center">
-        <div className="flex gap-2">
+        <div className="ml-3 flex gap-2">
           <img
             src={props.item.userAvatar}
             className={`mt-2 h-[36px] w-[36px] rounded-full`}

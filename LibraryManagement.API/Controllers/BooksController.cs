@@ -27,5 +27,26 @@ namespace LibraryManagement.API.Controllers
             var result = await _bookService.GetAllBookAsync();
             return Ok(result.Data);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateBookAsync([FromForm]EditBookDTO request)
+        {
+            var result = await _bookService.EditAsync(request);
+            return Ok(result);
+        }
+
+        [HttpGet("GetDetail/{bookId}")]
+        public async Task<IActionResult> GetDetailAsync([FromRoute]string bookId)
+        {
+            var result = await _bookService.GetByIdAsync(bookId);
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetAllAuthor")]
+        public async Task<IActionResult> GetAllAuthorAsync()
+        {
+            var result = await _bookService.GetAllAuthorAsync();
+            return Ok(result.Data);
+        }
     }
 }

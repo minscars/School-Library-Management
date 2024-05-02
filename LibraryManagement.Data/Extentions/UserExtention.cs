@@ -54,6 +54,14 @@ namespace LibraryManagement.Data.Extentions
                     UserCode = "B2012237",
                     PhoneNumber = "0122334455",
                     Address = "Hẻm 51, TP. Cần Thơ"
+                },
+                new User()
+                {
+                    Id = "B03DE8D3-DFD7-4A25-B081-20FB1696DB22",
+                    Name = "Huỳnh Yến Nhung",
+                    UserCode = "B1914237",
+                    PhoneNumber = "098769876",
+                    Address = "Ký túc xá A, Trường Đại học Cần Thơ"
                 }
 
                 );

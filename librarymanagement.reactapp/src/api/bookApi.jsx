@@ -3,6 +3,15 @@ const bookApi = {
   GetAll: () => {
     return API.get("/Books");
   },
+  GetDetailBook: (bookId) => {
+    return API.get(`/Books/GetDetail/${bookId}`);
+  },
+  UpdateBook: (dto) => {
+    return API.put("/Books", dto);
+  },
+  GetAllAuthor: () => {
+    return API.get("/Books/GetAllAuthor");
+  },
 };
 
 export default bookApi;

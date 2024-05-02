@@ -18,7 +18,7 @@ const History = () => {
   const [requestList, setRequestList] = useState([]);
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [limit] = useState(8);
+  const [limit] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
