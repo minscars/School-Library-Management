@@ -18,7 +18,7 @@ const History = () => {
   const [requestList, setRequestList] = useState([]);
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [limit] = useState(10);
+  const [limit] = useState(9);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
@@ -97,7 +97,7 @@ const History = () => {
               </form>
             </div>
           </div>
-          <div className="mt-2 block h-[570px]">
+          <div className="mt-2 block h-[530px]">
             <table className=" w-full">
               <thead className="sticky top-0 bg-white">
                 <tr>

@@ -12,6 +12,7 @@ namespace LibraryManagement.DTO.Book
         public string Id { get; set; }
         public string? Name { get; set; }
         public string CategoryName { get; set; }
+        public int CategoryId { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? CreatedTime { get; set; }
         public List<GetAuthorBookDetail> Authors { get; set; }

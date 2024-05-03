@@ -3,6 +3,7 @@ using LibraryManagement.Application.Services;
 using LibraryManagement.Data.Enums;
 using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.Blog;
+using LibraryManagement.DTO.Pagination;
 using LibraryManagement.DTO.Post;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace LibraryManagement.API.Controllers
             return String.Format("{0}://{1}{2}/images/Posts/{3}", Request.Scheme, Request.Host, Request.PathBase, currentName);
         }
 
-        [HttpGet]
+        [HttpGet()]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
@@ -39,6 +40,20 @@ namespace LibraryManagement.API.Controllers
                 result.Data.ForEach(p => p.Avatar = setImageName(p.Avatar));
                 result.Data.ForEach(p => p.Image = setImagePost(p.Image));
                 return Ok(result.Data);
+            }
+            return Ok(result);
+        }
+
+        [HttpPost("GetBlogPagination")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAll(GetPaginationRequest dto)
+        {
+            var result = await _blogService.GetAllAsync(dto);
+            if (result.StatusCode == 200)
+            {
+                result.Data.ForEach(p => p.Avatar = setImageName(p.Avatar));
+                result.Data.ForEach(p => p.Image = setImagePost(p.Image));
+                return Ok(result);
             }
             return Ok(result);
         }

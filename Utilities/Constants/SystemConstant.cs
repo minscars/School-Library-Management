@@ -21,6 +21,7 @@ namespace LibraryManagement.DTO.Contants
         public const string BOOKREQUEST_PREFIX = "BR";
         public const string BOOKCHECKOUT_PREFIX = "BC";
         public const string BLOG_PREFIX = "BL";
+        public const string AUTHOR = "A";
 
         //pagination
 

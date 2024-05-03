@@ -1,5 +1,6 @@
 ﻿using LibraryManagement.DTO.Book;
 using LibraryManagement.DTO.Contants;
+using LibraryManagement.DTO.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,8 @@ namespace LibraryManagement.Application.Interfaces
         //public Task<ApiResult<List<BookDTO>>> FindByKeyAsync(string key);
         //public Task<ApiResult<List<BookDTO>>> GetTopFiveAsync();
         //public Task<ApiResult<List<BookDTO>>> GetNewAsync();
-        Task<ApiResult<List<GetAllBookResponse>>> GetAllBookAsync();
+        Task<PaginatedList<List<GetAllBookResponse>>> GetAllBookAsync(GetPaginationRequest requestDto);
         Task<ApiResult<List<GetAuthorBookDetail>>> GetAllAuthorAsync();
+        Task<ApiResult<bool>> CreateNewAuthorAsync(string authorName);
     }
 }

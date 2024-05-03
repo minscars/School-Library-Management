@@ -2,6 +2,7 @@
 using LibraryManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using LibraryManagement.DTO.Book;
+using LibraryManagement.DTO.Pagination;
 
 namespace LibraryManagement.API.Controllers
 {
@@ -20,12 +21,12 @@ namespace LibraryManagement.API.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost("GetBookPagination")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllBookAsync([FromBody]GetPaginationRequest requestDto)
         {
-            var result = await _bookService.GetAllBookAsync();
-            return Ok(result.Data);
+            var result = await _bookService.GetAllBookAsync(requestDto);
+            return Ok(result);
         }
 
         [HttpPut]
@@ -47,6 +48,13 @@ namespace LibraryManagement.API.Controllers
         {
             var result = await _bookService.GetAllAuthorAsync();
             return Ok(result.Data);
+        }
+
+        [HttpPost("CreateNewAuthor")]
+        public async Task<IActionResult> CreateNewAuthorAsync([FromBody]string authorName)
+        {
+            var result = await _bookService.CreateNewAuthorAsync(authorName);
+            return Ok(result);
         }
     }
 }

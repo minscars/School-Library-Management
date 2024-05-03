@@ -3,27 +3,46 @@ import Card from "components/card";
 import { Link } from "react-router-dom";
 import blogApi from "api/blogApi";
 import moment from "moment";
+import Pagination from "components/pagination";
 const Index = () => {
   const [postList, setPosts] = useState([]);
-
+  const [page, setPage] = useState(0);
+  const [limit] = useState(7);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [isloaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    const getall = async () => {
-      const data = await blogApi.GetAll();
-      setPosts(data);
-    };
-    getall();
-  }, []);
+    // const getall = async () => {
+    //   const data = await blogApi.GetAll();
+    //   setPosts(data);
+    // };
+    // getall();
+    getAllBlogPagination();
+  }, [page, limit]);
 
+  const getAllBlogPagination = async () => {
+    var dto = { page, limit };
+    setIsLoaded(false);
+    const response = await blogApi.GetBlogPagination(dto);
+    setPageCount(Math.ceil(response.totalRecord / limit));
+    setPosts(response.data);
+    setIsLoaded(true);
+  };
+  const handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+    setPage(e.selected);
+  };
+  console.log(postList);
   return (
     <div>
       <div className="gap-5 xl:grid-cols-2">
-        <Card extra={"w-full px-6 pb-6  "}>
+        <Card extra={"w-full h-[600px] px-6 pb-6  "}>
           <div class="relative  mb-2 pt-4">
             <div class="flex items-center justify-between text-xl font-bold text-navy-700 dark:text-white">
               <p className="left-0 top-0">Blogs List</p>
             </div>
           </div>
-          <div className="table-wrp mt-2 block h-[500px] overflow-x-scroll">
+          <div className="mt-2 block h-[550px]">
             <table className="w-full">
               <thead className="sticky top-0 mb-1 bg-white">
                 <tr>
@@ -63,7 +82,7 @@ const Index = () => {
                       </p>
                     </td>
                     <td className="ml-10 items-center pb-[18px] pt-[14px] sm:text-[15px]">
-                      <div className="ml-10 mr-[18px] w-auto">
+                      <div className="ml-10 mr-[18px] w-[300px]">
                         <Link to={`/admin/blog/detail/${row.id}`}>
                           <p className="text-sm font-bold text-navy-700 dark:text-white">
                             {row.title}
@@ -86,8 +105,8 @@ const Index = () => {
                       </div>
                     </td>
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      <p className=" text-justify text-sm font-bold text-navy-700 dark:text-white">
-                        {moment(row.createdDate).format("DD/MM/YYYY HH:mm A")}
+                      <p className=" text-justify text-sm text-navy-700 dark:text-white">
+                        {moment(row.createdDate).format("DD/MM/YYYY HH:mm")}
                       </p>
                     </td>
                   </tr>
@@ -96,6 +115,11 @@ const Index = () => {
             </table>
           </div>
         </Card>
+        <Pagination
+          handlePageClick={handlePageClick}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
       </div>
     </div>
   );

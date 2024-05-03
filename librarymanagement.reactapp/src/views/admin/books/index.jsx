@@ -4,16 +4,30 @@ import Card from "components/card";
 import { Link } from "react-router-dom";
 import bookApi from "../../../api/bookApi";
 import moment from "moment";
+import Pagination from "components/pagination";
 const Index = () => {
   const [booksList, setBooks] = useState([]);
-
+  const [page, setPage] = useState(0);
+  const [limit] = useState(9);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [isloaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    const getall = async () => {
-      const data = await bookApi.GetAll();
-      setBooks(data);
-    };
-    getall();
-  }, []);
+    getAllBookPagination();
+  }, [page, limit]);
+
+  const getAllBookPagination = async () => {
+    var dto = { page, limit };
+    setIsLoaded(false);
+    const response = await bookApi.GetAll(dto);
+    setPageCount(Math.ceil(response.totalRecord / limit));
+    setBooks(response.data);
+    setIsLoaded(true);
+  };
+  const handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+    setPage(e.selected);
+  };
 
   return (
     <div>
@@ -29,7 +43,7 @@ const Index = () => {
               </Link>
             </div>
           </div>
-          <div className="table-wrp mt-2 block h-[610px] overflow-y-scroll">
+          <div className="table-wrp mt-2 block h-[530px]">
             <table className="w-full">
               <thead className="sticky top-0 mb-1 bg-white">
                 <tr>
@@ -114,6 +128,11 @@ const Index = () => {
             </table>
           </div>
         </Card>
+        <Pagination
+          handlePageClick={handlePageClick}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
       </div>
     </div>
   );

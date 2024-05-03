@@ -2,6 +2,7 @@
 using LibraryManagement.DTO.Blog;
 using LibraryManagement.DTO.Book;
 using LibraryManagement.DTO.Contants;
+using LibraryManagement.DTO.Pagination;
 using LibraryManagement.DTO.Post;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace LibraryManagement.Application.Interfaces
 {
     public interface IBlogService
     {
+        public Task<PaginatedList<List<GetAllBlogResponse>>> GetAllAsync(GetPaginationRequest dto);
         public Task<ApiResult<List<GetAllBlogResponse>>> GetAllAsync();
         public Task<ApiResult<List<GetAllBlogResponse>>> GetBlogByTopicAsync(string topicId);
         public Task<ApiResult<List<GetAllBlogByAccountIdResponse>>> GetByUserIdAsync(Guid AccountId);

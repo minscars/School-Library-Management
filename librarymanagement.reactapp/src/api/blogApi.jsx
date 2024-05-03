@@ -4,6 +4,9 @@ const postApi = {
   GetAll: () => {
     return API.get("/Blogs");
   },
+  GetBlogPagination: (dto) => {
+    return API.post("/Blogs/GetBlogPagination", dto);
+  },
   GetById: (id) => {
     return API.get(`/Blogs/Detail/${id}`);
   },
@@ -21,7 +24,7 @@ const postApi = {
   },
   GetAllTopic: () => {
     return API.get("/Topics");
-  }
+  },
 };
 
 export default postApi;

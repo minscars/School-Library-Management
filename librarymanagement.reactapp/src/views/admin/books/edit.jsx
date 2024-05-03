@@ -16,6 +16,8 @@ export function Update() {
   const [authors, setAuthors] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [bookName, setBookName] = useState(book?.name);
+  const [categoryIdValue, setCategoryId] = useState(book?.categoryId);
   const [selectedAuthor, setSelectedAuthor] = useState(
     book?.authors ? book?.authors : []
   );
@@ -43,29 +45,30 @@ export function Update() {
     if (book?.authors && book?.authors.length) {
       setSelectedAuthor(book?.authors);
     }
+    setCategoryId(book?.categoryId);
+    setBookName(book?.name);
   }, [book]);
 
   const { register, handleSubmit } = useForm();
 
-  const editBook = async (content) => {
-    content.Id = id;
-    const formData = new FormData();
-    formData.append("Id", content.Id);
-    formData.append("Name", content.name);
-    formData.append("CategoryId", content.categoryid);
-    await bookApi.Edit(formData).then((response) => {
-      if (response.statusCode === 200) {
-        Alert.showSuccessAlert(response.message, navigate("/admin/books"));
-      } else {
-        Alert.showErrorAlert(response.message);
-      }
-    });
+  const editBook = async () => {
+    var name = bookName;
+    var categoryId = categoryIdValue;
+    var dto = { id, name, categoryId };
+    dto.authors = selectedAuthor;
+    console.log(dto);
+    // await bookApi.Edit(dto).then((response) => {
+    //   if (response.statusCode === 200) {
+    //     Alert.showSuccessAlert(response.message, navigate("/admin/books"));
+    //   } else {
+    //     Alert.showErrorAlert(response.message);
+    //   }
+    // });
   };
 
-  console.log("selectedAuthor", selectedAuthor);
   return (
     <div className="mt-5 gap-5 xl:grid-cols-2">
-      <Card extra={"w-full h-full px-6 pb-6 sm:overflow-x-auto"}>
+      <Card extra={"w-full h-[600px] px-6 pb-6 sm:overflow-x-auto"}>
         <div className="relative flex items-center justify-between pt-4">
           <div className="text-xl font-bold text-navy-700 dark:text-white">
             Update your{" "}
@@ -91,13 +94,10 @@ export function Update() {
                 </label>
                 <input
                   className={`mt-2 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none`}
-                  {...register("name")}
                   autoFocus
-                  defaultValue={book.name}
-                  extra=""
+                  value={bookName}
+                  onChange={(event) => setBookName(event.target.value)}
                   label="Book name"
-                  placeholder=""
-                  id="name"
                   type="text"
                 />
               </div>
@@ -111,12 +111,11 @@ export function Update() {
                 </label>
                 <select
                   required
-                  {...register("categoryid")}
-                  id="categories"
+                  value={categoryIdValue}
+                  onChange={(event) => setCategoryId(event.target.value)}
                   class="mt-2 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"
                 >
-                  <option>Choose a category</option>
-                  {catesList.map((row) => (
+                  {catesList?.map((row) => (
                     <option key={row.id} value={row.id}>
                       {row.name}
                     </option>

@@ -4,8 +4,11 @@ using LibraryManagement.Data.EF;
 using LibraryManagement.Data.Enums;
 using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.Blog;
+using LibraryManagement.DTO.BookRequest;
 using LibraryManagement.DTO.Contants;
+using LibraryManagement.DTO.Pagination;
 using LibraryManagement.DTO.Post;
+using LibraryManagement.DTO.Request;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using static LibraryManagement.Data.Enums.StatusBlogEnums;
@@ -25,13 +28,29 @@ namespace LibraryManagement.Application.Services
             _fileServivce = fileSerivce;
         }
 
-        public async Task<ApiResult<List<GetAllBlogResponse>>> GetAllAsync()
+        public async Task<PaginatedList<List<GetAllBlogResponse>>> GetAllAsync(GetPaginationRequest dto)
         {
-            var blogList = await _context.Blogs
+            var total = await _context.Blogs.Where(r => r.IsDeleted == false).ToListAsync();
+            var blogList = _context.Blogs
                 .Include(p => p.UserAccount).ThenInclude(p => p.User)
                 .Where(p => p.IsDeleted == false)
-                .OrderByDescending(p => p.CreatedDate)
-                .Select(p => new GetAllBlogResponse()
+                
+                .AsQueryable();
+
+            #region Filtering
+            if (!string.IsNullOrEmpty(dto.Search))
+            {
+                blogList = blogList.Where(r => r.UserAccount.User.UserCode.Trim().ToLower().Contains(dto.Search.ToLower()) && r.IsDeleted == false);
+                total = await _context.Blogs.Where(r => r.UserAccount.User.UserCode.Trim().ToLower().Contains(dto.Search.ToLower()) && r.IsDeleted == false).ToListAsync();
+            }
+            if ((dto.Key != 0) && (dto.Key != null))
+            {
+                blogList = blogList.Where(r => r.IsDeleted == false && r.Status == dto.Key);
+                total = await _context.Blogs.Where(r => r.IsDeleted == false && r.Status == dto.Key).ToListAsync();
+            }
+            #endregion
+            blogList = blogList.Skip((dto.Page) * dto.Limit).Take(dto.Limit);
+            var result = await blogList.OrderByDescending(p => p.CreatedDate).Select(p => new GetAllBlogResponse()
                 {
                     Id = p.Id,
                     UserAccountId = p.UserAccountId,
@@ -46,21 +65,50 @@ namespace LibraryManagement.Application.Services
                     PostedDate = p.PostedDate,
                     TotalComments = p.Comments.Count
                 }).ToListAsync();
-            if (blogList.Count < 1)
+            if (result.Count < 1)
             {
-                return new ApiResult<List<GetAllBlogResponse>>(null)
-                {
-                    Message = "Something went wrong!",
-                    StatusCode = 400
-                };
+                return new PaginatedList<List<GetAllBlogResponse>>(null);
             }
-            return new ApiResult<List<GetAllBlogResponse>>(blogList)
+            return new PaginatedList<List<GetAllBlogResponse>>(result)
             {
-                Message = "",
+                TotalRecord = total.Count,
+                PageNumber = dto.Page,
+                Data = result,
                 StatusCode = 200
             };
         }
 
+        public async Task<ApiResult<List<GetAllBlogResponse>>> GetAllAsync()
+        {
+            var total = await _context.Blogs.Where(r => r.IsDeleted == false).ToListAsync();
+            var blogList = await _context.Blogs
+                .Include(p => p.UserAccount).ThenInclude(p => p.User)
+                .Where(p => p.IsDeleted == false)
+                .OrderByDescending(p => p.CreatedDate)
+                .Select(p => new GetAllBlogResponse()
+                 {
+                    Id = p.Id,
+                    UserAccountId = p.UserAccountId,
+                    Avatar = p.UserAccount.Avatar,
+                    UserName = p.UserAccount.User.Name,
+                    Title = p.Title,
+                    Image = p.Image,
+                    Content = p.Content,
+                    Status = StatusBlogEnums.GetDisplayName((StatusBlog)p.Status),
+                    CreatedDate = p.CreatedDate,
+                    IsDeleted = p.IsDeleted,
+                    PostedDate = p.PostedDate,
+                    TotalComments = p.Comments.Count
+                 }).ToListAsync();
+            if (blogList.Count < 1)
+            {
+                return new ApiResult<List<GetAllBlogResponse>>(null);
+            }
+            return new ApiResult<List<GetAllBlogResponse>>(blogList)
+            {
+                StatusCode = 200
+            };
+        }
         public async Task<ApiResult<List<GetAllBlogByAccountIdResponse>>> GetByUserIdAsync(Guid AccountId)
         {
             var blogList = await _context.Blogs

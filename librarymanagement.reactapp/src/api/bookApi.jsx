@@ -1,7 +1,7 @@
 import API from "./API";
 const bookApi = {
-  GetAll: () => {
-    return API.get("/Books");
+  GetAll: (dto) => {
+    return API.post("/Books/GetBookPagination", dto);
   },
   GetDetailBook: (bookId) => {
     return API.get(`/Books/GetDetail/${bookId}`);

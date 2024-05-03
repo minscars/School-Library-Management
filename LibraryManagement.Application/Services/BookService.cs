@@ -4,6 +4,7 @@ using LibraryManagement.Data.EF;
 using LibraryManagement.Data.Models;
 using LibraryManagement.DTO.Book;
 using LibraryManagement.DTO.Contants;
+using LibraryManagement.DTO.Pagination;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,13 +31,23 @@ namespace LibraryManagement.Application.Services
         }
 
 
-        public async Task<ApiResult<List<GetAllBookResponse>>> GetAllBookAsync()
+        public async Task<PaginatedList<List<GetAllBookResponse>>> GetAllBookAsync(GetPaginationRequest requestDto)
         {
-            var bookList = await _context.Books
+            var total = await _context.Books.Where(r => r.IsDeleted == false).ToListAsync();
+            var bookList = _context.Books
                 .Include(b => b.Category)
                 .Where(b => b.IsDeleted == false)
                 .OrderByDescending(b => b.CreatedTime)
-                .Select(b => new GetAllBookResponse()
+                .AsQueryable();
+            #region Filtering
+            if ((requestDto.Key != 0) && (requestDto.Key != null))
+            {
+                bookList = bookList.Where(r => r.IsDeleted == false && r.CategoryId == requestDto.Key);
+                total = await _context.Books.Where(r => r.IsDeleted == false && r.CategoryId == requestDto.Key).ToListAsync();
+            }
+            #endregion
+            bookList = bookList.Skip((requestDto.Page) * requestDto.Limit).Take(requestDto.Limit);
+            var result = await bookList.Select(b => new GetAllBookResponse()
                 {
                     Id = b.Id,
                     Name = b.Name,
@@ -48,17 +59,19 @@ namespace LibraryManagement.Application.Services
                         Name = a.Author.Name,
                     }).ToList(),
                 }).ToListAsync();
-            if (bookList.Count < 1)
+            if (result.Count < 1)
             {
-                return new ApiResult<List<GetAllBookResponse>>(null)
+                return new PaginatedList<List<GetAllBookResponse>>(null)
                 {
-                    Message = "Something went wrong!",
+                    
                     StatusCode = 400
                 };
             }
-            return new ApiResult<List<GetAllBookResponse>>(bookList)
+            return new PaginatedList<List<GetAllBookResponse>>(result)
             {
-                Message = "",
+                TotalRecord = total.Count,
+                PageNumber = requestDto.Page,
+                Data = result,
                 StatusCode = 200
             };
         }
@@ -76,6 +89,7 @@ namespace LibraryManagement.Application.Services
                     Name = b.Name,
                     CreatedTime = b.CreatedTime,
                     CategoryName = b.Category.Name,
+                    CategoryId = b.Category.Id,
                     Authors = b.BookAuthors.Select(a => new GetAuthorBookDetail
                     {
                         Value = a.Author.Id,
@@ -115,6 +129,30 @@ namespace LibraryManagement.Application.Services
             return new ApiResult<List<GetAuthorBookDetail>>(null)
             {
                 StatusCode = 400
+            };
+        }
+
+        public async Task<ApiResult<bool>> CreateNewAuthorAsync(string authorName)
+        {
+            if (authorName == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    StatusCode = 400
+                };
+            }
+
+            var author = new Author()
+            {
+                Id = SystemConstant.AUTHOR + $"{DateTime.Now:yyyyMMddHHmmss}",
+                Name = authorName
+            };
+            await _context.Authors.AddAsync(author);
+            await _context.SaveChangesAsync();
+            return new ApiResult<bool>(true)
+            {
+                StatusCode = 200,
+                Message = "Create new an author successfully!"
             };
         }
 

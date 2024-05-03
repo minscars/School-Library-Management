@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import React, { useState, useEffect, useRef } from "react";
+import Checkbox from "components/checkbox";
 import {
   MdHome,
   MdImage,
@@ -289,13 +290,12 @@ const Forum = () => {
               >
                 <div className="flex items-center">
                   <div className="ml-4 flex items-center">
-                    <Link>
-                      <p
-                        className={`text-m font-bold text-navy-700 dark:text-white`}
-                      >
-                        {item.topicName}
-                      </p>
-                    </Link>
+                    <p
+                      className={`text-m font-bold text-navy-700 dark:text-white`}
+                    >
+                      {item.topicName}
+                    </p>
+
                     <div className="flex items-center gap-2">
                       <MdOutlineMessage />
                       <p

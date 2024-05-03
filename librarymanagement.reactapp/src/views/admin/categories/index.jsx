@@ -18,7 +18,7 @@ const Index = () => {
   return (
     <div>
       <div className="gap-5 xl:grid-cols-2">
-        <Card extra={"w-full px-6 pb-6"}>
+        <Card extra={"w-full h-[650px] px-6 pb-6"}>
           <div class="relative mb-2 pt-4">
             <div class="flex items-center justify-between text-xl font-bold text-navy-700 dark:text-white">
               <p className="left-0 top-0">Categories List</p>
