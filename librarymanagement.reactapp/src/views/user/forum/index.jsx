@@ -13,15 +13,15 @@ import {
   MdOutlineModeComment,
   MdOutlineMessage,
 } from "react-icons/md";
-import blogApi from "api/blogApi";
+import blogApi from "../../../api/blogApi";
 import userAccountAPI from "api/accountApi";
 import jwt from "jwt-decode";
 import moment from "moment";
 import RichTextEditor from "components/textEditor";
 import { useForm } from "react-hook-form";
 import Alert from "components/alert";
-import { Item } from "@syncfusion/ej2-react-navigations";
 
+import { ToastContainer, toast } from "react-toastify";
 const Forum = () => {
   const [open, setOpen] = useState(false);
   const onOpenModal = () => setOpen(true);
@@ -70,8 +70,7 @@ const Forum = () => {
       setTopicList(data.data);
     };
     getAllTopic();
-    console.log(topicId);
-  }, [open, topicId]);
+  }, [open]);
 
   //const myRef = useRef("");
   const formRef = useRef(null);
@@ -97,10 +96,23 @@ const Forum = () => {
     });
   };
 
-  const getBlogByTopic = async (topic) => {};
-  // let currentDate = new Date();
-  // var formatDate = moment(currentDate.getTime()).format("HH");
-  // console.log(formatDate - 4);
+  const [topicChoose, setTopicChoose] = useState("");
+  const getBlogByTopic = async () => {
+    if (topicChoose !== "") {
+      await blogApi.GetBlogByTopic(topicChoose).then((res) => {
+        if (res?.statusCode === 200) {
+          setPosts(res.data);
+        } else {
+          toast.error("Blog is empty!");
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    getBlogByTopic();
+  }, [topicChoose]);
+  console.log(topicChoose);
   return (
     <div>
       <div className="grid h-full grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
@@ -243,6 +255,11 @@ const Forum = () => {
             </div>
           </Modal>
           <Card extra={"w-full p-3 mt-2 block h-[550px] overflow-y-scroll"}>
+            {postList === null && (
+              <div className="flex flex-col items-center justify-center">
+                <p className="mt-20 text-xl text-gray-700">Forum is empty!</p>
+              </div>
+            )}
             {postList?.map((row) => (
               <Link to={`/user/forum/detail/${row.id}`}>
                 <Post key={row.id} data={row} />
@@ -285,19 +302,22 @@ const Forum = () => {
           <Card extra={"w-full p-4  mt-2 block h-[350px] overflow-y-scroll"}>
             {topicList?.map((item) => (
               <div
-                key={item.id}
-                className={` mb-2 mt-2 flex w-full items-center rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+                key={item.topicId}
+                className={`${
+                  item.topicId === topicChoose ? "bg-gray-100" : ""
+                } mb-2 mt-2 flex w-full items-center rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
               >
-                <div className="flex items-center">
-                  <div className="ml-4 flex items-center">
+                <div className="flex items-center p-2">
+                  <div className="flex items-center">
                     <p
-                      className={`text-m font-bold text-navy-700 dark:text-white`}
+                      onClick={() => setTopicChoose(item.topicId)}
+                      className={`text-[16px] font-bold text-navy-700 hover:cursor-pointer dark:text-white`}
                     >
                       {item.topicName}
                     </p>
 
                     <div className="flex items-center gap-2">
-                      <MdOutlineMessage />
+                      <MdOutlineMessage className="ml-4" />
                       <p
                         className={`text-sm font-medium text-navy-700 dark:text-white`}
                       >
@@ -311,6 +331,7 @@ const Forum = () => {
           </Card>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -24,7 +24,7 @@ export default function HorizontalLinearStepper(props) {
       status = 5; //returned
     }
 
-    if (status !== 0) {
+    if (status !== 0 && status !== 4) {
       // thêm xác nhận
       Swal.fire({
         title: "Are you sure?",
@@ -57,7 +57,23 @@ export default function HorizontalLinearStepper(props) {
       // props.setTrigger();
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
+    if (status === 4) {
+      Swal.fire({
+        title: "Are you sure?",
+        input: "text",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+        }
+      });
+    }
   };
+
   useEffect(() => {
     if (props?.data?.status === "Pending") {
       setActiveStep(1);

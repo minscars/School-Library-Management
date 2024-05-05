@@ -113,7 +113,7 @@ const History = (props) => {
       });
     }
   };
-  console.log(requestList);
+
   return (
     <div>
       <div className="gap-5 xl:grid-cols-2">

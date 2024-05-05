@@ -177,38 +177,45 @@ namespace LibraryManagement.Application.Services
         //        };
         //    }
 
-        //    public async Task<ApiResult<bool>> CreateAsync(CreateBookDTO request)
-        //    {
-        //        if (request == null)
-        //        {
-        //            return new ApiResult<bool>(false)
-        //            {
-        //                Message = "Something went wrong!",
-        //                StatusCode = 400
-        //            };
-        //        }
+        public async Task<ApiResult<bool>> CreateAsync(CreateBookDTO request)
+        {
+            if (request == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = "Something went wrong!",
+                    StatusCode = 400
+                };
+            }
 
-        //        var imageName = await _fileServivce.UploadFileAsync(request.Image, SystemConstant.IMG_BOOKS_FOLDER);
+            var book = new Book()
+            {
+                Id = new Guid().ToString(),
+                Name = request.Name,
+                CategoryId = request.CategoryId,
+                CreatedTime = DateTime.Now,
+            };
+            await _context.Books.AddAsync(book);
+            await _context.SaveChangesAsync();
 
-        //        var book = new Book()
-        //        {
-        //            Name = request.Name,
-        //            Image = imageName,
-        //            CategoryId = request.CategoryId,
-        //            CreatedTime = DateTime.Now,
-        //            Quantity_Import = request.Quantity_Import,
-        //            Description = request.Description,
+            foreach (var item in request.ListAuthors)
+            {
+                var bookAuthorDetail = new BookAuthor()
+                {
+                    AuthorId = item.Value,
+                    BookId = book.Id,
+                };
+                await _context.BookAuthors.AddAsync(bookAuthorDetail);
+            }
 
-        //        };
-        //        await _context.Books.AddAsync(book);
-        //        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-        //        return new ApiResult<bool>(true)
-        //        {
-        //            Message = "Create new book successfully!",
-        //            StatusCode = 200
-        //        };
-        //    }
+            return new ApiResult<bool>(true)
+            {
+                Message = "Create new book successfully!",
+                StatusCode = 200
+            };
+        }
 
         //    public async Task<ApiResult<bool>> DeleteAsync(int Id)
         //    {
@@ -241,6 +248,12 @@ namespace LibraryManagement.Application.Services
                 };
             }
 
+            var bookAuthor = await _context.BookAuthors
+                .Where(b => b.BookId == request.Id)
+                .ToListAsync();
+            _context.RemoveRange(bookAuthor);
+            await _context.SaveChangesAsync();
+
             var book = await _context.Books.Where(b => b.IsDeleted == false && b.Id == request.Id).FirstOrDefaultAsync();
             if (book == null)
             {
@@ -254,6 +267,16 @@ namespace LibraryManagement.Application.Services
             book.Name = request.Name;
             book.CategoryId = request.CategoryId;
             book.UpdatedTime = DateTime.Now;
+
+            foreach( var item in request.ListAuthors )
+            {
+                var bookAuthorDetail = new BookAuthor()
+                {
+                    AuthorId = item.Value,
+                    BookId = request.Id,
+                };
+                await _context.BookAuthors.AddAsync(bookAuthorDetail);
+            }
 
             await _context.SaveChangesAsync();
             return new ApiResult<bool>(true)

@@ -30,7 +30,7 @@ namespace LibraryManagement.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateBookAsync([FromForm]EditBookDTO request)
+        public async Task<IActionResult> UpdateBookAsync([FromBody]EditBookDTO request)
         {
             var result = await _bookService.EditAsync(request);
             return Ok(result);
@@ -54,6 +54,13 @@ namespace LibraryManagement.API.Controllers
         public async Task<IActionResult> CreateNewAuthorAsync([FromBody]string authorName)
         {
             var result = await _bookService.CreateNewAuthorAsync(authorName);
+            return Ok(result);
+        }
+
+        [HttpPost("CreateNewBook")]
+        public async Task<IActionResult> CreateNewBookAsync([FromBody]CreateBookDTO request)
+        {
+            var result = await _bookService.CreateAsync(request);
             return Ok(result);
         }
     }

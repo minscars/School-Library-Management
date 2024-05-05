@@ -36,8 +36,4 @@
     <ProjectReference Include="..\LibraryManagement.Data\LibraryManagement.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
-
 </Project>

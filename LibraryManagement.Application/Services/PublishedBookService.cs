@@ -64,7 +64,6 @@ namespace LibraryManagement.Application.Services
             #endregion
 
             bookList = bookList.Skip((requestDto.Page) * requestDto.Limit).Take(requestDto.Limit);
-
             var result = await bookList.Select(b => new GetAllPublishedBookResponse()
             {
                     Id = b.Id,
@@ -87,7 +86,7 @@ namespace LibraryManagement.Application.Services
                         Id = a.Author.Id,
                         Name = a.Author.Name,
                     }).ToList(),
-                    
+                    Available =  b.BookDetails.Where(p => p.IsAvailable == true).ToList().Count,
             }).ToListAsync();
 
             if (result.Count < 1)

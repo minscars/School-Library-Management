@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import bookApi from "../../../api/bookApi";
 import moment from "moment";
 import Pagination from "components/pagination";
+import TooltipHorizon from "components/tooltip";
 const Index = () => {
   const [booksList, setBooks] = useState([]);
   const [page, setPage] = useState(0);
@@ -118,9 +119,21 @@ const Index = () => {
                       </p>
                     </td>
                     <td className="flex items-center justify-center pb-[9px] pt-[9px] sm:text-[15px]">
-                      <Link to={`./edit/${row.id}`}>
-                        <MdModeEditOutline className="rounded-full text-xl" />
-                      </Link>
+                      <TooltipHorizon
+                        trigger={
+                          <button>
+                            <Link to={`./edit/${row.id}`}>
+                              <MdModeEditOutline className="rounded-full text-xl" />
+                            </Link>
+                          </button>
+                        }
+                        content={
+                          <p className="font-bold text-customcolor-500">
+                            Update
+                          </p>
+                        }
+                        placement="right"
+                      />
                     </td>
                   </tr>
                 ))}

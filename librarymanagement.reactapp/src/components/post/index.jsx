@@ -3,7 +3,7 @@ import Link from "@mui/material/Link";
 import { MdOutlineModeComment } from "react-icons/md";
 import moment from "moment";
 const post = ({ data }) => {
-  console.log(data);
+  
   return (
     <div
       className={`mb-1 mt-1 flex w-full items-center justify-between rounded-[2px] rounded-[5px] border-2 bg-white p-3 shadow-3xl shadow-shadow-500 hover:bg-gray-300 dark:!bg-navy-700 dark:shadow-none`}

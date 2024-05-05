@@ -25,6 +25,9 @@ const postApi = {
   GetAllTopic: () => {
     return API.get("/Topics");
   },
+  GetBlogByTopic: (topicId) => {
+    return API.get(`/Blogs/GetBlogByTopic/${topicId}`);
+  },
 };
 
 export default postApi;

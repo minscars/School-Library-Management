@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-
+import { ToastContainer, toast } from "react-toastify";
 import AuthLayout from "layouts/auth";
 import AdminLayout from "layouts/admin";
 import UserLayout from "layouts/user";

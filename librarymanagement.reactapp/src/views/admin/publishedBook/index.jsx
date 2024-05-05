@@ -117,12 +117,7 @@ const Index = () => {
                   </th>
                   <th className="border-b border-gray-200 pb-[10px] pr-[40px] text-start dark:!border-navy-700">
                     <p className="text-xs tracking-wide text-gray-600">
-                      ON HAND
-                    </p>
-                  </th>
-                  <th className="border-b border-gray-200 pb-[10px] pr-[40px] text-start dark:!border-navy-700">
-                    <p className="text-xs tracking-wide text-gray-600">
-                      BORROWED
+                      AVAILABLE
                     </p>
                   </th>
                   <th className="border-b border-gray-200 pb-[10px] pr-[40px] text-start dark:!border-navy-700">
@@ -164,14 +159,9 @@ const Index = () => {
                     <td className="pb-[18px] pt-[14px] sm:text-[15px]">
                       <div className="w-[40px]">
                         <p className="ml-5 text-justify text-sm font-bold text-navy-700 dark:text-white">
-                          {row.quantity_On_Hand}
+                          {row.available}
                         </p>
                       </div>
-                    </td>
-                    <td className="pb-[18px] pt-[14px] sm:text-[15px]">
-                      <p className="ml-8 text-justify text-sm font-bold text-navy-700 dark:text-white">
-                        {row.quantity_Borrowed}
-                      </p>
                     </td>
                     <td className="flex items-center gap-2 pb-[18px] pt-[14px] sm:text-[14px]">
                       <Link to={`./edit/${row.id}`}>
