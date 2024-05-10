@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import jwt from "jwt-decode";
-import Alert from "components/alert";
+import Alert from "../../../components/alert";
 import Swal from "sweetalert2";
 import userAPI from "api/userApi";
 import accountApi from "api/accountApi";
 import image1 from "assets/img/profile/image1.png";
+
 const FreeCard = () => {
   const navigate = useNavigate();
   const userLogin = jwt(window.localStorage.getItem("token"));
@@ -17,7 +18,6 @@ const FreeCard = () => {
     };
     getUser();
   }, []);
-
   const handleLogout = async () => {
     Swal.fire({
       title: "Are you sure?",
@@ -30,8 +30,10 @@ const FreeCard = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         window.localStorage.removeItem("token");
-        Alert.showSuccessAlert("You have been log-outed sucessfully!");
-        navigate(`/auth/sign-in`);
+        Alert.showSuccessAlert(
+          "You have been log-outed sucessfully!",
+          navigate(`/auth/sign-in`)
+        );
       }
     });
   };

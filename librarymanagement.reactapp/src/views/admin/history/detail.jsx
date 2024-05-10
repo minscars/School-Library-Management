@@ -2,16 +2,23 @@ import Card from "components/card";
 import bookRequestApi from "api/bookRequest";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import "react-toastify/dist/ReactToastify.css";
 import banner from "assets/img/profile/banner.png";
 import moment from "moment";
-import Alert from "components/alert";
-import Swal from "sweetalert2";
+import Button from "@mui/material/Button";
 import HorizontalNonLinearStepper from "./components/stepper";
 function Detail() {
   const [bookRequest, setBookRequest] = useState([]);
   const { id } = useParams();
   const [trigger, setTrigger] = useState();
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
   useEffect(() => {
     const getbyid = async () => {
       const data = await bookRequestApi.GetDetail(id);
@@ -20,34 +27,33 @@ function Detail() {
     getbyid();
   }, [trigger]);
 
-  const handleUpdateStatus = async (status) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You should recheck the user information before update status!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, I checked it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        var bookRequestId = bookRequest.id;
-        const request = { bookRequestId, status };
+  const checkExpired = async () => {
+    try {
+      if (
+        moment().isAfter(
+          moment(bookRequest.dueTime, "YYYY-MM-DDTHH:mm:ss.SSSZ")
+        ) &&
+        (bookRequest.status === "Approve" ||
+          bookRequest.status === "Borrowing" ||
+          bookRequest.status === "Cancel")
+      ) {
+        var bookRequestId = id;
+        const request = { bookRequestId };
+        request.status = 6;
         request.bookDetailId = bookRequest.bookDetailId;
         request.publishedBookId = bookRequest.publishedBookId;
-        await bookRequestApi.UpdateStatus(request).then(async (res) => {
-          console.log(request);
-          if (res.statusCode === 200) {
-            Alert.showSuccessAlert("Update status sucessfully!");
-            const data = await bookRequestApi.GetDetail(id);
-            setBookRequest(data);
-          } else {
-            Alert.showErrorAlert("Something went worong!");
-          }
-        });
+
+        const res = await bookRequestApi.UpdateStatus(request);
       }
-    });
+    } catch (error) {
+      console.error("Error in checkExpired:", error);
+      // Handle error, show an alert or update state accordingly
+    }
   };
+
+  useEffect(() => {
+    checkExpired();
+  }, [bookRequest]);
 
   return (
     <div className="mt-3 grid h-fit grid-cols-1 gap-5 ">
@@ -64,7 +70,8 @@ function Detail() {
               ) &&
                 (bookRequest.status === "Approve" ||
                   bookRequest.status === "Borrowing" ||
-                  bookRequest.status === "Cancel") && (
+                  bookRequest.status === "Cancel" ||
+                  bookRequest.status === "Rejected") && (
                   <span className="ml-2 text-red-500">(Expired)</span>
                 )}
             </h4>
@@ -158,19 +165,21 @@ function Detail() {
               </Card>
             </div>
           </div>
-          {bookRequest?.status !== "Cancel" ? (
-            <div>
-              <p className="mb-6 mt-6 font-medium text-blue-700 dark:text-white">
-                <b>Confirm request</b>
-              </p>
+          {bookRequest?.status !== "Cancel" &&
+            bookRequest?.status !== "Rejected" && (
               <div>
-                <HorizontalNonLinearStepper
-                  setTrigger={setTrigger}
-                  data={bookRequest}
-                />
+                <p className="mb-6 mt-6 font-medium text-blue-700 dark:text-white">
+                  <b>Confirm request</b>
+                </p>
+                <div>
+                  <HorizontalNonLinearStepper
+                    setTrigger={setTrigger}
+                    data={bookRequest}
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
+            )}
+          {bookRequest?.status === "Cancel" && (
             <div>
               <p className="mb-6 mt-6 text-[16px] font-normal text-blue-700 dark:text-white">
                 <b>*Note: </b>
@@ -185,8 +194,26 @@ function Detail() {
               </p>
             </div>
           )}
+
+          {bookRequest?.status === "Rejected" && (
+            <div>
+              <p className="mb-6 mt-6 text-[16px] font-normal text-blue-700 dark:text-white">
+                <b>*Note: </b>
+                <span className="text-red-700">
+                  {" "}
+                  This request has been rejected at{" "}
+                  {moment(bookRequest?.rejectedTime).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}{" "}
+                  because {bookRequest?.userName} does not take this book on
+                  time!
+                </span>
+              </p>
+            </div>
+          )}
         </Card>
       </div>
+      <div></div>
     </div>
   );
 }

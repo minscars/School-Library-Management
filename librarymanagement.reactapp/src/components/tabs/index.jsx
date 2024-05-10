@@ -18,6 +18,8 @@ import Alert from "components/alert";
 import Swal from "sweetalert2";
 import bookRequestApi from "api/bookRequest";
 import { ToastContainer, toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
 function CustomTabPanel(props) {
   const { children, value, index, setTrigger, ...other } = props;
 
@@ -94,28 +96,36 @@ export default function BasicTabs(props) {
   }, []);
 
   const formRef = useRef(null);
-
-  const addFeedBack = async (content) => {
-    const formData = new FormData();
-    formData.append("Content", content.content);
-    formData.append("UserAccountId", userLogin.id);
-    formData.append("PublishedBookId", id);
-    formData.append("Rate", value);
-    await feedBackApi.AddFeedBack(formData).then(async (res) => {
-      if (res?.statusCode === 200) {
-        console.log(res);
-        Alert.showSuccessAlert(res?.message);
-      }
-      if (res?.statusCode === 400) {
-        Alert.showErrorAlert(res?.message);
-      } else {
-        toast.error("You have to fill the content!");
-      }
-      if (formRef.current) {
-        formRef.current.reset();
-      }
-      reset();
-    });
+  const [content, setContent] = useState("");
+  const [openLoader, setOpenLoader] = useState(false);
+  const addFeedBack = async () => {
+    var dto = { content };
+    dto.userAccountId = userLogin.id;
+    dto.publishedBookId = id;
+    dto.rate = value;
+    if (content === "" || value === null) {
+      toast.error("You have to fill the content!");
+    } else {
+      setOpenLoader(true);
+      await feedBackApi.AddFeedBack(dto).then(async (res) => {
+        if (res?.statusCode === 200) {
+          setTimeout(() => {
+            setOpenLoader(false);
+            toast.success(res?.message);
+          }, 1500);
+        }
+        if (res?.statusCode === 400) {
+          setTimeout(() => {
+            setOpenLoader(false);
+            toast.error(res?.message);
+          }, 1500);
+        }
+        if (formRef.current) {
+          formRef.current.reset();
+        }
+        reset();
+      });
+    }
     const data = await feedBackApi.GetFeedBack(id);
     setfeedBackList(data.data);
   };
@@ -135,12 +145,19 @@ export default function BasicTabs(props) {
       confirmButtonText: "Yes, I checked it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setOpenLoader(true);
         await bookRequestApi.CreateNewBookRequest(dto).then(async (res) => {
           if (res.statusCode === 200) {
-            Alert.showSuccessAlert(res.message);
-            navigate(`/user/history`);
+            setTimeout(() => {
+              setOpenLoader(false);
+              Alert.showSuccessAlert(res.message);
+              navigate(`/user/history`);
+            }, 2000);
           } else {
-            Alert.showErrorAlert(res.message);
+            setTimeout(() => {
+              setOpenLoader(false);
+              Alert.showErrorAlert(res.message);
+            }, 2000);
           }
         });
       }
@@ -159,6 +176,12 @@ export default function BasicTabs(props) {
           <Tab label="Feedbacks" {...a11yProps(1)} />
         </Tabs>
       </Box>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <CustomTabPanel value={valueX} index={0}>
         <table className="w-full">
           <thead>
@@ -244,7 +267,8 @@ export default function BasicTabs(props) {
                     className="autofocus placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 focus:border-1 linear mb-2 mr-3 mt-2 w-full resize-none rounded-[10px] rounded-[7px] bg-lightPrimary px-3 px-4 py-2 py-2.5 font-sans text-sm font-medium font-normal outline-0 transition transition-all duration-200 hover:bg-gray-100 focus:outline-0 active:bg-gray-200 disabled:resize-none disabled:border-0 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
                     type="text"
                     placeholder="Let's share about this book!"
-                    {...register("content")}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                   />
                 </div>
                 <div className="row mb-2 ml-[65px] flex items-center justify-between">
@@ -344,6 +368,7 @@ export default function BasicTabs(props) {
           </div>
         </div>
       </CustomTabPanel>
+      <ToastContainer />
     </Box>
   );
 }

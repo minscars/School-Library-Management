@@ -13,9 +13,11 @@ namespace LibraryManagement.Application.Services
     public class BookRequestService : IBookRequestService
     {
         private readonly LibraryManagementDbContext _context;
-        public BookRequestService(LibraryManagementDbContext context)
+        private readonly IEmailService _emailService;
+        public BookRequestService(LibraryManagementDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
         public async Task<PaginatedList<List<GetAllBookReuqestResponse>>> GetAllBookRequestAsync(GetPaginationRequest requestDto)
         {
@@ -24,6 +26,7 @@ namespace LibraryManagement.Application.Services
                 .Include(r => r.BookDetail)
                 .Include(r => r.UserAccount).ThenInclude(r => r.User)
                 .Where(r => r.IsDeleted == false)
+                .OrderByDescending(p => p.CreatedTime)
                 .AsQueryable();
             #region Filtering
             if (!string.IsNullOrEmpty(requestDto.Search))
@@ -59,6 +62,7 @@ namespace LibraryManagement.Application.Services
                     DueTime = r.DueTime,
                     ReturnedTime = r.ReturnedTime,
                     CanceledTime = r.CanceledTime,
+                    IsExtended = r.IsExtended,
                 }).ToListAsync();
 
             if (result.Count < 1)
@@ -80,17 +84,19 @@ namespace LibraryManagement.Application.Services
                 .Include(r => r.BookDetail)
                 .Include(r => r.UserAccount).ThenInclude(r => r.User)
                 .Where(r => r.IsDeleted == false && r.UserAccountId.ToString() == dto.UserId)
+                .OrderByDescending(p => p.CreatedTime)
                 .AsQueryable();
 
             requestList = requestList.Skip((dto.Page) * dto.Limit).Take(dto.Limit);
-            var result = await requestList.OrderByDescending(p => p.CreatedTime).Select(r => new GetBookRequestByAccountUserResponse()
+            var result = await requestList.OrderByDescending(p => p.CreatedTime)
+                .Select(r => new GetBookRequestByAccountUserResponse()
                  {
                      Id = r.Id,
                      Code = r.Code,
                     UserAccountId = r.UserAccountId.ToString(),
                     UserName = r.UserAccount.User.Name,
-                PublishedBookId = r.BookDetail.PublishedBookId,
-                PublishedBookName = r.BookDetail.PublishedBook.Book.Name,
+                    PublishedBookId = r.BookDetail.PublishedBookId,
+                    PublishedBookName = r.BookDetail.PublishedBook.Book.Name,
                     PublishedBookImage = r.BookDetail.PublishedBook.Image,
                     BookDetailId = r.BookDetailId,
                     BookDetailCode = r.BookDetail.Code,
@@ -101,10 +107,12 @@ namespace LibraryManagement.Application.Services
                     ReceivedTime = r.ReceivedTime,
                     BorrowedTime = r.BorrowedTime,
                     DueTime = r.DueTime,
+                    IsExtended = r.IsExtended,
+                    
                     ReturnedTime = r.ReturnedTime,
                     CanceledTime = r.CanceledTime,
                     ExtendedTime = r.ExtendedTime
-            }).ToListAsync();
+                }).ToListAsync();
             var total = await _context.BookRequests.Where(r => r.IsDeleted == false && r.UserAccountId.ToString() == dto.UserId).ToListAsync();
             if (result.Count < 1)
             {
@@ -131,7 +139,7 @@ namespace LibraryManagement.Application.Services
                     UserAccountId = r.UserAccountId.ToString(),
                     UserAvatar = r.UserAccount.Avatar,
                     UserName = r.UserAccount.User.Name,
-                    UserEmail = r.UserAccount.Email,
+                    UserEmail = r.UserAccount.UserName,
                     UserCode = r.UserAccount.User.UserCode,
                     UserAddress = r.UserAccount.User.Address,
                     UserPhone = r.UserAccount.User.PhoneNumber,
@@ -148,6 +156,8 @@ namespace LibraryManagement.Application.Services
                     ApprovedTime = r.ApprovedTime,
                     ReceivedTime = r.ReceivedTime,
                     BorrowedTime = r.BorrowedTime,
+                    ExtendedTime = r.ExtendedTime,
+                    IsExtended = r.IsExtended,
                     DueTime = r.DueTime,
                     ReturnedTime = r.ReturnedTime,
                     CanceledTime = r.CanceledTime,
@@ -174,13 +184,15 @@ namespace LibraryManagement.Application.Services
         public async Task<ApiResult<string>> CreateBookRequestAsync(CreateBookRequestRequest dto)
         {
             var checkExit = await _context.BookRequests
+                .Include(br => br.BookDetail).ThenInclude(p => p.PublishedBook)
                 .Where(br => br.UserAccountId.ToString() == dto.UserAccountId).ToListAsync();
+            var bookDetail = await _context.BookDetails.Where(b => b.Id == dto.BookDetailId).FirstOrDefaultAsync();
             foreach (var br in checkExit)
             {
                 if(((Status)br.Status == StatusEnums.Status.Pending || 
                     (Status)br.Status == StatusEnums.Status.Borrowing ||
                     (Status)br.Status == StatusEnums.Status.Approve)
-                    && dto.BookDetailId==br.BookDetailId)
+                    && bookDetail.PublishedBookId== br.BookDetail.PublishedBook.Id)
                 {
                     return new ApiResult<string>("false")
                     {
@@ -198,12 +210,70 @@ namespace LibraryManagement.Application.Services
                 Status = (int)StatusEnums.Status.Pending,
                 CreatedTime = DateTime.Now,
             };
-            var bookOPenRequest = await _context.BookDetails
-                .Where(bd => bd.Id == dto.BookDetailId)
-                .FirstOrDefaultAsync();
-            bookOPenRequest.Status = (int)StatusEnums.Status.Pending;
+            bookDetail.Status = (int)StatusEnums.Status.Pending;
+            bookDetail.IsAvailable = false;
+
             await _context.BookRequests.AddAsync(newBookRequest);
             await _context.SaveChangesAsync();
+            await _emailService.SendEmailAsync(newBookRequest.Id);
+
+            return new ApiResult<string>(newBookRequest.Id)
+            {
+                Message = "Create a request successfully!",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<string>> CreateBookRequestAsync(AdminCreateBookRequets dto)
+        {
+            var checkExit = await _context.BookRequests
+                .Include(u => u.UserAccount).ThenInclude(u => u.User)
+                .Include(br => br.BookDetail).ThenInclude(p => p.PublishedBook)
+                .Where(br => br.UserAccount.User.UserCode == dto.UserCode).ToListAsync();
+            if (checkExit.Count < 0)
+            {
+                return new ApiResult<string>("false")
+                {
+                    Message = "Something went wrong!",
+                    StatusCode = 400
+                };
+            }
+            var bookDetail = await _context.BookDetails.Where(b => b.Code == dto.BookDetailCode).FirstOrDefaultAsync();
+            foreach (var br in checkExit)
+            {
+                if (((Status)br.Status == StatusEnums.Status.Pending ||
+                    (Status)br.Status == StatusEnums.Status.Borrowing ||
+                    (Status)br.Status == StatusEnums.Status.Approve)
+                    && bookDetail.PublishedBookId == br.BookDetail.PublishedBook.Id)
+                {
+                    return new ApiResult<string>("false")
+                    {
+                        Message = "Reader has been had a request with this book!",
+                        StatusCode = 400
+                    };
+                }
+            }
+            var userAccount = await _context.UserAccounts.Where(u => u.User.UserCode == dto.UserCode).FirstOrDefaultAsync();
+            var newBookRequest = new BookRequest()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Code = SystemConstant.BOOKREQUEST_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
+                BookDetailId = bookDetail.Id,
+                UserAccountId = userAccount.Id,
+                Status = (int)StatusEnums.Status.Borrowing,
+                CreatedTime = DateTime.UtcNow,
+                BorrowedTime = DateTime.Now,
+                ReceivedTime = DateTime.Now,
+                DueTime = DateTime.Now.AddDays(14)
+        };
+            bookDetail.Status = (int)StatusEnums.Status.Borrowing;
+            bookDetail.DueTime = DateTime.Now.AddDays(14);
+            bookDetail.IsAvailable = false;
+
+            await _context.BookRequests.AddAsync(newBookRequest);
+            await _context.SaveChangesAsync();
+            await _emailService.SendEmailAsync(newBookRequest.Id);
+
             return new ApiResult<string>(newBookRequest.Id)
             {
                 Message = "Create a request successfully!",
@@ -236,35 +306,61 @@ namespace LibraryManagement.Application.Services
                     bookDetail.Status = (int)Status.Approve;
                     check.ApprovedTime = DateTime.Now;
                     check.DueTime = DateTime.Now.AddDays(1);
-                    check.Note = requestDto.Note;
+                    await _context.SaveChangesAsync();
+                    await _emailService.SendEmailAsync(check.Id);
                     break;
 
                 case Status.Borrowing:
-                    check.Status = (int)Status.Borrowing; //borrow
-                    bookDetail.Status = (int)Status.Borrowing;
-                    check.ReceivedTime = DateTime.Now;
-                    check.BorrowedTime = DateTime.Now;
-                    check.DueTime = DateTime.Now.AddDays(14);
-                    bookDetail.DueTime = DateTime.Now.AddDays(14);
-                    check.Note = requestDto.Note;
+                    if(requestDto.BookTaked != bookDetail.Code)
+                    {
+                        return new ApiResult<bool>(false)
+                        {
+                            Message = $"You must take the book have the Code {bookDetail.Code}",
+                            StatusCode = 400
+                        };
+                    }
+                    else
+                    {
+
+                        check.Status = (int)Status.Borrowing; //borrow
+                        bookDetail.Status = (int)Status.Borrowing;
+                        check.ReceivedTime = DateTime.Now;
+                        check.BorrowedTime = DateTime.Now;
+                        check.DueTime = DateTime.Now.AddDays(14);
+                        bookDetail.DueTime = DateTime.Now.AddDays(14);
+                        await _context.SaveChangesAsync();
+                        await _emailService.SendEmailAsync(check.Id);
+                    }
                     break;
 
                 case Status.Returned:
-                    check.Status = (int)Status.Returned; //return
-                    bookDetail.Status = (int)Status.Available;
-                    var publishedBook = await _context.PublishedBooks
-                        .Where(p => p.Id == requestDto.PublishedBookId)
-                        .FirstOrDefaultAsync();
-                    publishedBook.Checkout_visit += 1;
-                    check.ReturnedTime = DateTime.Now;
-                    bookDetail.IsAvailable = true;
+                    if (requestDto.BookTaked != bookDetail.Code)
+                    {
+                        return new ApiResult<bool>(false)
+                        {
+                            Message = $"You must return the book have the Code {bookDetail.Code}",
+                            StatusCode = 400
+                        };
+                    }
+                    else
+                    {
+                        check.Status = (int)Status.Returned; //return
+                        bookDetail.Status = (int)Status.Available;
+                        var publishedBook = await _context.PublishedBooks
+                            .Where(p => p.Id == requestDto.PublishedBookId)
+                            .FirstOrDefaultAsync();
+                        publishedBook.Checkout_visit += 1;
+                        check.ReturnedTime = DateTime.Now;
+                        bookDetail.IsAvailable = true;
+                    }
                     break;
 
                 case Status.Rejected:
                     check.Status = (int)Status.Rejected;
                     bookDetail.Status = (int)Status.Available;
                     check.RejectedTime = DateTime.Now;
-                    check.Note = requestDto.Note;
+                    await _context.SaveChangesAsync();
+                    await _emailService.SendEmailAsync(check.Id);
                     break;
 
                 case Status.Cancel:
@@ -276,7 +372,11 @@ namespace LibraryManagement.Application.Services
                 case Status.Extend:
                     check.ExtendedTime = DateTime.Now;
                     check.DueTime = check.DueTime.Value.AddDays(7);
+                    check.IsExtended = true;
                     bookDetail.DueTime = bookDetail.DueTime.Value.AddDays(7);
+                    await _context.SaveChangesAsync();
+                    await _emailService.SendEmailExtendAsync(check.Id);
+                    await _emailService.SendEmailExtendAdminAsync(check.Id);
                     break;
 
             }

@@ -12,6 +12,8 @@ import moment from "moment";
 import Alert from "components/alert";
 import Swal from "sweetalert2";
 import blogApi from "api/blogApi";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
 export default function VerticalLinearStepper(props) {
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -26,7 +28,7 @@ export default function VerticalLinearStepper(props) {
   const handleReset = () => {
     setActiveStep(0);
   };
-
+  const [open, setOpen] = useState(false);
   const handleUpdateStatus = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -42,16 +44,24 @@ export default function VerticalLinearStepper(props) {
         var status = 2;
         var dto = { blogId, status };
         console.log(dto);
+        setOpen(true);
         await blogApi.UpdateStatusBlog(dto).then(async (res) => {
           if (res.statusCode === 200) {
-            props
-              .setTrigger(Math.random() + 1)
-              ?.toString(36)
-              .substring(7);
-            Alert.showSuccessAlert("Update status sucessfully!");
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            setTimeout(() => {
+              setOpen(false);
+              props
+                .setTrigger(Math.random() + 1)
+                ?.toString(36)
+                .substring(7);
+              Alert.showSuccessAlert("Update status sucessfully!");
+              setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            }, 1800);
           } else {
-            Alert.showErrorAlert("Something went worong!");
+            setTimeout(() => {
+              setOpen(false);
+
+              Alert.showErrorAlert("Something went worong!");
+            }, 1800);
           }
         });
       }
@@ -68,6 +78,12 @@ export default function VerticalLinearStepper(props) {
 
   return (
     <Box sx={{ maxWidth: 400 }}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step>
           <StepLabel

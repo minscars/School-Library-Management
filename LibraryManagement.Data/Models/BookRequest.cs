@@ -25,6 +25,7 @@ namespace LibraryManagement.Data.Models
         public DateTime? ExtendedTime { get; set; }
         public bool IsDeleted { get; set; }
         public string? Note {  get; set; }
+        public bool IsExtended { get; set; }
         public virtual BookDetail BookDetail { get; set; }
         public virtual UserAccount UserAccount { get; set; }
     }

@@ -4,29 +4,67 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import cateApi from "../../../api/categoryAPI";
 import moment from "moment";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
+import { Modal } from "react-responsive-modal";
+import { toast, ToastContainer } from "react-toastify";
 const Index = () => {
   const [catesList, setCates] = useState([]);
-
+  const [openLoader, setOpenLoader] = useState(false);
+  const [open, setOpen] = useState(false);
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => {
+    setOpen(false);
+    setCateName("");
+  };
+  const [name, setCateName] = useState("");
+  const [trigger, setTrigger] = useState();
   useEffect(() => {
     const getall = async () => {
       const data = await cateApi.GetAll();
       setCates(data);
     };
     getall();
-  }, []);
-
+  }, [trigger]);
+  const createNewCate = async () => {
+    setOpen(true);
+    await cateApi.Create(name).then((response) => {
+      if (response.statusCode === 200) {
+        setTimeout(() => {
+          setTrigger(Math.random() + 1)
+            ?.toString(36)
+            .substring(7);
+          setOpen(false);
+          toast.success(response?.message);
+        }, 2200);
+      } else {
+        setTimeout(() => {
+          setOpen(false);
+          toast.error(response?.message);
+        }, 2200);
+      }
+    });
+  };
   return (
     <div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <ToastContainer />
       <div className="gap-5 xl:grid-cols-2">
         <Card extra={"w-full h-[650px] px-6 pb-6"}>
           <div class="relative mb-2 pt-4">
             <div class="flex items-center justify-between text-xl font-bold text-navy-700 dark:text-white">
               <p className="left-0 top-0">Categories List</p>
-              <Link to="/admin/categories/create">
-                <button class="linear right-0 rounded-[20px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90">
-                  + New category
-                </button>
-              </Link>
+              <button
+                onClick={onOpenModal}
+                class="linear right-0 rounded-[5px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
+              >
+                + New category
+              </button>
             </div>
           </div>
           <div className="table-wrp mt-2 block h-[600px] overflow-y-scroll">
@@ -105,6 +143,47 @@ const Index = () => {
             </table>
           </div>
         </Card>
+        <Modal
+          open={open}
+          onClose={onCloseModal}
+          center
+          classNames={{
+            modal:
+              "rounded-[10px] bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none",
+          }}
+        >
+          <div className="h-fit w-[600px]">
+            <div className="flex justify-center">
+              <span className="text-xl font-bold text-navy-700 dark:text-white">
+                Create new category
+              </span>
+            </div>
+            <div class="mb-[10px] mt-2 h-px bg-gray-300 dark:bg-white/30" />
+            <div>
+              {/* <div className="mt-4"> */}
+              <div className="mb-2">
+                <label class="text-m text-gray-600 dark:text-white">
+                  Category name
+                </label>
+                <input
+                  className={`mt-2 h-12 w-full justify-center border border-gray-400 bg-white/0 p-3 text-sm outline-none`}
+                  autoFocus
+                  value={name}
+                  onChange={(e) => setCateName(e.target.value)}
+                  placeholder="Enter book code"
+                  type="text"
+                />
+              </div>
+              <button
+                onClick={createNewCate}
+                className="linear mt-[60px] flex w-full items-center justify-center rounded-[10px] bg-brand-500 px-2 py-2 text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
+              >
+                Create
+              </button>
+              {/* </div> */}
+            </div>
+          </div>
+        </Modal>
       </div>
     </div>
   );

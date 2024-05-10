@@ -37,7 +37,7 @@ const History = (props) => {
     setRequestList(response?.data);
     setIsLoaded(true);
   };
-
+  console.log(requestList);
   const handlePageClick = (e) => {
     setCurrentPage(e.selected);
     setPage(e.selected);
@@ -236,31 +236,43 @@ const History = (props) => {
                             <MdCheckCircle className="ml-6 text-green-500" />
                           )}
 
-                          {row.status === "Borrowing" && (
-                            <p className="hover:text-black flex cursor-pointer items-center gap-2 pt-1 text-customcolor-500 hover:font-medium">
-                              <span>
-                                {/* <MdHistory className="h-5 w-5" /> */}
-                                <TooltipHorizon
-                                  trigger={
-                                    <button className="ml-6">
-                                      <MdHistory
-                                        onClick={() =>
-                                          handleUpdateStatus(8, row)
-                                        }
-                                        className="h-5 w-5"
-                                      />
-                                    </button>
-                                  }
-                                  content={
-                                    <p className="text-customcolor-500">
-                                      Extend
-                                    </p>
-                                  }
-                                  placement="top"
-                                />
-                              </span>
-                            </p>
+                          {row.status === "Rejected" && (
+                            <MdOutlineError className="ml-6 text-orange-500" />
                           )}
+
+                          {row.isExtended === true &&
+                            row.status !== "Returned" && (
+                              <p className="text-[14px] font-bold text-customcolor-500">
+                                Extended
+                              </p>
+                            )}
+
+                          {row.status === "Borrowing" &&
+                            row.isExtended === false && (
+                              <p className="hover:text-black flex cursor-pointer items-center gap-2 pt-1 text-customcolor-500 hover:font-medium">
+                                <span>
+                                  {/* <MdHistory className="h-5 w-5" /> */}
+                                  <TooltipHorizon
+                                    trigger={
+                                      <button className="ml-6">
+                                        <MdHistory
+                                          onClick={() =>
+                                            handleUpdateStatus(8, row)
+                                          }
+                                          className="h-5 w-5"
+                                        />
+                                      </button>
+                                    }
+                                    content={
+                                      <p className="text-customcolor-500">
+                                        Extend
+                                      </p>
+                                    }
+                                    placement="top"
+                                  />
+                                </span>
+                              </p>
+                            )}
                         </div>
                       </td>
                     </tr>

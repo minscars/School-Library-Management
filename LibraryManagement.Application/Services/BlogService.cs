@@ -11,6 +11,7 @@ using LibraryManagement.DTO.Post;
 using LibraryManagement.DTO.Request;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using static LibraryManagement.Data.Enums.StatusBlogEnums;
 namespace LibraryManagement.Application.Services
 {
@@ -20,12 +21,14 @@ namespace LibraryManagement.Application.Services
         private readonly IMapper _mapper;
         private readonly IFileSerivce _fileServivce;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public BlogService(LibraryManagementDbContext context, IMapper mapper, IFileSerivce fileSerivce, IWebHostEnvironment webHostEnvironment)
+        private readonly IEmailService _emailService;
+        public BlogService(LibraryManagementDbContext context, IMapper mapper, IFileSerivce fileSerivce, IWebHostEnvironment webHostEnvironment, IEmailService emailService)
         {
             _context = context;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _fileServivce = fileSerivce;
+            _emailService = emailService;
         }
 
         public async Task<PaginatedList<List<GetAllBlogResponse>>> GetAllAsync(GetPaginationRequest dto)
@@ -34,7 +37,7 @@ namespace LibraryManagement.Application.Services
             var blogList = _context.Blogs
                 .Include(p => p.UserAccount).ThenInclude(p => p.User)
                 .Where(p => p.IsDeleted == false)
-                
+                .OrderByDescending(p => p.CreatedDate)
                 .AsQueryable();
 
             #region Filtering
@@ -213,7 +216,7 @@ namespace LibraryManagement.Application.Services
 
             await _context.Blogs.AddAsync(post);
             await _context.SaveChangesAsync();
-
+            await _emailService.SendMailBlogAsync(post.Id);
             return new ApiResult<bool>(true)
             {
                 Message = "Create blog successfully!",
@@ -264,22 +267,35 @@ namespace LibraryManagement.Application.Services
             var blog = await _context.Blogs
                 .Where(b => b.Id == dto.BlogId)
                 .FirstOrDefaultAsync();
-            if (blog != null)
+            if (blog == null)
             {
-                blog.Status = (int)StatusBlog.Posted;
-                blog.PostedDate = DateTime.Now;
-                await _context.SaveChangesAsync();
-                return new ApiResult<bool>(true)
+                return new ApiResult<bool>(false)
                 {
-                    StatusCode = 200,
-                    Message = "The blog have been posted!"
+                    Message = "Something went wrong!",
+                    StatusCode = 400
                 };
             }
-            return new ApiResult<bool>(false)
+            switch (dto.Status)
             {
-                Message = "Something went wrong!",
-                StatusCode = 400
-            };
+                case StatusBlog.Posted:
+                    blog.Status = (int)StatusBlog.Posted;
+                    blog.PostedDate = DateTime.Now;
+                    await _context.SaveChangesAsync();
+                    await _emailService.SendMailBlogAsync(blog.Id);
+                    break;
+
+                case StatusBlog.Cancel:
+                    blog.Status = (int)StatusBlog.Cancel;
+                    await _context.SaveChangesAsync();
+                    await _emailService.SendMailBlogAsync(blog.Id);
+                    break;
+            }
+
+            return new ApiResult<bool>(true)
+            {
+                StatusCode = 200,
+                Message = "The blog have been posted!"
+            };            
         }
 
         public async Task<ApiResult<List<GetAllBlogResponse>>> GetBlogByTopicAsync(string topicId)

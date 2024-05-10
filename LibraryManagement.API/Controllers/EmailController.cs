@@ -16,9 +16,9 @@ namespace TheSkyHomestay.API.Controllers
         }
 
         [HttpPost("Send")]
-        public async Task<IActionResult> SendEmailAsync([FromBody] SendEmailRequest request)
+        public async Task<IActionResult> SendEmailAsync([FromBody]string bookRequestId)
         {
-            await _emailService.SendEmailAsync(request);
+            await _emailService.SendEmailAsync(bookRequestId);
             return Ok();
         }
     }

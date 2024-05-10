@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 using LibraryManagement.Application.Mapping;
 using Microsoft.AspNetCore.Identity;
 using LibraryManagement.Data.Models;
-using TheSkyHomestay.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

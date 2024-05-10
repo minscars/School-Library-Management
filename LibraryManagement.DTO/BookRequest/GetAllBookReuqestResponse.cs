@@ -27,5 +27,6 @@ namespace LibraryManagement.DTO.BookRequest
         public DateTime? ReturnedTime { get; set; }
         public DateTime? CanceledTime { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsExtended { get; set; }
     }
 }

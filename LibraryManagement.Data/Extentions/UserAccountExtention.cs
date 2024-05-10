@@ -93,10 +93,10 @@ namespace LibraryManagement.Data.Extentions
             var admin = new UserAccount()
             {
                 Id = adminId,
-                UserName = "admin@gmail.com",
-                NormalizedUserName = "ADMIN@GMAIL.COM",
-                Email = "admin@gmail.com",
-                NormalizedEmail = "ADMIN@GMAIL.COM",
+                UserName = "johnminscarslbm@gmail.com",
+                NormalizedUserName = "JOHNMINSCARSLBM@GMAIL.COM",
+                Email = "johnminscarslbm@gmail.com",
+                NormalizedEmail = "JOHNMINSCARSLBM@GMAIL.COM",
                 PhoneNumber = "0123456789",
             };
             user.PasswordHash = hasher.HashPassword(user, "kha123");
@@ -145,7 +145,7 @@ namespace LibraryManagement.Data.Extentions
                   Id = 2,
                   UserId = adminId,
                   ClaimType = "email",
-                  ClaimValue = "admin@gmail.com"
+                  ClaimValue = "johnminscarslbm@gmail.com"
               },
               new IdentityUserClaim<Guid>
               {

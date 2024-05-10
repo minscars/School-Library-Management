@@ -7,13 +7,16 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import bookRequestApi from "api/bookRequest";
+
 import Alert from "components/alert";
 import Swal from "sweetalert2";
 import moment from "moment";
-
+import { toast, ToastContainer } from "react-toastify";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 export default function HorizontalLinearStepper(props) {
   const [activeStep, setActiveStep] = React.useState(1);
-
+  const [open, setOpen] = useState(false);
   const handleUpdateStatus = () => {
     let status = 0;
     if (props.data?.status === "Pending") {
@@ -24,7 +27,7 @@ export default function HorizontalLinearStepper(props) {
       status = 5; //returned
     }
 
-    if (status !== 0 && status !== 4) {
+    if (status !== 0 && status !== 4 && status !== 5) {
       // thêm xác nhận
       Swal.fire({
         title: "Are you sure?",
@@ -36,28 +39,35 @@ export default function HorizontalLinearStepper(props) {
         confirmButtonText: "Yes, I checked it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          setOpen(true);
           var bookRequestId = props.data?.id;
           const request = { bookRequestId, status };
           request.bookDetailId = props.data?.bookDetailId;
           request.publishedBookId = props.data?.publishedBookId;
           await bookRequestApi.UpdateStatus(request).then(async (res) => {
-            if (res.statusCode === 200) {
-              props
-                .setTrigger(Math.random() + 1)
-                ?.toString(36)
-                .substring(7);
-              Alert.showSuccessAlert("Update status sucessfully!");
+            if (res?.statusCode === 200) {
+              setTimeout(() => {
+                props
+                  .setTrigger(Math.random() + 1)
+                  ?.toString(36)
+                  .substring(7);
+                setOpen(false);
+                Alert.showSuccessAlert(res?.message);
+                setActiveStep((prevActiveStep) => prevActiveStep + 1);
+              }, 2200);
             } else {
-              Alert.showErrorAlert("Something went worong!");
+              setTimeout(() => {
+                setOpen(false);
+                Alert.showErrorAlert(res?.message);
+              }, 2200);
             }
           });
         }
       });
 
       // props.setTrigger();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
-    if (status === 4) {
+    if (status === 4 || status === 5) {
       Swal.fire({
         title: "Are you sure?",
         input: "text",
@@ -67,8 +77,38 @@ export default function HorizontalLinearStepper(props) {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
+          setOpen(true);
+          var bookRequestId = props.data?.id;
+          const request = { bookRequestId, status };
+          request.bookDetailId = props.data?.bookDetailId;
+          request.publishedBookId = props.data?.publishedBookId;
+          request.bookTaked = result.value;
+
+          if (request.bookTaked === "") {
+            setOpen(false);
+            toast.error("You must enter the code book!");
+          } else {
+            await bookRequestApi.UpdateStatus(request).then(async (res) => {
+              if (res?.statusCode === 200) {
+                setTimeout(() => {
+                  props
+                    .setTrigger(Math.random() + 1)
+                    ?.toString(36)
+                    .substring(7);
+                  setOpen(false);
+                  Alert.showSuccessAlert(res?.message);
+                  setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                }, 2200);
+              } else {
+                setTimeout(() => {
+                  setOpen(false);
+                  Alert.showErrorAlert(res?.message);
+                }, 2200);
+              }
+            });
+          }
         }
       });
     }
@@ -175,6 +215,13 @@ export default function HorizontalLinearStepper(props) {
           </button>
         </Box>
       )}
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <ToastContainer />
     </Box>
   );
 }

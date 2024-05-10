@@ -12,7 +12,24 @@ import bookRequestApi from "api/bookRequest";
 import Pagination from "components/pagination";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Modal } from "react-responsive-modal";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdOutlineError,
+  MdHistory,
+} from "react-icons/md";
 const History = () => {
+  const [openLoader, setOpenLoader] = useState(false);
+  const [open, setOpen] = useState(false);
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => {
+    setOpen(false);
+    setBookDetailCode("");
+    setUserCode("");
+  };
   var token = window.localStorage.getItem("token");
   const userLogin = jwt(token);
   const [requestList, setRequestList] = useState([]);
@@ -22,16 +39,22 @@ const History = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [trigger, setTrigger] = useState();
+
   useEffect(() => {
     getAllBookRequestFromReact();
-  }, [page, limit]);
+  }, [page, limit, searchText, trigger]);
 
   const getAllBookRequestFromReact = async () => {
     var request = { page, limit };
+    if (searchText !== "") {
+      request.search = searchText;
+    }
     setIsLoaded(false);
     const response = await bookRequestApi.GetAll(request);
-    setPageCount(Math.ceil(response.totalRecord / limit));
-    setRequestList(response.data);
+    setPageCount(Math.ceil(response?.totalRecord / limit));
+    setRequestList(response?.data);
     setIsLoaded(true);
   };
 
@@ -59,6 +82,33 @@ const History = () => {
       setRequestList(response.data);
     }
   }
+  const [bookDetailCode, setBookDetailCode] = useState("");
+  const [userCode, setUserCode] = useState("");
+  const createNewRequest = async () => {
+    var dto = { bookDetailCode, userCode };
+    if (bookDetailCode === "" || userCode === "") {
+      toast.error("You must fill fully!");
+    } else {
+      setOpenLoader(true);
+      await bookRequestApi.AdminCreateBookRequest(dto).then((res) => {
+        if (res.statusCode === 200) {
+          setTimeout(() => {
+            setOpenLoader(false);
+
+            toast.success(res.message);
+            onCloseModal();
+          }, 2200);
+        } else {
+          setTimeout(() => {
+            setOpenLoader(false);
+
+            toast.error(res.message);
+            onCloseModal();
+          }, 2200);
+        }
+      });
+    }
+  };
   return (
     <div>
       <div className="gap-5 xl:grid-cols-2">
@@ -84,17 +134,25 @@ const History = () => {
               </div>
             </div>
 
-            <div className="flex items-center">
-              <p className="pl-3 pr-2 text-xl">
-                <FiSearch className="h-5 w-5 text-gray-400 dark:text-white" />
-              </p>
-              <form action="" className="mb-0">
+            <div class="flex text-navy-700 dark:text-white">
+              <div className="flex items-center rounded-[5px] bg-gray-100">
                 <input
                   type="text"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
                   placeholder="Enter a code..."
                   className="flex h-12 w-[360px] w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"
                 />
-              </form>
+                <p className="pl-3 pr-2 text-xl">
+                  <FiSearch className="h-5 w-5 text-gray-400 dark:text-white" />
+                </p>
+              </div>
+              <button
+                onClick={onOpenModal}
+                class="linear right-0 ml-6 rounded-[5px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
+              >
+                + New request
+              </button>
             </div>
           </div>
           <div className="mt-2 block h-[530px]">
@@ -172,13 +230,17 @@ const History = () => {
                       <div className="w-[40px]">
                         <p className="text-sm font-bold text-red-500 dark:text-white">
                           {moment().isAfter(
-                            moment(row.dueDate, "YYYY-MM-DDTHH:mm:ss.SSSZ")
+                            moment(row.dueTime, "YYYY-MM-DDTHH:mm:ss.SSSZ")
                           ) &&
                             (row.status === "Approve" ||
                               row.status === "Borrowing" ||
-                              row.status === "Cancel") &&
+                              row.status === "Cancel" ||
+                              row.status === "Rejected") &&
                             "Expired"}
                         </p>
+                        {row.status === "Returned" && (
+                          <MdCheckCircle className="ml-3 text-green-500" />
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -188,11 +250,71 @@ const History = () => {
           </div>
         </Card>
       </div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Pagination
         handlePageClick={handlePageClick}
         currentPage={currentPage}
         pageCount={pageCount}
       />
+      <Modal
+        open={open}
+        onClose={onCloseModal}
+        center
+        classNames={{
+          modal:
+            "rounded-[10px] bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none",
+        }}
+      >
+        <div className="h-fit w-[600px]">
+          <div className="flex justify-center">
+            <span className="text-xl font-bold text-navy-700 dark:text-white">
+              Create new request
+            </span>
+          </div>
+          <div class="mb-[10px] mt-2 h-px bg-gray-300 dark:bg-white/30" />
+          <div>
+            {/* <div className="mt-4"> */}
+            <div className="mb-2">
+              <label class="text-m text-gray-600 dark:text-white">
+                Book code
+              </label>
+              <input
+                className={`mt-2 h-12 w-full justify-center border border-gray-400 bg-white/0 p-3 text-sm outline-none`}
+                autoFocus
+                value={bookDetailCode}
+                onChange={(e) => setBookDetailCode(e.target.value)}
+                placeholder="Enter book code"
+                type="text"
+              />
+            </div>
+            <div>
+              <label class="text-m text-gray-600 dark:text-white">
+                Reader code
+              </label>
+              <input
+                className={`mt-2 h-12 w-full justify-center border border-gray-400 bg-white/0 p-3 text-sm outline-none`}
+                autoFocus
+                value={userCode}
+                onChange={(e) => setUserCode(e.target.value)}
+                placeholder="Enter reader code"
+                type="text"
+              />
+            </div>
+            <button
+              onClick={createNewRequest}
+              className="linear mt-[60px] flex w-full items-center justify-center rounded-[10px] bg-brand-500 px-2 py-2 text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
+            >
+              Create
+            </button>
+            {/* </div> */}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

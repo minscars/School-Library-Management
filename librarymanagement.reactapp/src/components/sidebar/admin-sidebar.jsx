@@ -25,7 +25,7 @@ const AdminSidebar = ({ open, onClose }) => {
       >
         <img className="h-[80px] w-auto" src={Logo} alt="" />
       </div>
-      <div class="mb-[40px] h-px bg-gray-300 dark:bg-white/30" />
+      <div class="mb-[10px] h-px bg-gray-300 dark:bg-white/30" />
       {/* Nav item */}
 
       <ul className="mb-auto pt-1 ">

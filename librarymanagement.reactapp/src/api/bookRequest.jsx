@@ -19,6 +19,9 @@ const bookRequestApi = {
   UpdateStatus: (dto) => {
     return Api.put("/BookRequest/UpdateStatus", dto);
   },
+  AdminCreateBookRequest: (dto) => {
+    return Api.post("/BookRequest/AdminCreateBookRequest", dto);
+  },
 };
 
 export default bookRequestApi;

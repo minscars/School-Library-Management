@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagement.Data.Migrations
 {
     [DbContext(typeof(LibraryManagementDbContext))]
-    [Migration("20240315131648_update-bookdetail-tables")]
-    partial class updatebookdetailtables
+    [Migration("20240426052304_add-topic-entities")]
+    partial class addtopicentities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,7 +78,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 682, DateTimeKind.Local).AddTicks(9848));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(6506));
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
@@ -87,6 +87,9 @@ namespace LibraryManagement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("PostedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -97,13 +100,16 @@ namespace LibraryManagement.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("TopicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("UserAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
 
                     b.HasIndex("UserAccountId");
 
@@ -117,6 +123,7 @@ namespace LibraryManagement.Data.Migrations
                             Image = "Test",
                             Status = 0,
                             Title = "Test",
+                            TopicId = "3A1C8B8E-33AB-4DB7-826F-D58C8DF82C88",
                             UserAccountId = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4")
                         });
                 });
@@ -132,7 +139,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("CreatedTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 681, DateTimeKind.Local).AddTicks(9917));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(3465));
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -146,7 +153,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("UpdatedTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 682, DateTimeKind.Local).AddTicks(408));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(3703));
 
                     b.HasKey("Id");
 
@@ -266,12 +273,9 @@ namespace LibraryManagement.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("LibraryManagement.Data.Models.BookCheckout", b =>
+            modelBuilder.Entity("LibraryManagement.Data.Models.BookDetail", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BookDetailId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Code")
@@ -279,37 +283,28 @@ namespace LibraryManagement.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 683, DateTimeKind.Local).AddTicks(3826));
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookDetailId")
-                        .IsUnique()
-                        .HasFilter("[BookDetailId] IS NOT NULL");
-
-                    b.ToTable("BookCheckouts");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Data.Models.BookDetail", b =>
-                {
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime?>("DueTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PublishedBookId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Code");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PublishedBookId");
 
@@ -318,21 +313,30 @@ namespace LibraryManagement.Data.Migrations
                     b.HasData(
                         new
                         {
+                            Id = "da4b76e3-2d86-4f50-ab6e-c93a73d10e0e",
                             Code = "BD20240306202611",
                             IsAvailable = false,
-                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646"
+                            IsDeleted = false,
+                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
+                            Status = 0
                         },
                         new
                         {
+                            Id = "4c0dc5ae-c609-4f5b-88eb-f8b81ab59439",
                             Code = "BD20240306202612",
                             IsAvailable = false,
-                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646"
+                            IsDeleted = false,
+                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
+                            Status = 0
                         },
                         new
                         {
+                            Id = "eb7eae5e-c665-4635-aeb0-b05398f9ca87",
                             Code = "BD20240306202613",
                             IsAvailable = false,
-                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646"
+                            IsDeleted = false,
+                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
+                            Status = 0
                         });
                 });
 
@@ -345,6 +349,10 @@ namespace LibraryManagement.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("BookCheckoutId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BookDetailId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("BorrowedTime")
@@ -363,12 +371,14 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("DueTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ExtendedTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PublishedBookId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ReceivedTime")
                         .HasColumnType("datetime2");
@@ -387,9 +397,7 @@ namespace LibraryManagement.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookCheckoutId");
-
-                    b.HasIndex("PublishedBookId");
+                    b.HasIndex("BookDetailId");
 
                     b.HasIndex("UserAccountId");
 
@@ -399,11 +407,87 @@ namespace LibraryManagement.Data.Migrations
                         new
                         {
                             Id = "1406E765-B3C6-4FC3-A25F-2154E7EAC5DB",
-                            Code = "BR20240315201647",
+                            BookDetailId = "da4b76e3-2d86-4f50-ab6e-c93a73d10e0e",
+                            Code = "BR20240426122304",
                             IsDeleted = false,
-                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
                             Status = 3,
                             UserAccountId = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4")
+                        });
+                });
+
+            modelBuilder.Entity("LibraryManagement.Data.Models.BookShelf", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BookShelves");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "aedab447-dd1f-4dad-becf-aa74ed03fe7b",
+                            IsDeleted = false,
+                            Name = "SH-001-A"
+                        },
+                        new
+                        {
+                            Id = "8a509337-277f-4c0d-94d8-e693ccf58a96",
+                            IsDeleted = false,
+                            Name = "SH-001-B"
+                        },
+                        new
+                        {
+                            Id = "da29aa39-bfca-4405-b8fe-b21ee816f404",
+                            IsDeleted = false,
+                            Name = "SH-002-A"
+                        });
+                });
+
+            modelBuilder.Entity("LibraryManagement.Data.Models.BookShelfDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BookShelfId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PublishedBookId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookShelfId");
+
+                    b.HasIndex("PublishedBookId");
+
+                    b.ToTable("BookShelfDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c5103159-813c-48a5-b5b0-b3d12185fb10",
+                            BookShelfId = "aedab447-dd1f-4dad-becf-aa74ed03fe7b",
+                            IsDeleted = false,
+                            PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646"
+                        },
+                        new
+                        {
+                            Id = "e6ef33c8-e912-43ef-af95-03b07bc4f2e9",
+                            BookShelfId = "8a509337-277f-4c0d-94d8-e693ccf58a96",
+                            IsDeleted = false,
+                            PublishedBookId = "FB51AB25-2788-4B0E-996E-2A68282B2C88"
                         });
                 });
 
@@ -418,7 +502,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 682, DateTimeKind.Local).AddTicks(7392));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(4584));
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -433,7 +517,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 682, DateTimeKind.Local).AddTicks(7840));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(4859));
 
                     b.HasKey("Id");
 
@@ -496,7 +580,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 683, DateTimeKind.Local).AddTicks(701));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(6879));
 
                     b.Property<bool?>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -523,7 +607,7 @@ namespace LibraryManagement.Data.Migrations
                             Id = 1,
                             BlogId = "BF001",
                             Content = "Test",
-                            CreatedDate = new DateTime(2024, 3, 15, 20, 16, 47, 690, DateTimeKind.Local).AddTicks(1031),
+                            CreatedDate = new DateTime(2024, 4, 26, 12, 23, 4, 295, DateTimeKind.Local).AddTicks(218),
                             UserAccountId = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4")
                         });
                 });
@@ -543,7 +627,7 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 15, 20, 16, 47, 683, DateTimeKind.Local).AddTicks(2544));
+                        .HasDefaultValue(new DateTime(2024, 4, 26, 12, 23, 4, 286, DateTimeKind.Local).AddTicks(7838));
 
                     b.Property<bool?>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -574,7 +658,7 @@ namespace LibraryManagement.Data.Migrations
                         {
                             Id = 1,
                             Content = "Test",
-                            CreatedDate = new DateTime(2024, 3, 15, 20, 16, 47, 690, DateTimeKind.Local).AddTicks(1057),
+                            CreatedDate = new DateTime(2024, 4, 26, 12, 23, 4, 295, DateTimeKind.Local).AddTicks(238),
                             PublishedBookId = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
                             Rate = 5.0,
                             UserAccountId = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4")
@@ -595,9 +679,6 @@ namespace LibraryManagement.Data.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
@@ -633,7 +714,7 @@ namespace LibraryManagement.Data.Migrations
                             Id = "7F33BDA5-7C2B-447A-89E3-DC670ACC3646",
                             BookId = "0E9B5F1B-0C7B-4093-9559-D3A7FE380832",
                             Checkout_visit = 1,
-                            Code = "PB20240315201647",
+                            Code = "PB20240426122304",
                             Image = "1.png",
                             Pages = 404,
                             PublishedYear = 2020,
@@ -645,7 +726,7 @@ namespace LibraryManagement.Data.Migrations
                             Id = "FB51AB25-2788-4B0E-996E-2A68282B2C88",
                             BookId = "3ECC8999-CAEA-4C31-9A0E-37FF9158427E",
                             Checkout_visit = 1,
-                            Code = "PB20240315201647",
+                            Code = "PB20240426122304",
                             Image = "giaotrinhdbclpm.png",
                             Pages = 312,
                             PublishedYear = 2012,
@@ -705,6 +786,47 @@ namespace LibraryManagement.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LibraryManagement.Data.Models.Topic", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Topics");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "3A1C8B8E-33AB-4DB7-826F-D58C8DF82C88",
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Lập trình",
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = "D2AB6BB4-0A82-4D2C-B70E-03DD1C3BE23D",
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Phỏng vấn",
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
             modelBuilder.Entity("LibraryManagement.Data.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -733,11 +855,43 @@ namespace LibraryManagement.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8a820adb-93d7-4c6f-9404-bdbfc14419f4",
+                            Id = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4",
                             Address = "Đường 3/2, phường Xuân Khánh, quận Ninh Kiều, TP. Cần Thơ",
                             Name = "Lê Minh Kha",
                             PhoneNumber = "0398897634",
                             UserCode = "B2012213"
+                        },
+                        new
+                        {
+                            Id = "BEFE5A8F-B2F6-48C4-AAA0-E4DDA7A3914C",
+                            Address = "87 Lê Văn Huân, Phường 13, Quận Tân Bình, TP. Hồ Chí Minh",
+                            Name = "Nguyễn Tùng Lâm",
+                            PhoneNumber = "0338307449",
+                            UserCode = "B1809363"
+                        },
+                        new
+                        {
+                            Id = "F7AA67C1-B3CB-4CCE-9394-1630407343BF",
+                            Address = "Ninh Kiều, TP. Cần Thơ",
+                            Name = "Trần Chí Thể",
+                            PhoneNumber = "1234567890",
+                            UserCode = "B2003923"
+                        },
+                        new
+                        {
+                            Id = "1B1BC693-F841-4B2D-9567-63710DA34F1D",
+                            Address = "Cái Răng, TP. Cần Thơ",
+                            Name = "Lưu Hoàng Lỉnh",
+                            PhoneNumber = "0123456789",
+                            UserCode = "B2012223"
+                        },
+                        new
+                        {
+                            Id = "D8E5F8D4-09DE-42FA-9952-37AF9BF3EE9B",
+                            Address = "Hẻm 51, TP. Cần Thơ",
+                            Name = "Nguyễn Trung Nhẩn",
+                            PhoneNumber = "0122334455",
+                            UserCode = "B2012237"
                         });
                 });
 
@@ -795,12 +949,12 @@ namespace LibraryManagement.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("UserPracticalId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -812,9 +966,9 @@ namespace LibraryManagement.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("UserPracticalId")
+                    b.HasIndex("UserId")
                         .IsUnique()
-                        .HasFilter("[UserPracticalId] IS NOT NULL");
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Accounts", (string)null);
 
@@ -823,32 +977,62 @@ namespace LibraryManagement.Data.Migrations
                         {
                             Id = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b6ce2b2c-e699-44d9-a472-25ec6696692b",
+                            ConcurrencyStamp = "cbc6fb88-8707-4945-bd49-eb2322420a18",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "KHA@GMAIL.COM",
                             NormalizedUserName = "KHA@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJI+5Bk2Voc7AIaKtIR/3EgThcZ3jTr+Gg+9NwzYXmcjXYv55xQRCDjr1ACLR8Uiuw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIJFWROYqgxsqYSHpGbU7ylVhpPzGkbLiLlzLWcV+GHwp0IO/o2PVDABCdxRHXpS6Q==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
-                            UserName = "kha@gmail.com",
-                            UserPracticalId = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4"
+                            UserId = "8A820ADB-93D7-4C6F-9404-BDBFC14419F4",
+                            UserName = "kha@gmail.com"
                         },
                         new
                         {
                             Id = new Guid("372ea575-2536-4076-9bab-3e3138de495f"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2769996c-33c0-4fd3-a750-956505e8bffe",
+                            ConcurrencyStamp = "e49b1598-1715-4212-81c8-2912457d1f3e",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAO11MyBxmQvRu52WhEP+EkxUDMxOKFJ6iNLsXwPRSoLHnPn+wdCA4yuO0+o2gI6yQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJjYxzOQISfLvR9TeYRkShccHpYphV7nrI4y9w4ySogIwOHm6CxmmZsgMs956grFOg==",
                             PhoneNumber = "0123456789",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
+                        },
+                        new
+                        {
+                            Id = new Guid("f5aa72ea-a563-4e89-a289-e290814f3c17"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "e0485474-2051-456c-ae10-a0f88a96a9f0",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "LAM@GMAIL.COM",
+                            NormalizedUserName = "LAM@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJZ/AQSWzzxzlkrBMQ/wdQdc2zvvF2XwDtZssoYuj+SS/fn9HDKzlZO8hfrGR2DpBg==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserId = "BEFE5A8F-B2F6-48C4-AAA0-E4DDA7A3914C",
+                            UserName = "lam@gmail.com"
+                        },
+                        new
+                        {
+                            Id = new Guid("f4e9077d-d904-4c9e-860e-7c0373cfddff"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "03f38d6d-8998-4683-ada0-4795f933dd4e",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THE@GMAIL.COM",
+                            NormalizedUserName = "THE@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGikyGAATpEcjwLxbyOCNlqx3YbUjrY0+B5HM44+HG41JdiGOKsrRyespAE6hZToSg==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserId = "F7AA67C1-B3CB-4CCE-9394-1630407343BF",
+                            UserName = "the@gmail.com"
                         });
                 });
 
@@ -883,14 +1067,14 @@ namespace LibraryManagement.Data.Migrations
                         new
                         {
                             Id = new Guid("9e87b492-5343-4272-9a34-fa5de7cffb22"),
-                            ConcurrencyStamp = "52f5923d-eeee-4292-98d4-82a2c732d7a2",
+                            ConcurrencyStamp = "ae102f63-3685-4010-a811-9bd104f5d429",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31"),
-                            ConcurrencyStamp = "498030b2-80ea-474a-8bc1-e7efc38e54da",
+                            ConcurrencyStamp = "aad1ca5e-bada-4abf-9071-8f9558698f77",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -985,6 +1169,48 @@ namespace LibraryManagement.Data.Migrations
                             ClaimType = "roles",
                             ClaimValue = "User",
                             UserId = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4")
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "id",
+                            ClaimValue = "f5aa72ea-a563-4e89-a289-e290814f3c17",
+                            UserId = new Guid("f5aa72ea-a563-4e89-a289-e290814f3c17")
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "email",
+                            ClaimValue = "lam@gmail.com",
+                            UserId = new Guid("f5aa72ea-a563-4e89-a289-e290814f3c17")
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClaimType = "roles",
+                            ClaimValue = "User",
+                            UserId = new Guid("f5aa72ea-a563-4e89-a289-e290814f3c17")
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ClaimType = "id",
+                            ClaimValue = "f4e9077d-d904-4c9e-860e-7c0373cfddff",
+                            UserId = new Guid("f4e9077d-d904-4c9e-860e-7c0373cfddff")
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ClaimType = "email",
+                            ClaimValue = "the@gmail.com",
+                            UserId = new Guid("f4e9077d-d904-4c9e-860e-7c0373cfddff")
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ClaimType = "roles",
+                            ClaimValue = "User",
+                            UserId = new Guid("f4e9077d-d904-4c9e-860e-7c0373cfddff")
                         });
                 });
 
@@ -1033,6 +1259,16 @@ namespace LibraryManagement.Data.Migrations
                         {
                             UserId = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4"),
                             RoleId = new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31")
+                        },
+                        new
+                        {
+                            UserId = new Guid("f5aa72ea-a563-4e89-a289-e290814f3c17"),
+                            RoleId = new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31")
+                        },
+                        new
+                        {
+                            UserId = new Guid("f4e9077d-d904-4c9e-860e-7c0373cfddff"),
+                            RoleId = new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31")
                         });
                 });
 
@@ -1057,6 +1293,12 @@ namespace LibraryManagement.Data.Migrations
 
             modelBuilder.Entity("LibraryManagement.Data.Models.Blog", b =>
                 {
+                    b.HasOne("LibraryManagement.Data.Models.Topic", null)
+                        .WithMany("Blogs")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LibraryManagement.Data.Models.UserAccount", "UserAccount")
                         .WithMany("Blogs")
                         .HasForeignKey("UserAccountId")
@@ -1096,15 +1338,6 @@ namespace LibraryManagement.Data.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("LibraryManagement.Data.Models.BookCheckout", b =>
-                {
-                    b.HasOne("LibraryManagement.Data.Models.BookDetail", "BookDetail")
-                        .WithOne("BookCheckout")
-                        .HasForeignKey("LibraryManagement.Data.Models.BookCheckout", "BookDetailId");
-
-                    b.Navigation("BookDetail");
-                });
-
             modelBuilder.Entity("LibraryManagement.Data.Models.BookDetail", b =>
                 {
                     b.HasOne("LibraryManagement.Data.Models.PublishedBook", "PublishedBook")
@@ -1118,13 +1351,9 @@ namespace LibraryManagement.Data.Migrations
 
             modelBuilder.Entity("LibraryManagement.Data.Models.BookRequest", b =>
                 {
-                    b.HasOne("LibraryManagement.Data.Models.BookCheckout", "BookCheckout")
-                        .WithMany()
-                        .HasForeignKey("BookCheckoutId");
-
-                    b.HasOne("LibraryManagement.Data.Models.PublishedBook", "PublishedBook")
+                    b.HasOne("LibraryManagement.Data.Models.BookDetail", "BookDetail")
                         .WithMany("BookRequests")
-                        .HasForeignKey("PublishedBookId")
+                        .HasForeignKey("BookDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1134,11 +1363,24 @@ namespace LibraryManagement.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BookCheckout");
-
-                    b.Navigation("PublishedBook");
+                    b.Navigation("BookDetail");
 
                     b.Navigation("UserAccount");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Data.Models.BookShelfDetail", b =>
+                {
+                    b.HasOne("LibraryManagement.Data.Models.BookShelf", "BookShelf")
+                        .WithMany()
+                        .HasForeignKey("BookShelfId");
+
+                    b.HasOne("LibraryManagement.Data.Models.PublishedBook", "PublishedBook")
+                        .WithMany("BookShelfDetails")
+                        .HasForeignKey("PublishedBookId");
+
+                    b.Navigation("BookShelf");
+
+                    b.Navigation("PublishedBook");
                 });
 
             modelBuilder.Entity("LibraryManagement.Data.Models.Comment", b =>
@@ -1198,7 +1440,7 @@ namespace LibraryManagement.Data.Migrations
                 {
                     b.HasOne("LibraryManagement.Data.Models.User", "User")
                         .WithOne("UserAccount")
-                        .HasForeignKey("LibraryManagement.Data.Models.UserAccount", "UserPracticalId");
+                        .HasForeignKey("LibraryManagement.Data.Models.UserAccount", "UserId");
 
                     b.Navigation("User");
                 });
@@ -1268,8 +1510,7 @@ namespace LibraryManagement.Data.Migrations
 
             modelBuilder.Entity("LibraryManagement.Data.Models.BookDetail", b =>
                 {
-                    b.Navigation("BookCheckout")
-                        .IsRequired();
+                    b.Navigation("BookRequests");
                 });
 
             modelBuilder.Entity("LibraryManagement.Data.Models.Category", b =>
@@ -1281,7 +1522,7 @@ namespace LibraryManagement.Data.Migrations
                 {
                     b.Navigation("BookDetails");
 
-                    b.Navigation("BookRequests");
+                    b.Navigation("BookShelfDetails");
 
                     b.Navigation("FeedBacks");
                 });
@@ -1289,6 +1530,11 @@ namespace LibraryManagement.Data.Migrations
             modelBuilder.Entity("LibraryManagement.Data.Models.Publisher", b =>
                 {
                     b.Navigation("PublishedBooks");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Data.Models.Topic", b =>
+                {
+                    b.Navigation("Blogs");
                 });
 
             modelBuilder.Entity("LibraryManagement.Data.Models.User", b =>

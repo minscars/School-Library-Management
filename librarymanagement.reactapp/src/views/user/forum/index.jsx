@@ -6,6 +6,8 @@ import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import React, { useState, useEffect, useRef } from "react";
 import Checkbox from "components/checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
 import {
   MdHome,
   MdImage,
@@ -23,9 +25,12 @@ import Alert from "components/alert";
 
 import { ToastContainer, toast } from "react-toastify";
 const Forum = () => {
+  const [openLoader, setOpenLoader] = useState(false);
   const [open, setOpen] = useState(false);
   const onOpenModal = () => setOpen(true);
-  const onCloseModal = () => setOpen(false);
+  const onCloseModal = () => {
+    setOpen(false);
+  };
   const [postList, setPosts] = useState([]);
   const [user, setUser] = useState(null);
   const userLogin = jwt(window.localStorage.getItem("token"));
@@ -82,9 +87,14 @@ const Forum = () => {
     formData.append("UserAccountId", userLogin.id);
     formData.append("Image", imageUploadFile);
     formData.append("TopicId", topicId);
+    setOpenLoader(true);
     await blogApi.CreateBlog(formData).then(async (res) => {
       if (res.statusCode === 200) {
-        Alert.showSuccessAlert("Your post have been posted sucessfully!");
+        setTimeout(() => {
+          setOpenLoader(false);
+          onCloseModal();
+          Alert.showSuccessAlert("Your post have been posted sucessfully!");
+        }, 1800);
         if (formRef.current) {
           formRef.current.reset();
         }
@@ -115,6 +125,12 @@ const Forum = () => {
   console.log(topicChoose);
   return (
     <div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div className="grid h-full grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
         <div className="col-span-1 h-[610px] w-full rounded-xl 2xl:col-span-2">
           <div className="flex items-center justify-center rounded-[10px] bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
@@ -304,7 +320,7 @@ const Forum = () => {
               <div
                 key={item.topicId}
                 className={`${
-                  item.topicId === topicChoose ? "bg-gray-100" : ""
+                  item.topicId === topicChoose ? "bg-gray-300" : ""
                 } mb-2 mt-2 flex w-full items-center rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
               >
                 <div className="flex items-center p-2">

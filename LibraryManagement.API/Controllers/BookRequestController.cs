@@ -77,15 +77,19 @@ namespace LibraryManagement.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("AdminCreateBookRequest")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateBookRequestAsync([FromBody] AdminCreateBookRequets dto)
+        {
+            var result = await _bookRequestService.CreateBookRequestAsync(dto);
+            return Ok(result);
+        }
+
         [HttpPut("UpdateStatus")]
         public async Task<IActionResult> UpdateStatusBookRequestAsync(UpdateStatusBookrequestRequest requestDto)
         {
             var result = await _bookRequestService.UpdateStatusBookRequestAsync(requestDto);
-            if (result.StatusCode == 200)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result.Message);
+            return Ok(result);
         }
 
     }

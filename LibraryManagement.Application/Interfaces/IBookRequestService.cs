@@ -11,6 +11,7 @@ namespace LibraryManagement.Application.Interfaces
         Task<PaginatedList<List<GetBookRequestByAccountUserResponse>>> GetBookRequestByAccountUserAsync(GetBookReuqestPaginationByUserRequest dto);
         Task<ApiResult<GetBookRequestByIdResponse>> GetBookRequestByIdAsync(string Id);
         Task<ApiResult<string>> CreateBookRequestAsync(CreateBookRequestRequest dto);
+        Task<ApiResult<string>> CreateBookRequestAsync(AdminCreateBookRequets dto);
         Task<ApiResult<bool>> UpdateStatusBookRequestAsync(UpdateStatusBookrequestRequest requestDto);
     }
 }

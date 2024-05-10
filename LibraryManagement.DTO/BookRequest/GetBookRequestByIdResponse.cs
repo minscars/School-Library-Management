@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibraryManagement.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,8 @@ namespace LibraryManagement.DTO.BookRequest
         public DateTime? DueTime { get; set; }
         public DateTime? ReturnedTime { get; set; }
         public DateTime? CanceledTime { get; set; }
+        public DateTime? ExtendedTime { get; set; }
+        public bool IsExtended { get; set; }
         public bool IsDeleted { get; set; }
 
     }

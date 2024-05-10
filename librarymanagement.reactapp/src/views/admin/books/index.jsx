@@ -9,7 +9,7 @@ import TooltipHorizon from "components/tooltip";
 const Index = () => {
   const [booksList, setBooks] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit] = useState(9);
+  const [limit] = useState(8);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
@@ -38,7 +38,7 @@ const Index = () => {
             <div class="flex items-center justify-between text-xl font-bold text-navy-700 dark:text-white">
               <p className="left-0 top-0">Books List</p>
               <Link to="/admin/books/create">
-                <button class="linear right-0 rounded-[20px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90">
+                <button class="linear right-0 rounded-[5px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90">
                   + New book
                 </button>
               </Link>

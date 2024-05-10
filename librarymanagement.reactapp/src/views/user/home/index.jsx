@@ -179,7 +179,7 @@ const Marketplace = () => {
       <div className="col-span-1 h-full w-full rounded-xl 2xl:col-span-1">
         <Card extra={"w-full p-4"}>
           <h4 className="text-lg font-bold text-navy-700 dark:text-white">
-            Top books
+            Recommend
           </h4>
           {topFiveList?.map((item) => (
             <div

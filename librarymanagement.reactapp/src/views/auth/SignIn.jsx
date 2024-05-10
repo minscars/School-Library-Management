@@ -7,16 +7,19 @@ import accountApi from "api/accountApi";
 import jwt from "jwt-decode";
 import Alert from "components/alert";
 import Loader from "components/loader";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 export default function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [userlogin, setUsser] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   async function login(e) {
     setIsLoading(true);
     e.preventDefault();
     const request = { username, password };
-
+    setOpen(true);
     await accountApi
       .login(request)
       .then((response) => {
@@ -25,15 +28,18 @@ export default function SignIn() {
           var token = window.localStorage.getItem("token");
           const user = jwt(token);
           if (user) {
-            setIsLoading(false);
-            Alert.showSuccessAlert(
-              response.message,
-              () =>
-                (window.location.href =
-                  user.roles === "User" ? "/user" : "/admin")
-            );
+            setTimeout(() => {
+              setOpen(false);
+              Alert.showSuccessAlert(
+                response.message,
+                () =>
+                  (window.location.href =
+                    user.roles === "User" ? "/user" : "/admin")
+              );
+            }, 2200);
           }
         } else {
+          setOpen(false);
           Alert.showErrorAlert(response.message);
         }
       })
@@ -46,7 +52,12 @@ export default function SignIn() {
 
   return (
     <>
-      {isLoading && <Loader />}
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div className="mb-16 mt-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
         {/* Sign in section */}
         <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
